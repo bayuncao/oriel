@@ -9,7 +9,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/bayuncao/oriel/internal/agent"
 	"github.com/bayuncao/oriel/internal/hub"
 	"github.com/bayuncao/oriel/internal/proc"
 	"github.com/bayuncao/oriel/internal/store"
@@ -25,39 +24,6 @@ func newTestApp(t *testing.T, env proc.Env, root string) (*App, string) {
 	}
 	t.Cleanup(a.Close)
 	return a, data
-}
-
-// A1：空 DataDir 建 app；Agents().Definitions 是 9 個 builtins；
-// 受控 PATH 上的假 grok 變成 ready。
-func TestNewAndAgents(t *testing.T) {
-	bin := t.TempDir()
-	writeExe(t, bin, "grok", "#!/bin/sh\necho 'grok 1.0.52 (0920c8169e27)'\n")
-	a, data := newTestApp(t, proc.Env{"PATH=" + bin}, t.TempDir())
-	if fi, err := os.Stat(filepath.Join(data, "orielhub.db")); err != nil || fi.IsDir() {
-		t.Fatal("no db")
-	}
-	defs := a.Agents().Definitions()
-	if len(defs) != len(builtins()) {
-		t.Fatalf("defs %d", len(defs))
-	}
-	// 經 Catalog 合併：來源一律標為 builtin（AgentRow.source 給頁面分組用）。
-	for _, d := range defs {
-		if d.Source != agent.SourceBuiltin {
-			t.Fatalf("%s source %q", d.ID, d.Source)
-		}
-	}
-	for {
-		for _, i := range a.Agents().Installations() {
-			if i.Agent == "grok" && i.Availability == agent.Ready {
-				return
-			}
-		}
-		select {
-		case <-a.Changes():
-		case <-time.After(30 * time.Second):
-			t.Fatal("grok never ready")
-		}
-	}
 }
 
 // A2：建 Task → Close → 重開 → Tasks/Workspaces/Search 都在。

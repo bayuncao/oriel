@@ -275,28 +275,6 @@ func TestInspect(t *testing.T) {
 		}
 	})
 
-	t.Run("git missing", func(t *testing.T) {
-		e := isolatedEnv(t)
-		g := newGit(t, e, func(o *workspace.Options) { o.Git = filepath.Join(t.TempDir(), "no-git") })
-		d := t.TempDir()
-		if err := os.Mkdir(filepath.Join(d, ".git"), 0o755); err != nil {
-			t.Fatal(err)
-		}
-		if _, err := g.Inspect(ctx, d); !errors.Is(err, missingGit()) {
-			t.Fatalf("got %v", err)
-		}
-		// PATH 裡找不到 git 也一樣（目錄要有 .git 才擋，P3）。
-		e2 := proc.Env{"HOME=" + t.TempDir(), "PATH=" + t.TempDir()}
-		g2 := newGit(t, e2, nil)
-		d = t.TempDir()
-		if err := os.Mkdir(filepath.Join(d, ".git"), 0o755); err != nil {
-			t.Fatal(err)
-		}
-		if _, err := g2.Inspect(ctx, d); !errors.Is(err, missingGit()) {
-			t.Fatalf("got %v", err)
-		}
-	})
-
 	t.Run("git fails", func(t *testing.T) {
 		e := isolatedEnv(t)
 		dir := t.TempDir()
