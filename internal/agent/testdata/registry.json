@@ -1,0 +1,172 @@
+{
+ "version": "1.0.0",
+ "agents": [
+  {
+   "id": "claude-acp",
+   "name": "Claude Agent",
+   "version": "0.94.0",
+   "description": "ACP wrapper for Anthropic's Claude",
+   "repository": "https://github.com/agentclientprotocol/claude-agent-acp",
+   "authors": [
+    "Anthropic",
+    "Zed Industries",
+    "JetBrains"
+   ],
+   "license": "proprietary",
+   "license_url": "https://github.com/agentclientprotocol/claude-agent-acp/blob/main/LICENSE",
+   "distribution": {
+    "npx": {
+     "package": "@agentclientprotocol/claude-agent-acp@0.94.0"
+    }
+   },
+   "icon": "https://cdn.agentclientprotocol.com/registry/v1/latest/claude-acp.svg"
+  },
+  {
+   "id": "cursor",
+   "name": "Cursor",
+   "version": "2026.10.19",
+   "description": "Cursor's coding agent",
+   "website": "https://cursor.com/docs/cli/acp",
+   "authors": [
+    "Cursor"
+   ],
+   "license": "proprietary",
+   "license_url": "https://cursor.com/terms-of-service",
+   "distribution": {
+    "binary": {
+     "darwin-aarch64": {
+      "archive": "https://downloads.cursor.com/lab/2026.10.19-6bbf2c4/darwin/arm64/agent-cli-package.tar.gz",
+      "cmd": "./dist-package/cursor-agent",
+      "args": [
+       "acp"
+      ]
+     },
+     "darwin-x86_64": {
+      "archive": "https://downloads.cursor.com/lab/2026.10.19-6bbf2c4/darwin/x64/agent-cli-package.tar.gz",
+      "cmd": "./dist-package/cursor-agent",
+      "args": [
+       "acp"
+      ]
+     },
+     "linux-aarch64": {
+      "archive": "https://downloads.cursor.com/lab/2026.10.19-6bbf2c4/linux/arm64/agent-cli-package.tar.gz",
+      "cmd": "./dist-package/cursor-agent",
+      "args": [
+       "acp"
+      ]
+     },
+     "linux-x86_64": {
+      "archive": "https://downloads.cursor.com/lab/2026.10.19-6bbf2c4/linux/x64/agent-cli-package.tar.gz",
+      "cmd": "./dist-package/cursor-agent",
+      "args": [
+       "acp"
+      ]
+     },
+     "windows-aarch64": {
+      "archive": "https://downloads.cursor.com/lab/2026.10.19-6bbf2c4/windows/arm64/agent-cli-package.zip",
+      "cmd": "./dist-package\\cursor-agent.cmd",
+      "args": [
+       "acp"
+      ]
+     },
+     "windows-x86_64": {
+      "archive": "https://downloads.cursor.com/lab/2026.10.19-6bbf2c4/windows/x64/agent-cli-package.zip",
+      "cmd": "./dist-package\\cursor-agent.cmd",
+      "args": [
+       "acp"
+      ]
+     }
+    }
+   },
+   "icon": "https://cdn.agentclientprotocol.com/registry/v1/latest/cursor.svg"
+  },
+  {
+   "id": "fast-agent",
+   "name": "fast-agent",
+   "version": "0.10.1",
+   "description": "Code and build agents with comprehensive multi-provider support",
+   "repository": "https://github.com/evalstate/fast-agent",
+   "website": "https://fast-agent.ai",
+   "authors": [
+    "enquiries@fast-agent.ai"
+   ],
+   "license": "Apache 2.0",
+   "license_url": "https://github.com/evalstate/fast-agent/blob/main/LICENSE",
+   "distribution": {
+    "uvx": {
+     "package": "fast-agent-acp==0.10.1",
+     "args": [
+      "-x"
+     ],
+     "env": {
+      "FAST_AGENT_MODEL": "codexplan"
+     }
+    }
+   },
+   "icon": "https://cdn.agentclientprotocol.com/registry/v1/latest/fast-agent.svg"
+  },
+  {
+   "id": "gemini",
+   "name": "Gemini CLI",
+   "version": "0.65.0",
+   "description": "Google's official CLI for Gemini",
+   "repository": "https://github.com/google-gemini/gemini-cli",
+   "website": "https://geminicli.com",
+   "authors": [
+    "Google"
+   ],
+   "license": "Apache-2.0",
+   "license_url": "https://github.com/google-gemini/gemini-cli/blob/main/LICENSE",
+   "distribution": {
+    "npx": {
+     "package": "@google/gemini-cli@0.65.0",
+     "args": [
+      "--acp"
+     ]
+    }
+   },
+   "icon": "https://cdn.agentclientprotocol.com/registry/v1/latest/gemini.svg"
+  },
+  {
+   "id": "grok-build",
+   "name": "Grok Build",
+   "version": "1.0.68",
+   "description": "xAI's coding agent and CLI",
+   "website": "https://x.ai/cli",
+   "authors": [
+    "xAI"
+   ],
+   "license": "proprietary",
+   "license_url": "https://x.ai/legal/terms-of-service",
+   "distribution": {
+    "npx": {
+     "package": "@xai-official/grok@1.0.68",
+     "args": [
+      "agent",
+      "stdio"
+     ]
+    }
+   },
+   "icon": "https://cdn.agentclientprotocol.com/registry/v1/latest/grok-build.svg"
+  },
+  {
+   "id": "pi-acp",
+   "name": "pi ACP",
+   "version": "0.0.34",
+   "description": "ACP adapter for pi coding agent",
+   "repository": "https://github.com/svkozak/pi-acp",
+   "authors": [
+    "Sergii Kozak <svkozak@gmail.com>"
+   ],
+   "license": "MIT",
+   "license_url": "https://github.com/svkozak/pi-acp/blob/main/LICENSE",
+   "distribution": {
+    "npx": {
+     "package": "pi-acp@0.0.34"
+    }
+   },
+   "icon": "https://cdn.agentclientprotocol.com/registry/v1/latest/pi-acp.svg"
+  }
+ ],
+ "extensions": []
+}

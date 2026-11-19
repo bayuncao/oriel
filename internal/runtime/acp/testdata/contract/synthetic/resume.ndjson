@@ -1,0 +1,8 @@
+# 第一次啟動：記下一個詞，之後連線被關掉。
+{"client":{"id":1,"method":"initialize","params":{"protocolVersion":1}}}
+{"agent":{"jsonrpc":"2.0","id":1,"result":{"protocolVersion":1,"agentCapabilities":{"sessionCapabilities":{"resume":{}}}}}}
+{"client":{"id":2,"method":"session/new","params":{"cwd":"<cwd>","mcpServers":[]}}}
+{"agent":{"jsonrpc":"2.0","id":2,"result":{"sessionId":"<session>"}}}
+{"client":{"id":3,"method":"session/prompt","params":{"sessionId":"<session>","prompt":[{"type":"text","text":"Remember the code word ORIEL-42. Reply with only: OK. Do not use any tools."}]}}}
+{"agent":{"jsonrpc":"2.0","method":"session/update","params":{"sessionId":"<session>","update":{"sessionUpdate":"agent_message_chunk","content":{"type":"text","text":"OK"}}}}}
+{"agent":{"jsonrpc":"2.0","id":3,"result":{"stopReason":"end_turn"}}}

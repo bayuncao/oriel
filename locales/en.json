@@ -1,0 +1,4494 @@
+{
+  "@@locale": "en",
+  "acp_protocol_version": "The agent speaks ACP version {version}; OrielHub supports version 1",
+  "@acp_protocol_version": {
+    "description": "The agent answered initialize with another protocol version.",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "acp_auth_required": "{agent} needs you to log in first: run it once in a terminal and sign in",
+  "@acp_auth_required": {
+    "description": "The agent refused to start a session until the user logs in.",
+    "placeholders": {
+      "agent": {
+        "type": "String"
+      }
+    }
+  },
+  "acp_start_timed_out": "The agent did not start a session in time",
+  "@acp_start_timed_out": {
+    "description": "initialize and session setup took longer than 60 seconds."
+  },
+  "acp_set_model_timed_out": "The agent did not switch models in time",
+  "@acp_set_model_timed_out": {
+    "description": "The agent did not answer a model switch within 30 seconds (C48)."
+  },
+  "acp_resume_unsupported": "This agent cannot resume sessions; start a new session instead",
+  "@acp_resume_unsupported": {
+    "description": "The agent supports neither session/resume nor session/load."
+  },
+  "acp_request_failed": "The agent could not handle {method}: {detail}",
+  "@acp_request_failed": {
+    "description": "The agent answered a request with an error; method is the ACP method, detail its message.",
+    "placeholders": {
+      "method": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "acp_prompt_failed": "The agent could not finish this turn: {detail}",
+  "@acp_prompt_failed": {
+    "description": "The prompt request failed; detail is the agent's message.",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "acp_max_tokens": "The agent stopped: it reached its token limit",
+  "@acp_max_tokens": {
+    "description": "The turn ended with stop reason max_tokens."
+  },
+  "acp_max_turn_requests": "The agent stopped: it reached its request limit for one turn",
+  "@acp_max_turn_requests": {
+    "description": "The turn ended with stop reason max_turn_requests."
+  },
+  "acp_refusal": "The agent refused to continue",
+  "@acp_refusal": {
+    "description": "The turn ended with stop reason refusal."
+  },
+  "acp_attachment_unsupported": "{name} cannot be attached yet: only files in the workspace can",
+  "@acp_attachment_unsupported": {
+    "description": "Images and other stored attachments are not supported yet.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "acp_protocol_error": "The agent sent something OrielHub could not read: {detail}",
+  "@acp_protocol_error": {
+    "description": "The agent broke the protocol (a line over 10 MiB, or stdout closed while running).",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "acp_opencode_config": "OPENCODE_CONFIG_CONTENT is not a valid JSON object: {detail}",
+  "@acp_opencode_config": {
+    "description": "The user's OPENCODE_CONFIG_CONTENT cannot be merged with OrielHub's permission settings.",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "agent_not_executable": "{path} is not an executable file",
+  "@agent_not_executable": {
+    "description": "A found candidate is not an executable file.",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "agent_unreadable": "Cannot read {path}: {detail}",
+  "@agent_unreadable": {
+    "description": "A candidate's file cannot be read; detail is the system error.",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "agent_other_program": "Another program named {command}, not from Homebrew {brew}",
+  "@agent_other_program": {
+    "description": "A program with the agent's command name belongs to another tool.",
+    "placeholders": {
+      "command": {
+        "type": "String"
+      },
+      "brew": {
+        "type": "String"
+      }
+    }
+  },
+  "agent_not_from_npm": "Not installed from npm {packages}",
+  "@agent_not_from_npm": {
+    "description": "The candidate is not inside the agent's npm package.",
+    "placeholders": {
+      "packages": {
+        "type": "String"
+      }
+    }
+  },
+  "agent_invalid_version_pattern": "The agent's version pattern is invalid: {detail}",
+  "@agent_invalid_version_pattern": {
+    "description": "The agent definition's version pattern is invalid.",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "agent_version_timeout": "Checking the version timed out",
+  "@agent_version_timeout": {
+    "description": "The version probe did not finish in time."
+  },
+  "agent_version_failed": "The program failed when checking its version: {detail} {output}",
+  "@agent_version_failed": {
+    "description": "The program failed when asked for its version.",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      },
+      "output": {
+        "type": "String"
+      }
+    }
+  },
+  "agent_version_mismatch": "The version output does not look like this agent: {output}",
+  "@agent_version_mismatch": {
+    "description": "The version output is not the agent's.",
+    "placeholders": {
+      "output": {
+        "type": "String"
+      }
+    }
+  },
+  "agent_version_excluded": "Version {version} is known not to work",
+  "@agent_version_excluded": {
+    "description": "The installed version is known not to work.",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "agent_version_too_old": "Version {version} is older than the required {min}",
+  "@agent_version_too_old": {
+    "description": "The installed version is older than the minimum.",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "min": {
+        "type": "String"
+      }
+    }
+  },
+  "agent_duplicate_agent": "Another agent already uses this ID",
+  "@agent_duplicate_agent": {
+    "description": "Two configured agents have the same ID."
+  },
+  "agent_invalid_slug": "The ID {slug} may only use lowercase letters, digits and -",
+  "@agent_invalid_slug": {
+    "description": "A custom agent's ID is not allowed.",
+    "placeholders": {
+      "slug": {
+        "type": "String"
+      }
+    }
+  },
+  "agent_no_command": "The custom agent {slug} has no command",
+  "@agent_no_command": {
+    "description": "A custom agent has no command.",
+    "placeholders": {
+      "slug": {
+        "type": "String"
+      }
+    }
+  },
+  "agent_relative_command": "The command {command} of {slug} must be a name or an absolute path",
+  "@agent_relative_command": {
+    "description": "A custom agent's command is a relative path.",
+    "placeholders": {
+      "slug": {
+        "type": "String"
+      },
+      "command": {
+        "type": "String"
+      }
+    }
+  },
+  "agent_registry_entry_invalid": "The saved Registry entry {id} cannot be read: {detail}",
+  "@agent_registry_entry_invalid": {
+    "description": "A saved Registry entry cannot be read.",
+    "placeholders": {
+      "id": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "agent_registry_entry_mismatch": "The saved Registry entry {id} holds {holds}",
+  "@agent_registry_entry_mismatch": {
+    "description": "A saved Registry entry holds another agent.",
+    "placeholders": {
+      "id": {
+        "type": "String"
+      },
+      "holds": {
+        "type": "String"
+      }
+    }
+  },
+  "agent_not_runnable": "Not available for {platform}",
+  "@agent_not_runnable": {
+    "description": "A Registry entry has no distribution for this platform.",
+    "placeholders": {
+      "platform": {
+        "type": "String"
+      }
+    }
+  },
+  "agent_unknown_agent": "This agent is not available",
+  "@agent_unknown_agent": {
+    "description": "The agent is not in the catalog."
+  },
+  "agent_not_installed": "The agent is not installed",
+  "@agent_not_installed": {
+    "description": "No program for the agent was found on this Mac."
+  },
+  "agent_closed": "Agent discovery has stopped",
+  "@agent_closed": {
+    "description": "Agent discovery has stopped, as the app quits."
+  },
+  "agent_registry_no_client": "The Registry cannot be reached",
+  "@agent_registry_no_client": {
+    "description": "The app did not configure the Registry client; a bug."
+  },
+  "agent_registry_unreachable": "The Registry cannot be reached: {detail}",
+  "@agent_registry_unreachable": {
+    "description": "The Registry could not be fetched; detail is the network error.",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "agent_registry_status": "The Registry answered {status}",
+  "@agent_registry_status": {
+    "description": "The Registry server answered with an error status.",
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "agent_registry_invalid": "The Registry index is invalid: {detail}",
+  "@agent_registry_invalid": {
+    "description": "The Registry index is malformed.",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "agent_registry_cache_write": "Cannot save the Registry cache: {detail}",
+  "@agent_registry_cache_write": {
+    "description": "The fetched Registry index could not be cached.",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "agent_internal": "Unexpected error: {detail}",
+  "@agent_internal": {
+    "description": "An unexpected error in agent discovery.",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "proc_closed": "Stopped running programs",
+  "@proc_closed": {
+    "description": "Probes are no longer run, as the app quits."
+  },
+  "proc_no_shell": "No shell answered",
+  "@proc_no_shell": {
+    "description": "No login shell answered for the environment."
+  },
+  "proc_start_failed": "Cannot start {path}: {detail}",
+  "@proc_start_failed": {
+    "description": "A program could not be started.",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "proc_exited": "The program exited with status {status}",
+  "@proc_exited": {
+    "description": "A program ended with an error status.",
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "proc_signaled": "The program was killed by signal {signal}",
+  "@proc_signaled": {
+    "description": "A program was ended by a signal (a number such as 9).",
+    "placeholders": {
+      "signal": {
+        "type": "String"
+      }
+    }
+  },
+  "proc_timed_out": "The program timed out",
+  "@proc_timed_out": {
+    "description": "A program did not finish in time."
+  },
+  "proc_canceled": "The program was stopped",
+  "@proc_canceled": {
+    "description": "A program was stopped."
+  },
+  "task_forged_origin": "This request is not allowed",
+  "@task_forged_origin": {
+    "description": "A client claimed to be the runtime."
+  },
+  "task_archived": "The task is archived",
+  "@task_archived": {
+    "description": "The task is archived."
+  },
+  "task_unknown_session": "The session does not exist",
+  "@task_unknown_session": {
+    "description": "The session does not exist in the task."
+  },
+  "task_session_closed": "The session is closed",
+  "@task_session_closed": {
+    "description": "The session is closed."
+  },
+  "task_session_exited": "The session has exited; resume it first",
+  "@task_session_exited": {
+    "description": "Submit to a session whose agent process has exited; the user must resume it first."
+  },
+  "task_conflicted": "The session was used elsewhere; take it over first",
+  "@task_conflicted": {
+    "description": "The agent's session was used outside OrielHub."
+  },
+  "task_not_resumable": "The session cannot be resumed",
+  "@task_not_resumable": {
+    "description": "The session cannot be resumed."
+  },
+  "task_unresolved_changes": "Merge or discard the worktree changes first",
+  "@task_unresolved_changes": {
+    "description": "Worktrees still have unmerged changes."
+  },
+  "task_needs_desktop": "Confirm this on the desktop",
+  "@task_needs_desktop": {
+    "description": "Only the desktop may do this."
+  },
+  "task_dirty_workdir": "Commit or discard the changes in the working directory first",
+  "@task_dirty_workdir": {
+    "description": "The working directory has uncommitted changes."
+  },
+  "task_not_git": "The workspace is not a Git repository",
+  "@task_not_git": {
+    "description": "The workspace is not a Git repository."
+  },
+  "task_detached_head": "No branch is checked out, so a worktree would have nowhere to merge back",
+  "@task_detached_head": {
+    "description": "Worktrees need a checked-out branch to merge into; the repository is in detached HEAD state."
+  },
+  "task_session_running": "Wait for the running sessions to finish, or cancel them first",
+  "@task_session_running": {
+    "description": "The task has a running session; archiving, merging and discarding are refused."
+  },
+  "task_model_unavailable": "The agent no longer offers that model",
+  "@task_model_unavailable": {
+    "description": "Picking a model the agent no longer lists, or one picked earlier that it dropped after resuming (D118)."
+  },
+  "task_model_switching": "The last model you picked is still being switched to",
+  "@task_model_switching": {
+    "description": "Picking a model while the previous pick is still on its way to the agent (V82, D118)."
+  },
+  "task_unknown_label": "That label was just deleted",
+  "task_session_open": "Close the session first",
+  "@task_session_open": {
+    "description": "Deleting native session files while the session is still connected to the agent."
+  },
+  "task_in_flight": "The operation is still running; it can only be cancelled once it has stopped",
+  "@task_in_flight": {
+    "description": "Cancelling an intent whose effect is not suspended."
+  },
+  "task_merge_conflict": "Merge conflict in: {files}",
+  "@task_merge_conflict": {
+    "description": "A merge stopped on conflicts; files are newline-separated.",
+    "placeholders": {
+      "files": {
+        "type": "String"
+      }
+    }
+  },
+  "task_invalid": "The request is invalid",
+  "@task_invalid": {
+    "description": "The request is malformed."
+  },
+  "transport_internal": "Something went wrong",
+  "@transport_internal": {
+    "description": "An error without a code; the details are in the log."
+  },
+  "transport_canceled": "The request was canceled",
+  "@transport_canceled": {
+    "description": "The request was canceled."
+  },
+  "transport_timed_out": "The request timed out",
+  "@transport_timed_out": {
+    "description": "The request timed out."
+  },
+  "hub_needs_desktop": "This operation requires the desktop",
+  "@hub_needs_desktop": {
+    "description": "Remote principals cannot perform this write operation."
+  },
+  "hub_unknown_rule": "Rule {rule} is unknown",
+  "@hub_unknown_rule": {
+    "description": "A rule ID that does not exist.",
+    "placeholders": { "rule": { "type": "String" } }
+  },
+  "hub_invalid_field": "Field {field} is invalid",
+  "@hub_invalid_field": {
+    "description": "A field failed validation.",
+    "placeholders": { "field": { "type": "String" } }
+  },
+  "hub_unknown_task": "No such task",
+  "@hub_unknown_task": {
+    "description": "A task ID that does not exist in the log."
+  },
+  "hub_unknown_workspace": "The path {path} is not a registered workspace",
+  "@hub_unknown_workspace": {
+    "description": "A directory that is not registered as a workspace.",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "hub_closed": "The hub is closed",
+  "@hub_closed": {
+    "description": "The hub has been closed and cannot accept commands."
+  },
+  "hub_agent_unsupported": "{agent} cannot be used from OrielHub yet",
+  "@hub_agent_unsupported": {
+    "description": "The agent's protocol has no adapter yet (Claude Code, Codex and pi come with M3).",
+    "placeholders": {
+      "agent": {
+        "type": "String"
+      }
+    }
+  },
+  "hub_session_exists": "This task has already started an agent",
+  "@hub_session_exists": {
+    "description": "Starting an agent on a task that already has a session; in M2 a task has at most one agent (D95)."
+  },
+  "hub_unknown_label": "Label {label} no longer exists",
+  "hub_duplicate_label": "A label named “{name}” already exists",
+  "hub_unknown_device": "Device {device} is no longer paired",
+  "@hub_unknown_device": {
+    "description": "The remote device was revoked or never paired (D145); device is its id.",
+    "placeholders": { "device": { "type": "String" } }
+  },
+  "hub_not_archived": "Only an archived task can be deleted",
+  "@hub_not_archived": {
+    "description": "Deleting a task that is not archived; archive it first (m2.md DL03)."
+  },
+  "hub_no_runtime": "No runtime for protocol {protocol}",
+  "@hub_no_runtime": {
+    "description": "No agent runtime adapter is registered for this protocol.",
+    "placeholders": {
+      "protocol": {
+        "type": "String"
+      }
+    }
+  },
+  "hub_secret_missing": "The secret {name} is not available",
+  "@hub_secret_missing": {
+    "description": "A secret referenced by the launch environment could not be resolved.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "hub_connection_lost": "The connection to the agent was lost",
+  "@hub_connection_lost": {
+    "description": "The agent process exited or the connection was lost, for example on restart."
+  },
+  "hub_effect_failed": "Effect failed: {detail}",
+  "@hub_effect_failed": {
+    "description": "A planned effect failed.",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "hub_unsupported": "{op} is not supported yet",
+  "@hub_unsupported": {
+    "description": "An operation that is not implemented yet.",
+    "placeholders": {
+      "op": {
+        "type": "String"
+      }
+    }
+  },
+  "hub_store_failed": "Store failed: {detail}",
+  "@hub_store_failed": {
+    "description": "Persisting events to the store failed.",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "hub_unknown_message": "Message {message} is unknown",
+  "@hub_unknown_message": {
+    "description": "A message ID that does not exist.",
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "hub_lagging": "The subscription fell behind and was closed",
+  "@hub_lagging": {
+    "description": "A subscriber that could not keep up with events was evicted; resubscribe from the last seen sequence."
+  },
+  "relay_busy": "The relay has too many connections right now.",
+  "@relay_busy": {
+    "description": "The relay refused the connection because it, or this network address, has reached its connection limit (RL08, RL09); the Mac retries with backoff."
+  },
+  "relay_disconnected": "Lost the connection to the relay: {detail}",
+  "@relay_disconnected": {
+    "description": "The Mac's connection to the remote-control relay dropped (ADR-37); detail is the error, in English.",
+    "placeholders": { "detail": { "type": "String" } }
+  },
+  "relay_unreachable": "Cannot reach the relay: {detail}",
+  "@relay_unreachable": {
+    "description": "Connecting to the remote-control relay failed (D145, DV02); detail is the error, in English.",
+    "placeholders": { "detail": { "type": "String" } }
+  },
+  "relay_version_unsupported": "The relay does not support this version of OrielHub",
+  "@relay_version_unsupported": {
+    "description": "The relay rejected the protocol version this build speaks (ADR-37)."
+  },
+  "store_open_failed": "Cannot open database: {detail}",
+  "@store_open_failed": {
+    "description": "The database file cannot be opened.",
+    "placeholders": { "detail": { "type": "String" } }
+  },
+  "store_newer_schema": "Database schema version {version} is newer than this app",
+  "@store_newer_schema": {
+    "description": "The database was created by a newer version of the app.",
+    "placeholders": { "version": { "type": "String" } }
+  },
+  "store_conflict": "Concurrent write to task {task}",
+  "@store_conflict": {
+    "description": "Another writer appended to the same task stream.",
+    "placeholders": { "task": { "type": "String" } }
+  },
+  "store_closed": "Store is closed",
+  "@store_closed": {
+    "description": "The database connection is closed."
+  },
+  "store_failed": "Database operation failed: {detail}",
+  "@store_failed": {
+    "description": "A database statement failed.",
+    "placeholders": { "detail": { "type": "String" } }
+  },
+  "workspace_unsupported": "The {op} operation is not supported by this version",
+  "@workspace_unsupported": {
+    "description": "A worktree operation that is not implemented yet.",
+    "placeholders": {
+      "op": {
+        "type": "String"
+      }
+    }
+  },
+  "workspace_dir_missing": "The path {path} is not a directory",
+  "@workspace_dir_missing": {
+    "description": "A directory that does not exist.",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "workspace_git_missing": "No usable git was found",
+  "@workspace_git_missing": {
+    "description": "No git executable was found, or Xcode Command Line Tools are not installed."
+  },
+  "workspace_git_failed": "git failed: {detail}",
+  "@workspace_git_failed": {
+    "description": "A git command failed.",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "notify_ask": "{agent} wants to run: {what}",
+  "@notify_ask": {
+    "description": "Notification when an agent asks to run a tool.",
+    "placeholders": { "agent": { "type": "String" }, "what": { "type": "String" } }
+  },
+  "notify_failed": "A turn failed",
+  "@notify_failed": {
+    "description": "Notification when a turn fails."
+  },
+  "notify_failed_reason": "A turn failed: {reason}",
+  "@notify_failed_reason": {
+    "description": "Notification when a turn fails, with the reason already translated.",
+    "placeholders": { "reason": { "type": "String" } }
+  },
+  "notify_recommended": "The review recommends a candidate",
+  "@notify_recommended": {
+    "description": "Notification when the review recommends a candidate."
+  },
+  "notify_confirmation": "A remote request needs confirmation on this computer: {kind}",
+  "@notify_confirmation": {
+    "description": "Notification when a remote request needs confirmation.",
+    "placeholders": { "kind": { "type": "String" } }
+  },
+  "notify_stalled": "{minutes, plural, one {{agent} has had no activity for # minute} other {{agent} has had no activity for # minutes}}",
+  "@notify_stalled": {
+    "description": "Notification when a turn has had no activity for a while (D79).",
+    "placeholders": { "agent": { "type": "String" }, "minutes": { "type": "int" } }
+  },
+  "notify_conflict": "{files, plural, one {Merge conflict in # file} other {Merge conflict in # files}}",
+  "@notify_conflict": {
+    "description": "Notification when a merge conflicts.",
+    "placeholders": { "files": { "type": "int" } }
+  },
+  "notify_completed": "The turn finished",
+  "@notify_completed": {
+    "description": "Notification when a turn finishes."
+  },
+  "mygoipc_needs_profile": "Starting an agent needs a profile, which this version does not support yet",
+  "@mygoipc_needs_profile": {
+    "description": "The page cannot launch agents; profiles arrive in M2."
+  },
+  "remote_pairing_expired": "This pairing code has expired. Show a new code on the Mac.",
+  "@remote_pairing_expired": {
+    "description": "The pairing QR code is older than 5 minutes, was replaced by a newer code, or was closed on the desktop (D145, PA04, PA06)."
+  },
+  "remote_pairing_used": "This pairing code was already used. Show a new code on the Mac.",
+  "@remote_pairing_used": {
+    "description": "Another phone already paired with this one-time code (D145, PA05)."
+  },
+  "remote_unknown_device": "This phone is not paired with the Mac. Pair it again from the Mac.",
+  "@remote_unknown_device": {
+    "description": "The phone's key is not registered: never paired, revoked, or remote was reset on the desktop (CN02, CN03, CN05)."
+  },
+  "remote_not_allowed": "This action is not available from a phone",
+  "@remote_not_allowed": {
+    "description": "The method is not on the remote allowlist (D145, CN07, PA09)."
+  },
+  "remote_bad_request": "The Mac could not read this request",
+  "@remote_bad_request": {
+    "description": "A remote request had malformed parameters, or reused the id of a subscription still in progress (RQ03, RQ05)."
+  },
+  "remote_keychain_unavailable": "Cannot read or save the remote keys in the keychain: {detail}",
+  "@remote_keychain_unavailable": {
+    "description": "The Mac's Noise key or room key could not be read from or written to the keychain; remote stays off (DV11).",
+    "placeholders": { "detail": { "type": "String" } }
+  },
+  "remote_bad_relay_url": "{url} is not a relay address. Use one that starts with wss:// or ws://.",
+  "@remote_bad_relay_url": {
+    "description": "The relay address entered in Settings > Remote > Advanced is not a ws:// or wss:// address without a path (DV15).",
+    "placeholders": { "url": { "type": "String" } }
+  },
+  "remote_not_connected": "Not connected to the relay yet",
+  "@remote_not_connected": {
+    "description": "A pairing code was requested while the Mac is not connected to the relay (DV09)."
+  },
+  "remote_save_failed": "Cannot save the remote settings: {detail}",
+  "@remote_save_failed": {
+    "description": "The remote on/off switch or relay address could not be written to the data folder (DV12).",
+    "placeholders": { "detail": { "type": "String" } }
+  },
+  "mygoipc_not_ready": "OrielHub is still starting",
+  "@mygoipc_not_ready": {
+    "description": "The backend is still starting."
+  },
+  "mygoipc_unsupported_link": "Only web and email links can be opened",
+  "@mygoipc_unsupported_link": {
+    "description": "A link in the conversation uses a scheme other than http, https or mailto (m2.md V10)."
+  },
+  "app_start_failed": "OrielHub could not start: {detail}",
+  "@app_start_failed": {
+    "description": "The application could not start.",
+    "placeholders": { "detail": { "type": "String" } }
+  },
+  "app_unknown_language": "OrielHub is not available in {tag}",
+  "@app_unknown_language": {
+    "description": "The chosen interface language is not one the app is written in.",
+    "placeholders": { "tag": { "type": "String" } }
+  },
+  "app_language_save_failed": "Could not save the language: {detail}",
+  "@app_language_save_failed": {
+    "description": "The interface language choice could not be written to disk; detail is the system error.",
+    "placeholders": { "detail": { "type": "String" } }
+  },
+  "app_keep_awake_save_failed": "Could not save the sleep setting: {detail}",
+  "@app_keep_awake_save_failed": {
+    "description": "The keep-awake switch (D80) could not be written to disk; detail is the system error.",
+    "placeholders": { "detail": { "type": "String" } }
+  },
+  "keep_awake_reason": "An OrielHub agent is running",
+  "@keep_awake_reason": {
+    "description": "Reason macOS lists for the idle-sleep assertion while agents run (D80, KA01)."
+  },
+  "updater_check_failed": "Could not check for updates: {detail}",
+  "@updater_check_failed": {
+    "description": "Asking the update feed for a newer version failed; detail is the error, in English.",
+    "placeholders": { "detail": { "type": "String" } }
+  },
+  "updater_install_failed": "Could not install the update: {detail}",
+  "@updater_install_failed": {
+    "description": "Downloading, verifying or installing a newer version failed; detail is the error, in English.",
+    "placeholders": { "detail": { "type": "String" } }
+  },
+  "usage_read_failed": "Could not read the {agent} usage records at {path}: {detail}",
+  "@usage_read_failed": {
+    "description": "Reading an agent's local usage records failed, shown in the usage page's record sources; agent is the agent ID, path the location or file, detail the error in English.",
+    "placeholders": { "agent": { "type": "String" }, "path": { "type": "String" }, "detail": { "type": "String" } }
+  },
+  "usage_closed": "Usage reading has stopped",
+  "@usage_closed": {
+    "description": "The usage reader was closed while the app quits."
+  },
+  "provider_fetch_failed": "Couldn’t read the {provider} status page: {detail}",
+  "@provider_fetch_failed": {
+    "description": "Reading a provider's public status page failed; provider is its name, detail the error in English (PS23).",
+    "placeholders": { "provider": { "type": "String" }, "detail": { "type": "String" } }
+  },
+  "provider_closed": "Provider status has stopped",
+  "@provider_closed": {
+    "description": "The provider status reader was closed while the app quits."
+  },
+  "provider_keychain_unavailable": "The system keychain isn’t available: {detail}",
+  "@provider_keychain_unavailable": {
+    "description": "No credential store, or access was refused (PK09).",
+    "placeholders": { "detail": { "type": "String" } }
+  },
+  "provider_key_name_missing": "Give the key a name",
+  "@provider_key_name_missing": {
+    "description": "A key was added without a name (PK07)."
+  },
+  "provider_key_missing": "Paste the key",
+  "@provider_key_missing": {
+    "description": "A key was added with nothing pasted (PK07)."
+  },
+  "provider_unknown_icon": "Choose a provider icon",
+  "@provider_unknown_icon": {
+    "description": "A key was added without one of the provider icons (PK05, PK07)."
+  },
+  "provider_invalid_base_url": "Enter an http or https address with a host, without a user, query or fragment",
+  "@provider_invalid_base_url": {
+    "description": "A base URL that is not an http or https address with a host, or has a user, query or fragment (PK24, PK25)."
+  },
+  "provider_key_not_found": "This key isn’t stored anymore",
+  "@provider_key_not_found": {
+    "description": "The key being edited was removed meanwhile (PK32)."
+  },
+  "tray_tooltip": "{running, plural, one {# task running} other {# tasks running}} · {attention, plural, one {# item needs you} other {# items need you}}",
+  "@tray_tooltip": {
+    "description": "Tooltip of the menu bar icon, explaining the two numbers next to it: tasks with a running session, and pending asks plus confirmations.",
+    "placeholders": { "running": { "type": "int" }, "attention": { "type": "int" } }
+  },
+  "ui_shell_navigation": "Navigation",
+  "@ui_shell_navigation": {
+    "description": "Name of the sidebar navigation."
+  },
+  "ui_shell_expand": "Expand sidebar",
+  "@ui_shell_expand": {
+    "description": "Button that opens the sidebar."
+  },
+  "ui_shell_collapse": "Collapse sidebar",
+  "@ui_shell_collapse": {
+    "description": "Button that folds the sidebar into an icon rail."
+  },
+  "ui_shell_open_navigation": "Open navigation",
+  "@ui_shell_open_navigation": {
+    "description": "Button that opens the navigation sheet on a narrow window."
+  },
+  "ui_shell_close_navigation": "Close navigation",
+  "@ui_shell_close_navigation": {
+    "description": "Button that closes the navigation sheet."
+  },
+  "ui_shell_expanded": "Sidebar expanded",
+  "@ui_shell_expanded": {
+    "description": "Announced after the sidebar opens."
+  },
+  "ui_shell_collapsed": "Sidebar collapsed",
+  "@ui_shell_collapsed": {
+    "description": "Announced after the sidebar folds."
+  },
+  "ui_shell_breadcrumb": "Breadcrumb",
+  "@ui_shell_breadcrumb": {
+    "description": "Accessible name of the trail in the top bar."
+  },
+  "ui_nav_agents": "Agents",
+  "@ui_nav_agents": {
+    "description": "Sidebar entry and title of the agents page."
+  },
+  "ui_nav_settings": "Settings",
+  "@ui_nav_settings": {
+    "description": "Sidebar entry and title of the settings page."
+  },
+  "ui_nav_tasks": "Tasks",
+  "@ui_nav_tasks": {
+    "description": "Sidebar entry and title of the tasks page."
+  },
+  "ui_nav_usage": "Usage",
+  "@ui_nav_usage": {
+    "description": "Sidebar entry and title of the usage page."
+  },
+  "ui_nav_workspaces": "Workspaces",
+  "@ui_nav_workspaces": {
+    "description": "Sidebar group and title of the workspaces page."
+  },
+  "ui_nav_workspaces_all": "All workspaces",
+  "@ui_nav_workspaces_all": {
+    "description": "First row in the sidebar's workspace group; opens the workspaces page."
+  },
+  "ui_nav_attention": "{count, plural, one {# needs attention} other {# need attention}}",
+  "@ui_nav_attention": {
+    "description": "Tooltip note on the agents entry: how many agents are broken or outdated.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_close": "Close",
+  "@ui_close": {
+    "description": "Generic close button."
+  },
+  "ui_stage_inspector_width": "Inspector width",
+  "@ui_stage_inspector_width": {
+    "description": "Accessible name of the handle on the inspector's left edge, which drags or steps the inspector's width."
+  },
+  "ui_stage_inspector_width_value": "{width} pixels",
+  "@ui_stage_inspector_width_value": {
+    "description": "Read by screen readers as the inspector's current width.",
+    "placeholders": { "width": { "type": "int" } }
+  },
+  "ui_copy": "Copy",
+  "@ui_copy": {
+    "description": "Generic copy button."
+  },
+  "ui_retry": "Retry",
+  "@ui_retry": {
+    "description": "Button that repeats a failed request."
+  },
+  "ui_read_more": "Read more",
+  "@ui_read_more": {
+    "description": "Expands clamped text."
+  },
+  "ui_show_less": "Show less",
+  "@ui_show_less": {
+    "description": "Collapses expanded text."
+  },
+  "ui_load_failed": "Could not load",
+  "@ui_load_failed": {
+    "description": "Title of an error shown when a list cannot be loaded."
+  },
+  "ui_agents_local": "On this computer",
+  "@ui_agents_local": {
+    "description": "Segment of the agents page: agents found on this computer."
+  },
+  "ui_agents_registry": "Registry",
+  "@ui_agents_registry": {
+    "description": "Segment of the agents page: the ACP Registry."
+  },
+  "ui_agents_views": "Agent views",
+  "@ui_agents_views": {
+    "description": "Name of the control that switches between local agents and the registry."
+  },
+  "ui_agents_rescan": "Rescan",
+  "@ui_agents_rescan": {
+    "description": "Button that scans this computer for agents again."
+  },
+  "ui_agents_rescanning": "Scanning",
+  "@ui_agents_rescanning": {
+    "description": "Label of the rescan button while a scan runs."
+  },
+  "ui_agents_rescan_failed": "Rescan failed",
+  "@ui_agents_rescan_failed": {
+    "description": "Title of the error shown when a rescan fails."
+  },
+  "ui_agents_search": "Search agents",
+  "@ui_agents_search": {
+    "description": "Label of the search that jumps to an agent."
+  },
+  "ui_agents_filter": "Filter by availability",
+  "@ui_agents_filter": {
+    "description": "Label of the availability cards."
+  },
+  "ui_agents_filter_all": "All",
+  "@ui_agents_filter_all": {
+    "description": "Availability card that shows every agent."
+  },
+  "ui_availability_detecting": "Detecting",
+  "@ui_availability_detecting": {
+    "description": "Availability before the first scan has finished."
+  },
+  "ui_availability_ready": "Ready",
+  "@ui_availability_ready": {
+    "description": "Availability: the agent can run."
+  },
+  "ui_availability_missing": "Missing",
+  "@ui_availability_missing": {
+    "description": "Availability: the agent was not found."
+  },
+  "ui_availability_broken": "Broken",
+  "@ui_availability_broken": {
+    "description": "Availability: the agent was found but does not work."
+  },
+  "ui_availability_outdated": "Outdated",
+  "@ui_availability_outdated": {
+    "description": "Availability: the installed version is too old."
+  },
+  "ui_source_builtin": "Built-in",
+  "@ui_source_builtin": {
+    "description": "Group of agents that ship with OrielHub."
+  },
+  "ui_source_registry": "From the registry",
+  "@ui_source_registry": {
+    "description": "Group of agents added from the ACP Registry."
+  },
+  "ui_source_custom": "Custom",
+  "@ui_source_custom": {
+    "description": "Group of agents the user defined."
+  },
+  "ui_protocol_native": "Native",
+  "@ui_protocol_native": {
+    "description": "The agent speaks its own protocol."
+  },
+  "ui_protocol_acp": "ACP",
+  "@ui_protocol_acp": {
+    "description": "The agent speaks the Agent Client Protocol."
+  },
+  "ui_auth_authenticated": "Signed in",
+  "@ui_auth_authenticated": {
+    "description": "Sign-in state of an agent."
+  },
+  "ui_auth_unauthenticated": "Not signed in",
+  "@ui_auth_unauthenticated": {
+    "description": "Sign-in state of an agent."
+  },
+  "ui_path_source_override": "Override",
+  "@ui_path_source_override": {
+    "description": "Where the program was found: a path the user set."
+  },
+  "ui_path_source_path": "PATH",
+  "@ui_path_source_path": {
+    "description": "Where the program was found: the login shell's PATH."
+  },
+  "ui_path_source_tool_dir": "User tool directory",
+  "@ui_path_source_tool_dir": {
+    "description": "Where the program was found: a user tool directory such as ~/.local/bin."
+  },
+  "ui_path_source_vendor_dir": "Vendor directory",
+  "@ui_path_source_vendor_dir": {
+    "description": "Where the program was found: the vendor's install directory."
+  },
+  "ui_field_protocol": "Protocol",
+  "@ui_field_protocol": {
+    "description": "Field label."
+  },
+  "ui_field_version": "Version",
+  "@ui_field_version": {
+    "description": "Field label."
+  },
+  "ui_field_path": "Path",
+  "@ui_field_path": {
+    "description": "Field label."
+  },
+  "ui_field_authors": "Authors",
+  "@ui_field_authors": {
+    "description": "Field label."
+  },
+  "ui_field_license": "License",
+  "@ui_field_license": {
+    "description": "Field label."
+  },
+  "ui_field_runs_with": "Runs with",
+  "@ui_field_runs_with": {
+    "description": "Field label: how a registry entry runs (npx, uvx or a binary)."
+  },
+  "ui_agent_install": "Install",
+  "@ui_agent_install": {
+    "description": "Discovery step over the install command of a missing agent."
+  },
+  "ui_agent_install_hint": "Copy it into a terminal. OrielHub never runs it.",
+  "@ui_agent_install_hint": {
+    "description": "Note under the install command."
+  },
+  "ui_agent_docs": "Documentation",
+  "@ui_agent_docs": {
+    "description": "Link to the agent's documentation."
+  },
+  "ui_agent_candidates": "{count, plural, one {# program found} other {# programs found}}",
+  "@ui_agent_candidates": {
+    "description": "Heading of the expandable list of found programs.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_agent_discovery": "Discovery",
+  "@ui_agent_discovery": {
+    "description": "Title of the panel at the top of an agent's details that lists what the scan found, step by step."
+  },
+  "ui_agent_checked": "Checked",
+  "@ui_agent_checked": {
+    "description": "Read by screen readers before the time of the agent's last check."
+  },
+  "ui_agent_looking": "Looking for {name}",
+  "@ui_agent_looking": {
+    "description": "Discovery step shown while the first scan runs.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_agent_found_in": "Found in {source}",
+  "@ui_agent_found_in": {
+    "description": "Discovery step: where the program was found, such as PATH or a user tool directory.",
+    "placeholders": { "source": { "type": "String" } }
+  },
+  "ui_agent_found_count": "{count} found",
+  "@ui_agent_found_count": {
+    "description": "Next to the found step: how many programs with the agent's command name were found. Shown when more than one was.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_agent_runs": "Runs",
+  "@ui_agent_runs": {
+    "description": "Before the program OrielHub actually runs, when the found one is a version manager's shim."
+  },
+  "ui_agent_version": "Version {version}",
+  "@ui_agent_version": {
+    "description": "Discovery step: the confirmed version.",
+    "placeholders": { "version": { "type": "String" } }
+  },
+  "ui_agent_check_failed": "Check failed",
+  "@ui_agent_check_failed": {
+    "description": "Discovery step: the program was found but did not pass the check; the reason follows."
+  },
+  "ui_agent_not_found": "Not found on this computer",
+  "@ui_agent_not_found": {
+    "description": "Discovery step: no program with the agent's command name was found."
+  },
+  "ui_agent_others": "{count, plural, one {Found # program with this name, but it is not this agent} other {Found # programs with this name, but none is this agent}}",
+  "@ui_agent_others": {
+    "description": "Discovery step: every program with the agent's command name turned out to be another program; the reason follows.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_agent_summary_ready": "Found and verified. OrielHub can run it.",
+  "@ui_agent_summary_ready": {
+    "description": "Sentence under the availability of a ready agent."
+  },
+  "ui_agent_summary_missing": "Install it, then rescan.",
+  "@ui_agent_summary_missing": {
+    "description": "Sentence under the availability of a missing agent."
+  },
+  "ui_agent_summary_broken": "It was found but did not pass the check. Fix the problem above, then rescan.",
+  "@ui_agent_summary_broken": {
+    "description": "Sentence under the availability of a broken agent; the problem is shown in the discovery panel above it."
+  },
+  "ui_agent_summary_outdated": "This version is not supported. Update it, then rescan.",
+  "@ui_agent_summary_outdated": {
+    "description": "Sentence under the availability of an outdated agent."
+  },
+  "ui_agent_summary_detecting": "The first scan has not finished yet.",
+  "@ui_agent_summary_detecting": {
+    "description": "Sentence under the availability while the first scan runs."
+  },
+  "ui_agent_state_changed": "{name}: {state}",
+  "@ui_agent_state_changed": {
+    "description": "Announced to screen readers when the availability of the agent shown in the inspector changes.",
+    "placeholders": { "name": { "type": "String" }, "state": { "type": "String" } }
+  },
+  "ui_candidate_selected": "In use",
+  "@ui_candidate_selected": {
+    "description": "The candidate OrielHub runs."
+  },
+  "ui_candidate_rejected": "Rejected",
+  "@ui_candidate_rejected": {
+    "description": "A candidate that is not this agent."
+  },
+  "ui_candidate_unchecked": "Not checked",
+  "@ui_candidate_unchecked": {
+    "description": "A candidate after the selected one; it was not checked."
+  },
+  "ui_registry_show_native": "Show entries supported natively",
+  "@ui_registry_show_native": {
+    "description": "Switch that shows registry entries a built-in agent already supports."
+  },
+  "ui_registry_native": "Supported natively by {agent}",
+  "@ui_registry_native": {
+    "description": "Label on a registry entry a built-in agent supports.",
+    "placeholders": { "agent": { "type": "String" } }
+  },
+  "ui_registry_installed": "Installed",
+  "@ui_registry_installed": {
+    "description": "Label on a registry entry found on this computer."
+  },
+  "ui_registry_same_name": "A program with this name was found. It may be a different program; check its path.",
+  "@ui_registry_same_name": {
+    "description": "Note on a binary registry entry matched by command name only."
+  },
+  "ui_registry_unavailable": "Not available on this platform",
+  "@ui_registry_unavailable": {
+    "description": "Label on a registry entry with no distribution for this platform."
+  },
+  "ui_registry_refresh": "Refresh registry",
+  "@ui_registry_refresh": {
+    "description": "Button that checks the registry again."
+  },
+  "ui_registry_stale": "Showing the cached registry",
+  "@ui_registry_stale": {
+    "description": "Title shown when the registry could not be checked and the cache is shown."
+  },
+  "ui_registry_checked_at": "Last checked {time}",
+  "@ui_registry_checked_at": {
+    "description": "When the registry was last checked.",
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "ui_registry_loading": "Loading the registry",
+  "@ui_registry_loading": {
+    "description": "Announced while the registry loads."
+  },
+  "ui_registry_empty": "The registry is empty",
+  "@ui_registry_empty": {
+    "description": "Title shown when the registry lists nothing to show."
+  },
+  "ui_registry_empty_hint": "Entries supported natively are hidden; turn on the switch to show them.",
+  "@ui_registry_empty_hint": {
+    "description": "Hint shown when every entry is hidden."
+  },
+  "ui_registry_empty_all_hint": "The registry returned no entries. Refresh to check again.",
+  "@ui_registry_empty_all_hint": {
+    "description": "Hint shown when the registry has no entries at all, native ones included."
+  },
+  "ui_registry_repository": "Repository",
+  "@ui_registry_repository": {
+    "description": "Link to a registry entry's repository."
+  },
+  "ui_registry_website": "Website",
+  "@ui_registry_website": {
+    "description": "Link to a registry entry's website."
+  },
+  "ui_dist_npx": "npx",
+  "@ui_dist_npx": {
+    "description": "Distribution kind."
+  },
+  "ui_dist_uvx": "uvx",
+  "@ui_dist_uvx": {
+    "description": "Distribution kind."
+  },
+  "ui_dist_binary": "Binary",
+  "@ui_dist_binary": {
+    "description": "Distribution kind."
+  },
+  "ui_copied": "Copied",
+  "@ui_copied": {
+    "description": "Shown after a copy succeeds."
+  },
+  "ui_copy_failed": "Could not copy",
+  "@ui_copy_failed": {
+    "description": "Shown when a copy fails."
+  },
+  "ui_clear_search": "Clear search",
+  "@ui_clear_search": {
+    "description": "Button that empties a search field."
+  },
+  "ui_search_no_results": "No results for “{query}”",
+  "@ui_search_no_results": {
+    "description": "Title shown when a search finds nothing.",
+    "placeholders": { "query": { "type": "String" } }
+  },
+  "ui_search_no_results_hint": "Try a shorter word or check the spelling.",
+  "@ui_search_no_results_hint": {
+    "description": "Hint shown when a search finds nothing."
+  },
+  "ui_search_results_for": "Results for {query}",
+  "@ui_search_results_for": {
+    "description": "Accessible name of the search results list.",
+    "placeholders": { "query": { "type": "String" } }
+  },
+  "ui_search_result_count": "{count, plural, one {# result} other {# results}}",
+  "@ui_search_result_count": {
+    "description": "Announced when search results change.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_search_open": "Search",
+  "@ui_search_open": {
+    "description": "Top bar button that opens the search panel (⌘K), and the panel's name for screen readers."
+  },
+  "ui_search_placeholder": "Search task titles, briefs and conversations",
+  "@ui_search_placeholder": {
+    "description": "Placeholder in the search panel's field."
+  },
+  "ui_search_tasks": "Tasks",
+  "@ui_search_tasks": {
+    "description": "Heading of the tasks found by a search in the search panel."
+  },
+  "ui_search_recent": "Recent searches",
+  "@ui_search_recent": {
+    "description": "Heading of this run's recent searches in the search panel, before anything is typed."
+  },
+  "ui_search_recent_tasks": "Recently updated tasks",
+  "@ui_search_recent_tasks": {
+    "description": "Heading of the most recently updated tasks in the search panel, before anything is typed."
+  },
+  "ui_search_browse": "Recent searches and tasks",
+  "@ui_search_browse": {
+    "description": "Accessible name of the list the search panel shows before anything is typed."
+  },
+  "ui_search_other": "Other",
+  "@ui_search_other": {
+    "description": "Heading of search results that belong to no known group."
+  },
+  "ui_search_empty_hint": "Search the titles, briefs and conversations of your tasks.",
+  "@ui_search_empty_hint": {
+    "description": "Shown in the search panel when there are no recent searches or tasks to list."
+  },
+  "ui_search_more": "{count, plural, one {Showing the first result; there may be more.} other {Showing the first # results; there may be more.}}",
+  "@ui_search_more": {
+    "description": "Note under the search results when they reach the limit; the backend does not say how many there are.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_search_you": "You",
+  "@ui_search_you": {
+    "description": "Who said a message found by search: the user. Shown before the matched text, as in “You: …”."
+  },
+  "ui_search_agent": "Agent",
+  "@ui_search_agent": {
+    "description": "Who said a message found by search when the agent has no name."
+  },
+  "ui_search_said": "{who}: ",
+  "@ui_search_said": {
+    "description": "Prefix before the matched text of a message found by search; who is “You” or the agent's name. Keep the trailing space.",
+    "placeholders": { "who": { "type": "String" } }
+  },
+  "ui_search_navigate": "Navigate",
+  "@ui_search_navigate": {
+    "description": "Footer hint next to the arrow keys in the search panel."
+  },
+  "ui_search_open_result": "Open",
+  "@ui_search_open_result": {
+    "description": "Footer hint next to the Return key in the search panel."
+  },
+  "ui_search_close": "Close",
+  "@ui_search_close": {
+    "description": "Footer hint next to the Escape key in the search panel."
+  },
+  "ui_search_opened": "Opened {title}",
+  "@ui_search_opened": {
+    "description": "Announced when a search result is opened.",
+    "placeholders": { "title": { "type": "String" } }
+  },
+  "ui_task_status_todo": "To do",
+  "@ui_task_status_todo": {
+    "description": "Task status: not started."
+  },
+  "ui_task_status_in_progress": "In progress",
+  "@ui_task_status_in_progress": {
+    "description": "Task status: being worked on."
+  },
+  "ui_task_status_in_review": "Your turn",
+  "@ui_task_status_in_review": {
+    "description": "Task status: the agent finished its turn and waits for the user to check the result or give the next step (D123)."
+  },
+  "ui_task_status_done": "Done",
+  "@ui_task_status_done": {
+    "description": "Task status: finished."
+  },
+  "ui_registry_search": "Search the registry",
+  "@ui_registry_search": {
+    "description": "Label of the registry filter."
+  },
+  "ui_registry_same_name_short": "May be another program",
+  "@ui_registry_same_name_short": {
+    "description": "Short label on a binary registry entry matched by command name only."
+  },
+  "ui_registry_refreshing": "Refreshing",
+  "@ui_registry_refreshing": {
+    "description": "Label of the refresh registry button while it runs."
+  },
+  "ui_tray_open": "Open OrielHub",
+  "@ui_tray_open": {
+    "description": "Button in the menu bar panel that shows the main window."
+  },
+  "ui_tray_quit": "Quit OrielHub",
+  "@ui_tray_quit": {
+    "description": "Button in the menu bar panel that quits the app."
+  },
+  "ui_tray_update_check": "Check for Updates",
+  "@ui_tray_update_check": {
+    "description": "Update button in the title bar of the menu bar panel: checks for a newer version, then downloads and installs it."
+  },
+  "ui_tray_update_checking": "Checking for Updates",
+  "@ui_tray_update_checking": {
+    "description": "Label of the update button while it asks the update feed whether there is a newer version."
+  },
+  "ui_tray_update_downloading": "Downloading Update {percent}%",
+  "@ui_tray_update_downloading": {
+    "description": "Label of the update button while it downloads a newer version: how much of it is downloaded, as a whole percentage.",
+    "placeholders": { "percent": { "type": "int" } }
+  },
+  "ui_tray_update_downloading_full": "Downloading Full Update {percent}%",
+  "@ui_tray_update_downloading_full": {
+    "description": "Label of the update button when the small delta update could not be used and the whole update is downloaded instead, so the percentage starts over: how much of it is downloaded, as a whole percentage.",
+    "placeholders": { "percent": { "type": "int" } }
+  },
+  "ui_tray_update_downloading_spoken": "Downloading Update",
+  "@ui_tray_update_downloading_spoken": {
+    "description": "What screen readers hear for the update button while it downloads a newer version: the visible label without its changing percentage."
+  },
+  "ui_tray_update_downloading_full_spoken": "Downloading Full Update",
+  "@ui_tray_update_downloading_full_spoken": {
+    "description": "What screen readers hear for the update button when the delta update could not be used and the whole update is downloaded instead: the visible label without its changing percentage."
+  },
+  "ui_tray_update_installing": "Installing Update",
+  "@ui_tray_update_installing": {
+    "description": "Label of the update button once the newer version is downloaded, while its signature is checked and it replaces the installed app."
+  },
+  "ui_tray_update_restart": "Restart to Update",
+  "@ui_tray_update_restart": {
+    "description": "Label of the update button once a newer version is installed; pressing it restarts the app into it."
+  },
+  "ui_tray_update_restarting": "Restarting",
+  "@ui_tray_update_restarting": {
+    "description": "Announced to screen readers while the app restarts into the new version."
+  },
+  "ui_tray_update_latest": "Up to Date",
+  "@ui_tray_update_latest": {
+    "description": "Shown briefly on the update button when a check found no newer version."
+  },
+  "ui_tray_update_failed": "Update Failed",
+  "@ui_tray_update_failed": {
+    "description": "Shown briefly on the update button when checking for, downloading or installing an update failed."
+  },
+  "ui_user_menu_account": "Account menu, {name}",
+  "@ui_user_menu_account": {
+    "description": "Accessible name of the account button in the sidebar header.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_user_menu_account_status": "Account menu, {name}, {status}",
+  "@ui_user_menu_account_status": {
+    "description": "Accessible name of the account button when it shows a presence status.",
+    "placeholders": { "name": { "type": "String" }, "status": { "type": "String" } }
+  },
+  "ui_user_menu_profile": "Profile",
+  "@ui_user_menu_profile": {
+    "description": "Account menu item that opens the profile page."
+  },
+  "ui_user_menu_billing": "Billing",
+  "@ui_user_menu_billing": {
+    "description": "Account menu item that opens the billing page."
+  },
+  "ui_user_menu_feedback": "Feedback",
+  "@ui_user_menu_feedback": {
+    "description": "Account menu item that opens a new GitHub issue in the browser (m2.md UL03)."
+  },
+  "ui_user_menu_status": "Status",
+  "@ui_user_menu_status": {
+    "description": "Account menu row that switches the presence status."
+  },
+  "ui_user_menu_available": "Available",
+  "@ui_user_menu_available": {
+    "description": "Presence status: free to be contacted."
+  },
+  "ui_user_menu_busy": "Busy",
+  "@ui_user_menu_busy": {
+    "description": "Presence status: do not disturb."
+  },
+  "ui_user_menu_away": "Away",
+  "@ui_user_menu_away": {
+    "description": "Presence status: not at the computer."
+  },
+  "ui_user_menu_theme": "Theme",
+  "@ui_user_menu_theme": {
+    "description": "Account menu row that switches between light, dark and system appearance."
+  },
+  "ui_user_menu_light": "Light",
+  "@ui_user_menu_light": {
+    "description": "Appearance option: light."
+  },
+  "ui_user_menu_dark": "Dark",
+  "@ui_user_menu_dark": {
+    "description": "Appearance option: dark."
+  },
+  "ui_user_menu_system": "System",
+  "@ui_user_menu_system": {
+    "description": "Appearance option: follow the system."
+  },
+  "ui_user_menu_language": "Language",
+  "@ui_user_menu_language": {
+    "description": "Account menu row that switches the interface language."
+  },
+  "ui_user_menu_language_system": "System ({language})",
+  "@ui_user_menu_language_system": {
+    "description": "Language switch option that follows the system's language; language is the one it shows now, named in itself.",
+    "placeholders": { "language": { "type": "String" } }
+  },
+  "ui_user_menu_sign_out": "Sign out",
+  "@ui_user_menu_sign_out": {
+    "description": "Account menu item that signs out."
+  },
+  "ui_user_menu_signing_out": "Signing out",
+  "@ui_user_menu_signing_out": {
+    "description": "Sign out item while signing out is in progress."
+  },
+  "ui_login_no_account": "No account?",
+  "@ui_login_no_account": {
+    "description": "Prompt before the sign up button in the sign in screen header."
+  },
+  "ui_login_have_account": "Have an account?",
+  "@ui_login_have_account": {
+    "description": "Prompt before the sign in button in the sign up screen header."
+  },
+  "ui_login_sign_in": "Sign in",
+  "@ui_login_sign_in": {
+    "description": "Button in the header that switches to signing in; also the screen accessible name."
+  },
+  "ui_login_sign_up": "Sign up",
+  "@ui_login_sign_up": {
+    "description": "Button in the header that switches to creating an account."
+  },
+  "ui_login_passkey_title": "Sign in to {brand}",
+  "@ui_login_passkey_title": {
+    "description": "Heading of the passkey step; brand is the product name.",
+    "placeholders": { "brand": { "type": "String" } }
+  },
+  "ui_login_passkey_body": "Use the passkey saved on this device. No password needed.",
+  "@ui_login_passkey_body": {
+    "description": "Text under the passkey heading."
+  },
+  "ui_login_passkey": "Sign in with passkey",
+  "@ui_login_passkey": {
+    "description": "Button that signs in with a passkey."
+  },
+  "ui_login_use_email": "Use email instead",
+  "@ui_login_use_email": {
+    "description": "Button that switches the card to the email form."
+  },
+  "ui_login_or": "or",
+  "@ui_login_or": {
+    "description": "Divider between passkey and single sign-on buttons."
+  },
+  "ui_login_sso": "Single sign-on",
+  "@ui_login_sso": {
+    "description": "Accessible name of the group of third-party sign in buttons."
+  },
+  "ui_login_continue_with": "Continue with {provider}",
+  "@ui_login_continue_with": {
+    "description": "Accessible name of a third-party sign in button; provider is Google, Apple or GitHub.",
+    "placeholders": { "provider": { "type": "String" } }
+  },
+  "ui_login_email_title": "Sign in with email",
+  "@ui_login_email_title": {
+    "description": "Heading of the email step when signing in."
+  },
+  "ui_login_email_body": "We will send a 6 digit code to your inbox.",
+  "@ui_login_email_body": {
+    "description": "Text under the email heading when signing in."
+  },
+  "ui_login_sign_up_title": "Create your account",
+  "@ui_login_sign_up_title": {
+    "description": "Heading of the email step when creating an account; also the screen accessible name."
+  },
+  "ui_login_sign_up_body": "Enter your work email. We will send a code to confirm it.",
+  "@ui_login_sign_up_body": {
+    "description": "Text under the heading when creating an account."
+  },
+  "ui_login_email": "Email",
+  "@ui_login_email": {
+    "description": "Label of the email field when signing in."
+  },
+  "ui_login_work_email": "Work email",
+  "@ui_login_work_email": {
+    "description": "Label of the email field when creating an account."
+  },
+  "ui_login_email_placeholder": "name@example.com",
+  "@ui_login_email_placeholder": {
+    "description": "Placeholder of the email field."
+  },
+  "ui_login_send_code": "Send code",
+  "@ui_login_send_code": {
+    "description": "Submit button of the email form when signing in."
+  },
+  "ui_login_create_account": "Create account",
+  "@ui_login_create_account": {
+    "description": "Submit button of the email form when creating an account."
+  },
+  "ui_login_use_passkey": "Use a passkey instead",
+  "@ui_login_use_passkey": {
+    "description": "Button that switches the card back to the passkey step."
+  },
+  "ui_usage_refresh": "Refresh",
+  "@ui_usage_refresh": {
+    "description": "Button on the usage page that reads every agent's local records again."
+  },
+  "ui_usage_refreshing": "Refreshing…",
+  "@ui_usage_refreshing": {
+    "description": "The usage refresh button while reading."
+  },
+  "ui_usage_period": "Period",
+  "@ui_usage_period": {
+    "description": "Name of the today / 7 days / 30 days switch on the usage page."
+  },
+  "ui_usage_today": "Today",
+  "@ui_usage_today": {
+    "description": "Usage period: the current calendar day in the local time zone."
+  },
+  "ui_usage_days": "{count, plural, one {# day} other {# days}}",
+  "@ui_usage_days": {
+    "description": "Usage period of the last count calendar days, today included.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_usage_read_at": "Records read {time}",
+  "@ui_usage_read_at": {
+    "description": "When the usage records were last read; time is relative, such as 5 minutes ago.",
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "ui_usage_reading": "Reading records…",
+  "@ui_usage_reading": {
+    "description": "Shown while the usage records are being read; with the progress bar."
+  },
+  "ui_usage_quota": "Quota",
+  "@ui_usage_quota": {
+    "description": "Section title: each agent's subscription quota windows."
+  },
+  "ui_usage_quota_empty": "No agent has reported a quota yet",
+  "@ui_usage_quota_empty": {
+    "description": "Empty state of the quota section."
+  },
+  "ui_usage_quota_claude": "Claude Code's quota appears after OrielHub runs Claude Code.",
+  "@ui_usage_quota_claude": {
+    "description": "Explains why Claude Code has no quota yet (D87)."
+  },
+  "ui_usage_quota_as_of": "As of {time}, from the latest {agent} call on this Mac; use on other devices shows up after the next one here.",
+  "@ui_usage_quota_as_of": {
+    "description": "Where a quota snapshot comes from; time is relative, agent the agent's name.",
+    "placeholders": { "time": { "type": "String" }, "agent": { "type": "String" } }
+  },
+  "ui_usage_quota_plan": "Plan: {plan}",
+  "@ui_usage_quota_plan": {
+    "description": "The subscription plan of a quota bucket, as the agent names it (such as pro).",
+    "placeholders": { "plan": { "type": "String" } }
+  },
+  "ui_usage_window_minutes": "{count, plural, one {# minute} other {# minutes}}",
+  "@ui_usage_window_minutes": {
+    "description": "Length of a quota window in minutes.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_usage_window_hours": "{count, plural, one {# hour} other {# hours}}",
+  "@ui_usage_window_hours": {
+    "description": "Length of a quota window in hours.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_usage_window_days": "{count, plural, one {# day} other {# days}}",
+  "@ui_usage_window_days": {
+    "description": "Length of a quota window in days.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_usage_resets": "Resets {time}",
+  "@ui_usage_resets": {
+    "description": "When a quota window resets; time is relative, such as in 2 hours.",
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "ui_usage_reset_passed": "Reset since this snapshot",
+  "@ui_usage_reset_passed": {
+    "description": "The quota window's reset time has passed, so its used share no longer applies (U22)."
+  },
+  "ui_usage_total": "Total",
+  "@ui_usage_total": {
+    "description": "Total tokens of the four categories."
+  },
+  "ui_usage_input": "Input",
+  "@ui_usage_input": {
+    "description": "Token category: input, without cache."
+  },
+  "ui_usage_cache_read": "Cache read",
+  "@ui_usage_cache_read": {
+    "description": "Token category: input read from the prompt cache."
+  },
+  "ui_usage_cache_write": "Cache write",
+  "@ui_usage_cache_write": {
+    "description": "Token category: input written to the prompt cache."
+  },
+  "ui_usage_output": "Output",
+  "@ui_usage_output": {
+    "description": "Token category: output, reasoning and thinking included."
+  },
+  "ui_usage_not_reported": "Not reported",
+  "@ui_usage_not_reported": {
+    "description": "A token category this agent does not report; not the same as 0."
+  },
+  "ui_usage_empty": "No usage in this period",
+  "@ui_usage_empty": {
+    "description": "Empty state of the consumption section."
+  },
+  "ui_usage_dir_unknown": "Directory unknown",
+  "@ui_usage_dir_unknown": {
+    "description": "Tokens whose records don't say the working directory."
+  },
+  "ui_usage_model_unknown": "Model unknown",
+  "@ui_usage_model_unknown": {
+    "description": "Tokens whose records don't say the model."
+  },
+  "ui_usage_via_hub": "Via OrielHub",
+  "@ui_usage_via_hub": {
+    "description": "Note after an agent in the usage breakdown when all its tokens came from runs through OrielHub (m2.md U84)."
+  },
+  "ui_usage_split": "Via OrielHub {hub} · used directly {direct}",
+  "@ui_usage_split": {
+    "description": "Note after an agent in the usage breakdown when its tokens came both through OrielHub and from using it directly; hub and direct are abbreviated token counts (m2.md U84).",
+    "placeholders": { "hub": { "type": "String" }, "direct": { "type": "String" } }
+  },
+  "ui_usage_direct": "Used directly",
+  "@ui_usage_direct": {
+    "description": "Tokens from using the agent outside OrielHub; all of them until OrielHub runs agents (M2)."
+  },
+  "ui_usage_chart_label": "Tokens per day",
+  "@ui_usage_chart_label": {
+    "description": "Name of the daily tokens chart for assistive technology."
+  },
+  "ui_usage_chart_average": "Daily average",
+  "@ui_usage_chart_average": {
+    "description": "Headline of the daily chart at rest."
+  },
+  "ui_usage_chart_day": "Day",
+  "@ui_usage_chart_day": {
+    "description": "Header of the first column in the chart's data table for screen readers."
+  },
+  "ui_usage_chart_empty": "No data",
+  "@ui_usage_chart_empty": {
+    "description": "What screen readers hear when the chart has no value."
+  },
+  "ui_usage_sources": "Record sources",
+  "@ui_usage_sources": {
+    "description": "Section title: where each agent's usage records are read from."
+  },
+  "ui_usage_source_files": "{count, plural, one {# record file} other {# record files}}",
+  "@ui_usage_source_files": {
+    "description": "How many record files were found for the agent.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_usage_source_none": "No records found",
+  "@ui_usage_source_none": {
+    "description": "No record files were found for the agent."
+  },
+  "ui_usage_source_bad": "{count, plural, one {# line not understood} other {# lines not understood}}",
+  "@ui_usage_source_bad": {
+    "description": "How many record lines could not be understood.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_usage_source_waiting": "Not searched yet",
+  "@ui_usage_source_waiting": {
+    "description": "The records haven't been searched since the app started."
+  },
+  "ui_usage_source_failed": "Couldn't read",
+  "@ui_usage_source_failed": {
+    "description": "Status of a record source whose records couldn't be read (U63)."
+  },
+  "ui_usage_source_ok": "OK",
+  "@ui_usage_source_ok": {
+    "description": "Status of a record source whose records were all read (U63)."
+  },
+  "ui_usage_sources_filter": "Filter by status",
+  "@ui_usage_sources_filter": {
+    "description": "Accessible name of the record sources tabs (U64)."
+  },
+  "ui_usage_sources_all": "All",
+  "@ui_usage_sources_all": {
+    "description": "Record sources tab: every agent (U64)."
+  },
+  "ui_usage_sources_problem": "Issues",
+  "@ui_usage_sources_problem": {
+    "description": "Record sources tab: sources that failed or have lines not understood (U64)."
+  },
+  "ui_usage_sources_ok": "OK",
+  "@ui_usage_sources_ok": {
+    "description": "Record sources tab: sources whose records were all read (U64)."
+  },
+  "ui_usage_sources_empty": "No records",
+  "@ui_usage_sources_empty": {
+    "description": "Record sources tab: not searched yet, not kept on this machine, or nothing found (U64)."
+  },
+  "ui_usage_sources_all_none": "No record sources yet.",
+  "@ui_usage_sources_all_none": {
+    "description": "Empty state of the All tab of record sources."
+  },
+  "ui_usage_sources_problem_none": "Every source was read without problems.",
+  "@ui_usage_sources_problem_none": {
+    "description": "Empty state of the Issues tab of record sources (U64)."
+  },
+  "ui_usage_sources_ok_none": "No source has readable records yet.",
+  "@ui_usage_sources_ok_none": {
+    "description": "Empty state of the OK tab of record sources."
+  },
+  "ui_usage_sources_empty_none": "Every agent has records.",
+  "@ui_usage_sources_empty_none": {
+    "description": "Empty state of the No records tab of record sources."
+  },
+  "ui_usage_sources_tone_danger": "includes read failures",
+  "@ui_usage_sources_tone_danger": {
+    "description": "Read by screen readers after the count of a record sources tab whose icon shows a read failure (U63b)."
+  },
+  "ui_usage_sources_tone_warning": "includes unreadable lines",
+  "@ui_usage_sources_tone_warning": {
+    "description": "Read by screen readers after the count of a record sources tab whose icon shows unreadable lines and no read failure (U63c)."
+  },
+  "ui_usage_note_not_recorded": "Doesn't record tokens on this Mac",
+  "@ui_usage_note_not_recorded": {
+    "description": "Cursor CLI keeps no local token records."
+  },
+  "ui_usage_note_session_end": "Records usage when a session ends; sessions in progress aren't counted yet",
+  "@ui_usage_note_session_end": {
+    "description": "GitHub Copilot CLI writes usage only at session end."
+  },
+  "ui_usage_note_turn_end": "Records usage when a turn completes; a turn in progress isn't counted yet",
+  "@ui_usage_note_turn_end": {
+    "description": "Grok writes usage only when a turn completes."
+  },
+  "ui_usage_note_reported_only": "Only usage from runs through OrielHub, as the agent reports it each turn",
+  "@ui_usage_note_reported_only": {
+    "description": "Record source note for an agent that keeps no tokens on this Mac: its usage comes only from what it reports to OrielHub (m2.md U89)."
+  },
+  "ui_usage_cache_share": "Cache read share",
+  "@ui_usage_cache_share": {
+    "description": "Number row: cache reads as a share of the total (U49)."
+  },
+  "ui_usage_cache_read_count": "{count} cache read",
+  "@ui_usage_cache_read_count": {
+    "description": "Line under the cache read share: the full cache read count, already formatted (U49).",
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "ui_usage_output_note": "Includes reasoning and thinking",
+  "@ui_usage_output_note": {
+    "description": "Line under the output number (U49)."
+  },
+  "ui_usage_tightest": "Tightest quota",
+  "@ui_usage_tightest": {
+    "description": "Number row: the quota window with the largest used share that has not reset (U51)."
+  },
+  "ui_usage_breakdown": "Breakdown",
+  "@ui_usage_breakdown": {
+    "description": "Title of the breakdown card (U58)."
+  },
+  "ui_usage_period_total": "Period total",
+  "@ui_usage_period_total": {
+    "description": "Label of the line above the breakdown with the selected range's four categories (U58)."
+  },
+  "ui_usage_dimension": "Break down by",
+  "@ui_usage_dimension": {
+    "description": "Accessible name of the agent / model / folder switch (U58)."
+  },
+  "ui_usage_dim_agent": "Agents",
+  "@ui_usage_dim_agent": {
+    "description": "Breakdown switch option: by agent (U58)."
+  },
+  "ui_usage_dim_model": "Models",
+  "@ui_usage_dim_model": {
+    "description": "Breakdown switch option: by model (U58)."
+  },
+  "ui_usage_dim_task": "Tasks",
+  "@ui_usage_dim_task": {
+    "description": "Breakdown switch option: usage through OrielHub by task (m2.md U85)."
+  },
+  "ui_usage_task_deleted": "Deleted tasks",
+  "@ui_usage_task_deleted": {
+    "description": "Breakdown row that sums the usage of tasks that were deleted (m2.md U86)."
+  },
+  "ui_usage_tasks_empty": "Nothing ran through OrielHub in this period",
+  "@ui_usage_tasks_empty": {
+    "description": "Shown instead of the task breakdown when nothing ran through OrielHub in the chosen period (m2.md U88)."
+  },
+  "ui_usage_dim_dir": "Folders",
+  "@ui_usage_dim_dir": {
+    "description": "Breakdown switch option: by folder (U58)."
+  },
+  "ui_usage_col_name": "Name",
+  "@ui_usage_col_name": {
+    "description": "Breakdown column header (U58)."
+  },
+  "ui_usage_col_share": "Share",
+  "@ui_usage_col_share": {
+    "description": "Breakdown column header: share of the period total (U58)."
+  },
+  "ui_usage_quota_about": "About the {name} quota",
+  "@ui_usage_quota_about": {
+    "description": "Accessible name of the info button next to a quota bucket (U55).",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_tree_expand_all": "Expand all",
+  "@ui_tree_expand_all": {
+    "description": "Tree table header button: expand every row."
+  },
+  "ui_tree_collapse_all": "Collapse all",
+  "@ui_tree_collapse_all": {
+    "description": "Tree table header button: collapse every row."
+  },
+  "ui_tree_expanded_all": "Expanded all rows",
+  "@ui_tree_expanded_all": {
+    "description": "Screen reader announcement after expanding every row."
+  },
+  "ui_tree_collapsed_all": "Collapsed all rows",
+  "@ui_tree_collapsed_all": {
+    "description": "Screen reader announcement after collapsing every row."
+  },
+  "ui_cancel": "Cancel",
+  "@ui_cancel": {
+    "description": "Generic cancel button of a dialog."
+  },
+  "ui_clear_selection": "Clear selection",
+  "@ui_clear_selection": {
+    "description": "Spoken name of the button that clears a picked option."
+  },
+  "ui_tasks_new": "New task",
+  "@ui_tasks_new": {
+    "description": "Button on the Task stage and title of the dialog that creates a task."
+  },
+  "ui_tasks_board": "Tasks by status",
+  "@ui_tasks_board": {
+    "description": "Spoken name of the Task board."
+  },
+  "ui_tasks_count": "{count, plural, one {# task} other {# tasks}}",
+  "@ui_tasks_count": {
+    "description": "Spoken count of a board column.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_list_separator": ", ",
+  "@ui_list_separator": {
+    "description": "Between the parts of a spoken list, such as a card's title, workspace and time."
+  },
+  "ui_tasks_attention": "Needs attention",
+  "@ui_tasks_attention": {
+    "description": "Mark on a task with an operation that failed and waits for the user (D71); also the heading listing those operations."
+  },
+  "ui_tasks_empty_title": "No tasks yet",
+  "@ui_tasks_empty_title": {
+    "description": "Empty Task stage: heading."
+  },
+  "ui_tasks_empty_text": "Pick a folder and write down what to do to create your first task. You can also drop a folder here.",
+  "@ui_tasks_empty_text": {
+    "description": "Empty Task stage: what to do."
+  },
+  "ui_tasks_load_failed": "Couldn't load tasks",
+  "@ui_tasks_load_failed": {
+    "description": "Title of the error shown when the task list can't be loaded."
+  },
+  "ui_tasks_drop": "Drop to create a task in this folder",
+  "@ui_tasks_drop": {
+    "description": "Shown over the Task stage while files are dragged over it."
+  },
+  "ui_tasks_drop_hint": "One folder at a time",
+  "@ui_tasks_drop_hint": {
+    "description": "Under ui_tasks_drop: only a single folder can be dropped."
+  },
+  "ui_task_section_brief": "Brief",
+  "@ui_task_section_brief": {
+    "description": "Task details: heading of the brief."
+  },
+  "ui_task_section_details": "Details",
+  "@ui_task_section_details": {
+    "description": "Task details: heading of the fields."
+  },
+  "ui_task_field_workspace": "Workspace",
+  "@ui_task_field_workspace": {
+    "description": "Task details: the workspace the task belongs to."
+  },
+  "ui_task_field_folder": "Folder",
+  "@ui_task_field_folder": {
+    "description": "Task details: the folder of the task's workspace."
+  },
+  "ui_task_field_isolation": "Isolation",
+  "@ui_task_field_isolation": {
+    "description": "Task details: where the task works (its folder or a worktree)."
+  },
+  "ui_task_field_updated": "Updated",
+  "@ui_task_field_updated": {
+    "description": "Task details: when the task last changed."
+  },
+  "ui_task_isolation_none": "None, works in the folder itself",
+  "@ui_task_isolation_none": {
+    "description": "Task isolation: none."
+  },
+  "ui_task_isolation_worktree": "Task worktree",
+  "@ui_task_isolation_worktree": {
+    "description": "Task isolation: its own git worktree."
+  },
+  "ui_task_isolation_worktree_pending": "Task worktree (not created yet)",
+  "@ui_task_isolation_worktree_pending": {
+    "description": "Task isolation: a worktree that doesn't exist yet."
+  },
+  "ui_task_load_failed": "Couldn't load this task",
+  "@ui_task_load_failed": {
+    "description": "Title of the error shown when a task's details can't be loaded."
+  },
+  "ui_task_effect_create_worktree": "Create the task worktree",
+  "@ui_task_effect_create_worktree": {
+    "description": "A held operation: creating the task's worktree."
+  },
+  "ui_task_effect_merge_worktree": "Merge the worktree",
+  "@ui_task_effect_merge_worktree": {
+    "description": "A held operation: merging a worktree back."
+  },
+  "ui_task_effect_discard_worktree": "Discard the worktree",
+  "@ui_task_effect_discard_worktree": {
+    "description": "A held operation: discarding a worktree."
+  },
+  "ui_task_effect_other": "Background operation",
+  "@ui_task_effect_other": {
+    "description": "A held operation of a kind this version doesn't name."
+  },
+  "ui_new_task_folder": "Folder",
+  "@ui_new_task_folder": {
+    "description": "New task dialog: heading of the folder field."
+  },
+  "ui_new_task_workspace": "Registered workspaces",
+  "@ui_new_task_workspace": {
+    "description": "New task dialog: picker of the workspaces already registered."
+  },
+  "ui_new_task_workspace_none": "No matching workspace",
+  "@ui_new_task_workspace_none": {
+    "description": "New task dialog: nothing in the workspace picker matches."
+  },
+  "ui_new_task_choose": "Choose folder…",
+  "@ui_new_task_choose": {
+    "description": "New task dialog: opens the system folder picker."
+  },
+  "ui_new_task_drop_hint": "You can also drop a folder into the window",
+  "@ui_new_task_drop_hint": {
+    "description": "New task dialog: under the folder field."
+  },
+  "ui_new_task_change": "Change",
+  "@ui_new_task_change": {
+    "description": "New task dialog: pick another folder."
+  },
+  "ui_new_task_one_folder": "Choose a single folder",
+  "@ui_new_task_one_folder": {
+    "description": "New task dialog: a file or several items were dropped."
+  },
+  "ui_new_task_title": "Title",
+  "@ui_new_task_title": {
+    "description": "New task dialog: title field."
+  },
+  "ui_new_task_title_placeholder": "What this task is for",
+  "@ui_new_task_title_placeholder": {
+    "description": "New task dialog: placeholder of the title."
+  },
+  "ui_new_task_brief": "Brief (optional)",
+  "@ui_new_task_brief": {
+    "description": "New task dialog: brief field."
+  },
+  "ui_new_task_brief_placeholder": "Background, requirements, what done looks like…",
+  "@ui_new_task_brief_placeholder": {
+    "description": "New task dialog: placeholder of the brief."
+  },
+  "ui_new_task_create": "Create task",
+  "@ui_new_task_create": {
+    "description": "New task dialog: submit button."
+  },
+  "ui_new_task_failed": "Couldn't create the task",
+  "@ui_new_task_failed": {
+    "description": "New task dialog: title of the error after submitting."
+  },
+  "ui_nav_attention_stage": "Notifications",
+  "@ui_nav_attention_stage": {
+    "description": "Sidebar: the needs-attention stage (m2.md D11)."
+  },
+  "ui_attention_note": "Waiting longest first",
+  "@ui_attention_note": {
+    "description": "Needs-attention stage: note next to the title."
+  },
+  "ui_attention_empty_title": "Nothing needs you",
+  "@ui_attention_empty_title": {
+    "description": "Needs-attention stage and tray panel: nothing to answer (D12, M16)."
+  },
+  "ui_attention_empty_text": "Agents asking for approval and operations that couldn't finish show up here.",
+  "@ui_attention_empty_text": {
+    "description": "Needs-attention stage: empty state text."
+  },
+  "ui_attention_load_failed": "Couldn't load what needs you",
+  "@ui_attention_load_failed": {
+    "description": "Needs-attention list: title of the load error."
+  },
+  "ui_attention_open_task": "Open task",
+  "@ui_attention_open_task": {
+    "description": "Needs-attention item: go to its task (D17)."
+  },
+  "ui_attention_suspended": "{op} couldn't finish",
+  "@ui_attention_suspended": {
+    "description": "Needs-attention item: a suspended operation (D16). {op} is the operation name.",
+    "placeholders": { "op": { "type": "String" } }
+  },
+  "ui_ask_title_read": "{agent} wants to read",
+  "@ui_ask_title_read": {
+    "description": "Needs-attention item: what the agent asks to do (D13).",
+    "placeholders": { "agent": { "type": "String" } }
+  },
+  "ui_ask_title_edit": "{agent} wants to edit",
+  "@ui_ask_title_edit": {
+    "description": "Needs-attention item: what the agent asks to do.",
+    "placeholders": { "agent": { "type": "String" } }
+  },
+  "ui_ask_title_delete": "{agent} wants to delete",
+  "@ui_ask_title_delete": {
+    "description": "Needs-attention item: what the agent asks to do.",
+    "placeholders": { "agent": { "type": "String" } }
+  },
+  "ui_ask_title_move": "{agent} wants to move",
+  "@ui_ask_title_move": {
+    "description": "Needs-attention item: what the agent asks to do.",
+    "placeholders": { "agent": { "type": "String" } }
+  },
+  "ui_ask_title_search": "{agent} wants to search",
+  "@ui_ask_title_search": {
+    "description": "Needs-attention item: what the agent asks to do.",
+    "placeholders": { "agent": { "type": "String" } }
+  },
+  "ui_ask_title_execute": "{agent} wants to run a command",
+  "@ui_ask_title_execute": {
+    "description": "Needs-attention item: what the agent asks to do.",
+    "placeholders": { "agent": { "type": "String" } }
+  },
+  "ui_ask_title_fetch": "{agent} wants to fetch a page",
+  "@ui_ask_title_fetch": {
+    "description": "Needs-attention item: what the agent asks to do.",
+    "placeholders": { "agent": { "type": "String" } }
+  },
+  "ui_ask_title_other": "{agent} asks for approval",
+  "@ui_ask_title_other": {
+    "description": "Needs-attention item: an ask of another kind.",
+    "placeholders": { "agent": { "type": "String" } }
+  },
+  "ui_ask_allow": "Allow",
+  "@ui_ask_allow": {
+    "description": "Needs-attention item: allow this once."
+  },
+  "ui_ask_deny": "Deny",
+  "@ui_ask_deny": {
+    "description": "Needs-attention item: deny this once."
+  },
+  "ui_ask_failed": "Couldn't send the answer",
+  "@ui_ask_failed": {
+    "description": "Needs-attention item: title of the error after answering."
+  },
+  "ui_tool_kind_read": "Read",
+  "@ui_tool_kind_read": {
+    "description": "Kind of agent action."
+  },
+  "ui_tool_kind_edit": "Edit",
+  "@ui_tool_kind_edit": {
+    "description": "Kind of agent action."
+  },
+  "ui_tool_kind_delete": "Delete",
+  "@ui_tool_kind_delete": {
+    "description": "Kind of agent action."
+  },
+  "ui_tool_kind_move": "Move",
+  "@ui_tool_kind_move": {
+    "description": "Kind of agent action."
+  },
+  "ui_tool_kind_search": "Search",
+  "@ui_tool_kind_search": {
+    "description": "Kind of agent action."
+  },
+  "ui_tool_kind_execute": "Run command",
+  "@ui_tool_kind_execute": {
+    "description": "Kind of agent action."
+  },
+  "ui_tool_kind_think": "Think",
+  "@ui_tool_kind_think": {
+    "description": "Kind of agent action."
+  },
+  "ui_tool_kind_fetch": "Fetch",
+  "@ui_tool_kind_fetch": {
+    "description": "Kind of agent action."
+  },
+  "ui_tool_kind_other": "Other",
+  "@ui_tool_kind_other": {
+    "description": "Kind of agent action."
+  },
+  "ui_always_match": "Match",
+  "@ui_always_match": {
+    "description": "Always dialog: heading of how the rule matches."
+  },
+  "ui_always_prefix": "Commands starting with",
+  "@ui_always_prefix": {
+    "description": "Always dialog: match commands by prefix."
+  },
+  "ui_always_prefix_label": "Command start",
+  "@ui_always_prefix_label": {
+    "description": "Always dialog: label of the prefix field."
+  },
+  "ui_always_prefix_mismatch": "It must match this command, which doesn't start with “{prefix}”.",
+  "@ui_always_prefix_mismatch": {
+    "description": "Always dialog: the edited prefix no longer covers the command (D22).",
+    "placeholders": { "prefix": { "type": "String" } }
+  },
+  "ui_always_compound": "Not for commands with ; | & > < ` $( or a line break",
+  "@ui_always_compound": {
+    "description": "Always dialog: why prefix matching is unavailable (D20)."
+  },
+  "ui_always_exact": "Only this exact command",
+  "@ui_always_exact": {
+    "description": "Always dialog: match this command exactly."
+  },
+  "ui_always_tool": "Every “{kind}” request",
+  "@ui_always_tool": {
+    "description": "Always dialog: match every request of this kind (D21).",
+    "placeholders": { "kind": { "type": "String" } }
+  },
+  "ui_always_scope": "Where",
+  "@ui_always_scope": {
+    "description": "Always dialog: heading of the rule scope."
+  },
+  "ui_rule_scope_session": "This session",
+  "@ui_rule_scope_session": {
+    "description": "Rule scope."
+  },
+  "ui_rule_scope_task": "This task",
+  "@ui_rule_scope_task": {
+    "description": "Rule scope."
+  },
+  "ui_rule_scope_workspace": "This workspace ({name})",
+  "@ui_rule_scope_workspace": {
+    "description": "Rule scope; {name} is the workspace name.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_rule_scope_global": "Everywhere",
+  "@ui_rule_scope_global": {
+    "description": "Rule scope."
+  },
+  "ui_always_agent": "Which agent",
+  "@ui_always_agent": {
+    "description": "Always dialog: heading of which agents the rule covers."
+  },
+  "ui_always_agent_this": "Only {agent}",
+  "@ui_always_agent_this": {
+    "description": "Always dialog: the rule covers this agent only.",
+    "placeholders": { "agent": { "type": "String" } }
+  },
+  "ui_always_agent_all": "Every agent",
+  "@ui_always_agent_all": {
+    "description": "Always dialog and rules list: the rule covers every agent."
+  },
+  "ui_always_allow": "Always allow",
+  "@ui_always_allow": {
+    "description": "Always dialog: save an allow rule and allow this request."
+  },
+  "ui_always_deny": "Always deny",
+  "@ui_always_deny": {
+    "description": "Always dialog: save a deny rule and deny this request."
+  },
+  "ui_task_section_asks": "Waiting for you",
+  "@ui_task_section_asks": {
+    "description": "Task details: section with the task's pending asks (L23)."
+  },
+  "ui_rules_group_workspace": "Workspace · {name}",
+  "@ui_rules_group_workspace": {
+    "description": "Rules list: group of one workspace's rules (N11).",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_rules_group_global": "Everywhere",
+  "@ui_rules_group_global": {
+    "description": "Rules list: group of global rules."
+  },
+  "ui_rule_allow": "Allow",
+  "@ui_rule_allow": {
+    "description": "Rules list: the rule allows."
+  },
+  "ui_rule_deny": "Deny",
+  "@ui_rule_deny": {
+    "description": "Rules list: the rule denies."
+  },
+  "ui_rule_match_prefix": "Commands starting with",
+  "@ui_rule_match_prefix": {
+    "description": "Rules list: before the command prefix."
+  },
+  "ui_rule_match_exact": "The command",
+  "@ui_rule_match_exact": {
+    "description": "Rules list: before the exact command."
+  },
+  "ui_rule_match_tool": "Every “{kind}” request",
+  "@ui_rule_match_tool": {
+    "description": "Rules list: the rule covers a whole kind.",
+    "placeholders": { "kind": { "type": "String" } }
+  },
+  "ui_rule_delete": "Delete",
+  "@ui_rule_delete": {
+    "description": "Rules list: delete a rule (N12)."
+  },
+  "ui_rule_delete_title": "Delete this rule?",
+  "@ui_rule_delete_title": {
+    "description": "Rules list: confirmation dialog title."
+  },
+  "ui_rule_delete_text": "Requests like this will ask you again.",
+  "@ui_rule_delete_text": {
+    "description": "Rules list: confirmation dialog text."
+  },
+  "ui_rule_delete_failed": "Couldn't delete the rule",
+  "@ui_rule_delete_failed": {
+    "description": "Rules list: title of the error after deleting."
+  },
+  "ui_task_status_label": "Status",
+  "@ui_task_status_label": {
+    "description": "Task details: label of the status switch (m2.md L38)."
+  },
+  "ui_task_status_failed": "Couldn't change the status of “{title}”",
+  "@ui_task_status_failed": {
+    "description": "Task details and board: title of the error after changing a task's status (L38, L39).",
+    "placeholders": { "title": { "type": "String" } }
+  },
+  "ui_task_section_reply": "Last reply",
+  "@ui_task_section_reply": {
+    "description": "Task details: section with the agent's last reply, as plain text (L25)."
+  },
+  "ui_turn_completed": "Turn completed",
+  "@ui_turn_completed": {
+    "description": "Task details: how the last turn ended."
+  },
+  "ui_turn_cancelled": "Turn cancelled",
+  "@ui_turn_cancelled": {
+    "description": "Task details: how the last turn ended."
+  },
+  "ui_turn_failed": "Turn failed",
+  "@ui_turn_failed": {
+    "description": "Task details: how the last turn ended."
+  },
+  "ui_reply_running": "{agent} is working on this turn…",
+  "@ui_reply_running": {
+    "description": "Task details: a turn is running (L30).",
+    "placeholders": { "agent": { "type": "String" } }
+  },
+  "ui_board_picked": "Picked up {title}.",
+  "@ui_board_picked": {
+    "description": "Board: screen reader, a card picked up with the pointer (L41).",
+    "placeholders": { "title": { "type": "String" } }
+  },
+  "ui_board_lifted": "Lifted {title}. {column}, position {position}. Use the arrow keys to move, Space to drop, Escape to cancel.",
+  "@ui_board_lifted": {
+    "description": "Board: screen reader, a card lifted from the keyboard.",
+    "placeholders": { "title": { "type": "String" }, "column": { "type": "String" }, "position": { "type": "int" } }
+  },
+  "ui_board_moved": "{column}, position {position}.",
+  "@ui_board_moved": {
+    "description": "Board: screen reader, where a lifted card moved to.",
+    "placeholders": { "column": { "type": "String" }, "position": { "type": "int" } }
+  },
+  "ui_board_dropped": "Dropped {title} in {column}.",
+  "@ui_board_dropped": {
+    "description": "Board: screen reader, a card dropped into a column.",
+    "placeholders": { "title": { "type": "String" }, "column": { "type": "String" } }
+  },
+  "ui_board_returned": "{title} is back where it was.",
+  "@ui_board_returned": {
+    "description": "Board: screen reader, a drag cancelled.",
+    "placeholders": { "title": { "type": "String" } }
+  },
+  "ui_board_draggable": "Draggable card",
+  "@ui_board_draggable": {
+    "description": "Board: role description of a card."
+  },
+  "ui_new_task_agent": "Agent",
+  "@ui_new_task_agent": {
+    "description": "New task dialog: label of the agent field (m2.md T27)."
+  },
+  "ui_new_task_agent_none": "Don't start an agent",
+  "@ui_new_task_agent_none": {
+    "description": "New task dialog: the agent option that creates the task without a session."
+  },
+  "ui_new_task_agent_none_detail": "The task waits in To do",
+  "@ui_new_task_agent_none_detail": {
+    "description": "New task dialog: second line of the no-agent option."
+  },
+  "ui_new_task_agent_empty": "No matching agent",
+  "@ui_new_task_agent_empty": {
+    "description": "New task dialog: shown when the search in the agent field matches nothing."
+  },
+  "ui_new_task_agent_unavailable": "No agent available",
+  "@ui_new_task_agent_unavailable": {
+    "description": "New task dialog: placeholder of the agent field when no agent is ready (T28)."
+  },
+  "ui_new_task_agent_checking": "Checking agents…",
+  "@ui_new_task_agent_checking": {
+    "description": "New task dialog: placeholder of the agent field while the last chosen agent is still being checked (T32)."
+  },
+  "ui_new_task_agents_failed": "Couldn't load the agents",
+  "@ui_new_task_agents_failed": {
+    "description": "New task dialog: title of the error when the agent list fails to load."
+  },
+  "ui_new_task_agent_none_ready": "No agent is ready.",
+  "@ui_new_task_agent_none_ready": {
+    "description": "New task dialog: hint under the agent field when no agent is ready (T28)."
+  },
+  "ui_new_task_agents_link": "Open Agents",
+  "@ui_new_task_agents_link": {
+    "description": "New task dialog: link to the Agents page after the agent hint."
+  },
+  "ui_new_task_brief_required": "Brief",
+  "@ui_new_task_brief_required": {
+    "description": "New task dialog: label of the brief when an agent is chosen; it is required then."
+  },
+  "ui_new_task_brief_first_prompt": "With an agent, the brief is the first message it gets.",
+  "@ui_new_task_brief_first_prompt": {
+    "description": "New task dialog: hint under the brief when an agent is chosen (T29)."
+  },
+  "ui_new_task_shared_folder": "“{title}” is running here too; two agents would change files in the same folder.",
+  "@ui_new_task_shared_folder": {
+    "description": "New task dialog: warning under the folder when another task is running in it, a folder above it or below it (T33).",
+    "placeholders": { "title": { "type": "String" } }
+  },
+  "ui_new_task_shared_folder_many": "{count} other tasks are running here; their agents would change files in the same folder.",
+  "@ui_new_task_shared_folder_many": {
+    "description": "New task dialog: the same warning when several tasks are running there (T33).",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_task_field_agent": "Agent",
+  "@ui_task_field_agent": {
+    "description": "Task details: the agent of a session and the session's status (L21)."
+  },
+  "ui_task_session_idle": "Idle",
+  "@ui_task_session_idle": {
+    "description": "Task details: session status."
+  },
+  "ui_task_session_running": "Running",
+  "@ui_task_session_running": {
+    "description": "Task details: session status."
+  },
+  "ui_task_session_exited": "Exited",
+  "@ui_task_session_exited": {
+    "description": "Task details: session status."
+  },
+  "ui_task_session_closed": "Closed",
+  "@ui_task_session_closed": {
+    "description": "Task details: session status."
+  },
+  "ui_task_agent_exited": "{agent} exited",
+  "@ui_task_agent_exited": {
+    "description": "Task details: title of the alert with the reason the agent exited (L22).",
+    "placeholders": { "agent": { "type": "String" } }
+  },
+  "ui_task_stderr_tail": "Last stderr output",
+  "@ui_task_stderr_tail": {
+    "description": "Task details: expandable section with the end of the agent's stderr (L22)."
+  },
+  "ui_workspaces_view": "View",
+  "@ui_workspaces_view": {
+    "description": "Spoken name of the grid / list switch on the Workspace stage."
+  },
+  "ui_workspaces_grid": "Grid",
+  "@ui_workspaces_grid": {
+    "description": "Workspace stage: show workspaces as cards."
+  },
+  "ui_workspaces_list": "List",
+  "@ui_workspaces_list": {
+    "description": "Workspace stage: show workspaces as rows."
+  },
+  "ui_workspaces_all": "All",
+  "@ui_workspaces_all": {
+    "description": "Heading of the block listing every workspace."
+  },
+  "ui_workspaces_task_count": "{count, plural, one {# task} other {# tasks}}",
+  "@ui_workspaces_task_count": {
+    "description": "How many tasks (not archived) a workspace has.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_workspaces_used": "Used {when}",
+  "@ui_workspaces_used": {
+    "description": "When a workspace was last used; when is a relative time such as “5 minutes ago”.",
+    "placeholders": { "when": { "type": "String" } }
+  },
+  "ui_workspaces_col_name": "Name and path",
+  "@ui_workspaces_col_name": {
+    "description": "Workspace list: column heading."
+  },
+  "ui_workspaces_col_tasks": "Tasks",
+  "@ui_workspaces_col_tasks": {
+    "description": "Workspace list: column heading."
+  },
+  "ui_workspaces_col_used": "Last used",
+  "@ui_workspaces_col_used": {
+    "description": "Workspace list: column heading."
+  },
+  "ui_workspaces_col_policy": "Isolation",
+  "@ui_workspaces_col_policy": {
+    "description": "Workspace list: column heading."
+  },
+  "ui_workspaces_empty_title": "No workspaces yet",
+  "@ui_workspaces_empty_title": {
+    "description": "Empty Workspace stage: heading."
+  },
+  "ui_workspaces_empty_text": "Folders you pick when creating a task are registered here.",
+  "@ui_workspaces_empty_text": {
+    "description": "Empty Workspace stage: how workspaces get here."
+  },
+  "ui_workspaces_empty_action": "Create a task",
+  "@ui_workspaces_empty_action": {
+    "description": "Empty Workspace stage: opens the new task dialog on the Task stage."
+  },
+  "ui_workspaces_load_failed": "Couldn't load workspaces",
+  "@ui_workspaces_load_failed": {
+    "description": "Title of the error shown when the workspaces can't be loaded."
+  },
+  "ui_policy_auto": "Automatic",
+  "@ui_policy_auto": {
+    "description": "Isolation policy auto, short form."
+  },
+  "ui_policy_auto_default": "Automatic (default)",
+  "@ui_policy_auto_default": {
+    "description": "Isolation policy auto, as an option."
+  },
+  "ui_policy_always": "Always use a worktree",
+  "@ui_policy_always": {
+    "description": "Isolation policy always."
+  },
+  "ui_policy_never": "Never use a worktree",
+  "@ui_policy_never": {
+    "description": "Isolation policy never."
+  },
+  "ui_policy_auto_text": "New tasks get a worktree only when they are created remotely or go to several agents at once; otherwise they work in the folder itself, even while another task in the same repository is running.",
+  "@ui_policy_auto_text": {
+    "description": "What isolation policy auto does (W06)."
+  },
+  "ui_policy_always_text": "Every new task works in a worktree of its own and leaves your working copy alone.",
+  "@ui_policy_always_text": {
+    "description": "What isolation policy always does."
+  },
+  "ui_policy_never_text": "New tasks always work in the folder itself.",
+  "@ui_policy_never_text": {
+    "description": "What isolation policy never does."
+  },
+  "ui_policy_note": "Only tasks created from now on follow it. Folders that aren't git repositories, and repositories with no branch checked out (detached HEAD), never use a worktree.",
+  "@ui_policy_note": {
+    "description": "Under the isolation options (W06, W10)."
+  },
+  "ui_policy_note_unsupported": "This version can't create worktrees yet: with “Always”, new tasks are marked as needing attention.",
+  "@ui_policy_note_unsupported": {
+    "description": "Under the isolation options: worktrees come later (W08)."
+  },
+  "ui_workspace_name": "Name",
+  "@ui_workspace_name": {
+    "description": "Spoken name of the workspace name field."
+  },
+  "ui_workspace_name_hint": "Click the name to change it. It's only what OrielHub calls the folder; the folder keeps its name.",
+  "@ui_workspace_name_hint": {
+    "description": "Under the workspace name."
+  },
+  "ui_workspace_name_empty": "The name can't be empty",
+  "@ui_workspace_name_empty": {
+    "description": "The workspace name was cleared (W05)."
+  },
+  "ui_workspace_field_used": "Last used",
+  "@ui_workspace_field_used": {
+    "description": "Workspace details: when a task was last created in it."
+  },
+  "ui_workspace_field_tasks": "Tasks",
+  "@ui_workspace_field_tasks": {
+    "description": "Workspace details: how many tasks it has."
+  },
+  "ui_workspace_section_policy": "Isolation",
+  "@ui_workspace_section_policy": {
+    "description": "Workspace details: heading of the isolation options."
+  },
+  "ui_workspace_save_failed": "Couldn't save",
+  "@ui_workspace_save_failed": {
+    "description": "Title of the error after a workspace rename or policy change failed."
+  },
+  "ui_inline_activate": "Activate to edit.",
+  "@ui_inline_activate": {
+    "description": "Spoken hint on text that can be edited in place."
+  },
+  "ui_inline_keys": "Enter saves, Escape cancels.",
+  "@ui_inline_keys": {
+    "description": "Spoken hint while editing text in place."
+  },
+  "ui_inline_save": "Save",
+  "@ui_inline_save": {
+    "description": "Spoken name of the save button of text edited in place."
+  },
+  "ui_inline_cancel": "Cancel editing",
+  "@ui_inline_cancel": {
+    "description": "Spoken name of the cancel button of text edited in place."
+  },
+  "ui_inline_saving": "Saving",
+  "@ui_inline_saving": {
+    "description": "Announced while text edited in place is saved."
+  },
+  "ui_inline_saved": "Saved",
+  "@ui_inline_saved": {
+    "description": "Announced once text edited in place is saved."
+  },
+  "ui_settings_tabs": "Settings sections",
+  "@ui_settings_tabs": {
+    "description": "Spoken name of the tab list on the Settings stage."
+  },
+  "ui_settings_general": "General",
+  "@ui_settings_general": {
+    "description": "Settings tab with general preferences such as power (KA11)."
+  },
+  "ui_settings_power": "Power",
+  "@ui_settings_power": {
+    "description": "Heading of the power card in Settings › General (KA12)."
+  },
+  "ui_settings_power_text": "How OrielHub uses this Mac's power while agents work.",
+  "@ui_settings_power_text": {
+    "description": "Line under the power heading (KA12)."
+  },
+  "ui_keep_awake_label": "Keep the Mac awake while agents run",
+  "@ui_keep_awake_label": {
+    "description": "Switch that keeps the computer from idle sleep while an agent runs (D80)."
+  },
+  "ui_keep_awake_text": "Stops idle sleep while an agent is running. The display still turns off, and closing the lid or choosing Sleep still sleeps",
+  "@ui_keep_awake_text": {
+    "description": "What the keep-awake switch does (KA12)."
+  },
+  "ui_rules_pages": "{group} rule pages",
+  "@ui_rules_pages": {
+    "description": "Accessible name of a rules group's pagination (RP09); group is the group's title.",
+    "placeholders": { "group": { "type": "String" } }
+  },
+  "ui_page_previous": "Previous page",
+  "@ui_page_previous": {
+    "description": "Pagination button that goes to the previous page (RP09)."
+  },
+  "ui_page_next": "Next page",
+  "@ui_page_next": {
+    "description": "Pagination button that goes to the next page (RP09)."
+  },
+  "ui_page_number": "Page {page}",
+  "@ui_page_number": {
+    "description": "Accessible name of a page number button (RP09).",
+    "placeholders": { "page": { "type": "int" } }
+  },
+  "ui_settings_notifications": "Notifications",
+  "@ui_settings_notifications": {
+    "description": "Settings tab: notification switches."
+  },
+  "ui_settings_rules": "Rules",
+  "@ui_settings_rules": {
+    "description": "Settings tab: approval rules."
+  },
+  "ui_settings_remote": "Remote",
+  "@ui_settings_remote": {
+    "description": "Settings tab: remote control from the iPhone app (D145)."
+  },
+  "ui_remote_text": "Use OrielHub from the iPhone app. Everything goes through a relay and is end-to-end encrypted.",
+  "@ui_remote_text": {
+    "description": "Line under the Remote heading in Settings (DV01)."
+  },
+  "ui_remote_switch": "Allow remote control",
+  "@ui_remote_switch": {
+    "description": "Switch that turns remote control on or off (DV02, DV07)."
+  },
+  "ui_remote_load_failed": "Couldn't load remote",
+  "@ui_remote_load_failed": {
+    "description": "Title of the error when the remote status can't be loaded."
+  },
+  "ui_remote_save_failed": "Couldn't change remote",
+  "@ui_remote_save_failed": {
+    "description": "Title of the error after turning remote on or off failed (DV11)."
+  },
+  "ui_remote_state_off": "Off",
+  "@ui_remote_state_off": {
+    "description": "Remote connection state: remote is off."
+  },
+  "ui_remote_state_no_relay": "No relay address yet. Enter one under Advanced.",
+  "@ui_remote_state_no_relay": {
+    "description": "Remote connection state: on but no relay address (DV09)."
+  },
+  "ui_remote_state_connecting": "Connecting to the relay",
+  "@ui_remote_state_connecting": {
+    "description": "Remote connection state: connecting."
+  },
+  "ui_remote_state_connected": "Connected",
+  "@ui_remote_state_connected": {
+    "description": "Remote connection state: connected to the relay (DV02)."
+  },
+  "ui_remote_state_retrying": "Can't reach the relay. Retrying automatically.",
+  "@ui_remote_state_retrying": {
+    "description": "Remote connection state: disconnected, reconnecting with backoff (DV10); the reason follows."
+  },
+  "ui_remote_state_failed": "Stopped",
+  "@ui_remote_state_failed": {
+    "description": "Remote connection state: stopped until Retry, e.g. the keychain could not be read; the reason follows."
+  },
+  "ui_remote_add_device": "Add device",
+  "@ui_remote_add_device": {
+    "description": "Button that shows a pairing QR code (PA02, DV13)."
+  },
+  "ui_remote_pair_title": "Scan with the OrielHub app",
+  "@ui_remote_pair_title": {
+    "description": "Title of the pairing dialog (DV13)."
+  },
+  "ui_remote_pair_text": "Open OrielHub on your iPhone and scan this code. It works once.",
+  "@ui_remote_pair_text": {
+    "description": "Line under the pairing dialog title (DV13)."
+  },
+  "ui_remote_pair_expires": "Expires in {time}",
+  "@ui_remote_pair_expires": {
+    "description": "Countdown under the pairing QR code; time is m:ss (DV13).",
+    "placeholders": {"time": { "type": "String" } }
+  },
+  "ui_remote_pair_expired": "This code has expired.",
+  "@ui_remote_pair_expired": {
+    "description": "Shown over the faded QR code after 5 minutes (DV13)."
+  },
+  "ui_remote_pair_again": "New code",
+  "@ui_remote_pair_again": {
+    "description": "Button that makes a new pairing code after the old one expired (DV13)."
+  },
+  "ui_remote_pair_failed": "Couldn't show a pairing code",
+  "@ui_remote_pair_failed": {
+    "description": "Title of the error when no pairing code could be made."
+  },
+  "ui_remote_pair_qr": "Pairing QR code",
+  "@ui_remote_pair_qr": {
+    "description": "Spoken name of the pairing QR code."
+  },
+  "ui_remote_devices": "Devices",
+  "@ui_remote_devices": {
+    "description": "Heading of the paired devices list (DV03)."
+  },
+  "ui_remote_devices_empty_title": "No devices yet",
+  "@ui_remote_devices_empty_title": {
+    "description": "Empty state of the devices list."
+  },
+  "ui_remote_devices_empty_text": "Add your iPhone with Add device.",
+  "@ui_remote_devices_empty_text": {
+    "description": "Under the empty devices list."
+  },
+  "ui_remote_device_name": "Device name",
+  "@ui_remote_device_name": {
+    "description": "Spoken name of a device's editable name (DV04)."
+  },
+  "ui_remote_device_name_empty": "Enter a name",
+  "@ui_remote_device_name_empty": {
+    "description": "Shown when a device name is left empty (DV04)."
+  },
+  "ui_remote_device_online": "Online",
+  "@ui_remote_device_online": {
+    "description": "A paired device that is connected now (DV14)."
+  },
+  "ui_remote_device_offline": "Offline",
+  "@ui_remote_device_offline": {
+    "description": "A paired device that is not connected (DV14)."
+  },
+  "ui_remote_device_paired": "Paired {time}",
+  "@ui_remote_device_paired": {
+    "description": "When the device was paired; time is relative, such as 5 minutes ago (DV03).",
+    "placeholders": {"time": { "type": "String" } }
+  },
+  "ui_remote_device_seen": "Last seen {time}",
+  "@ui_remote_device_seen": {
+    "description": "When the device last connected or disconnected; time is relative (DV03).",
+    "placeholders": {"time": { "type": "String" } }
+  },
+  "ui_remote_device_never": "Never connected",
+  "@ui_remote_device_never": {
+    "description": "A paired device that has not connected since pairing."
+  },
+  "ui_remote_rename_failed": "Couldn't rename the device",
+  "@ui_remote_rename_failed": {
+    "description": "Title of the error after renaming a device failed (DV04)."
+  },
+  "ui_remote_revoke": "Remove",
+  "@ui_remote_revoke": {
+    "description": "Button that revokes a paired device (DV05)."
+  },
+  "ui_remote_revoke_title": "Remove {name}?",
+  "@ui_remote_revoke_title": {
+    "description": "Title of the confirmation before revoking a device (DV05).",
+    "placeholders": {"name": { "type": "String" } }
+  },
+  "ui_remote_revoke_text": "It disconnects now and can't connect again until it pairs again.",
+  "@ui_remote_revoke_text": {
+    "description": "Under the revoke confirmation title (DV05)."
+  },
+  "ui_remote_revoke_failed": "Couldn't remove the device",
+  "@ui_remote_revoke_failed": {
+    "description": "Title of the error after revoking a device failed (DV05)."
+  },
+  "ui_remote_reset": "Reset remote",
+  "@ui_remote_reset": {
+    "description": "Button that resets remote: new keys and room, all devices removed (DV06)."
+  },
+  "ui_remote_reset_title": "Reset remote?",
+  "@ui_remote_reset_title": {
+    "description": "Title of the confirmation before resetting remote (DV06)."
+  },
+  "ui_remote_reset_text": "Removes every device and changes this Mac's keys. Each phone has to pair again.",
+  "@ui_remote_reset_text": {
+    "description": "What resetting remote does (DV06)."
+  },
+  "ui_remote_reset_yes": "Reset",
+  "@ui_remote_reset_yes": {
+    "description": "Confirm button of the reset confirmation (DV06)."
+  },
+  "ui_remote_reset_failed": "Couldn't reset remote",
+  "@ui_remote_reset_failed": {
+    "description": "Title of the error after resetting remote failed (DV06)."
+  },
+  "ui_remote_advanced": "Advanced",
+  "@ui_remote_advanced": {
+    "description": "Collapsible section with the relay address (DV08, DV16)."
+  },
+  "ui_remote_relay": "Relay address",
+  "@ui_remote_relay": {
+    "description": "Label of the relay address field (DV08)."
+  },
+  "ui_remote_relay_text": "The wss:// address of an OrielHub relay. After a change, paired phones have to scan again.",
+  "@ui_remote_relay_text": {
+    "description": "Under the relay address field (DV08)."
+  },
+  "ui_remote_relay_save": "Save",
+  "@ui_remote_relay_save": {
+    "description": "Saves the relay address (DV08)."
+  },
+  "ui_remote_relay_failed": "Couldn't save the relay address",
+  "@ui_remote_relay_failed": {
+    "description": "Title of the error after the relay address was not saved (DV15)."
+  },
+  "ui_settings_notifications_text": "Choose what sends a system notification. Clicking one opens its task.",
+  "@ui_settings_notifications_text": {
+    "description": "Under the Notifications heading."
+  },
+  "ui_settings_notify_types": "Notification types",
+  "@ui_settings_notify_types": {
+    "description": "Heading above the card of notification switches in Settings › Notifications."
+  },
+  "ui_settings_save_failed": "Couldn't save",
+  "@ui_settings_save_failed": {
+    "description": "Title of the error after a notification switch failed to save."
+  },
+  "ui_settings_load_failed": "Couldn't load settings",
+  "@ui_settings_load_failed": {
+    "description": "Title of the error shown when settings can't be loaded."
+  },
+  "ui_notify_ask_label": "Agent asks for approval",
+  "@ui_notify_ask_label": {
+    "description": "Notification kind ask."
+  },
+  "ui_notify_ask_text": "When an agent wants to run a tool or command and waits for you",
+  "@ui_notify_ask_text": {
+    "description": "When notification kind ask is sent (N02)."
+  },
+  "ui_notify_failed_label": "Turn failed",
+  "@ui_notify_failed_label": {
+    "description": "Notification kind failed."
+  },
+  "ui_notify_failed_text": "When a turn of an agent can't finish, for example its process exits or errs",
+  "@ui_notify_failed_text": {
+    "description": "When notification kind failed is sent (N02)."
+  },
+  "ui_notify_stalled_label": "Might be stuck",
+  "@ui_notify_stalled_label": {
+    "description": "Notification kind stalled."
+  },
+  "ui_notify_stalled_text": "When a turn of an agent has had no activity for a long time (usually 10 minutes, 30 while a tool runs)",
+  "@ui_notify_stalled_text": {
+    "description": "When notification kind stalled is sent (ST14)."
+  },
+  "ui_notify_completed_label": "Turn completed",
+  "@ui_notify_completed_label": {
+    "description": "Notification kind completed."
+  },
+  "ui_notify_completed_text": "When an agent finishes a turn. Off by default: with many turns it's frequent",
+  "@ui_notify_completed_text": {
+    "description": "When notification kind completed is sent (N02)."
+  },
+  "ui_notify_recommended_label": "Review recommends",
+  "@ui_notify_recommended_label": {
+    "description": "Notification kind recommended."
+  },
+  "ui_notify_recommended_text": "When several agents work on one thing and the review picks a candidate",
+  "@ui_notify_recommended_text": {
+    "description": "When notification kind recommended is sent (N02)."
+  },
+  "ui_notify_confirmation_label": "Remote request to confirm",
+  "@ui_notify_confirmation_label": {
+    "description": "Notification kind confirmation."
+  },
+  "ui_notify_confirmation_text": "When an action sent from a phone or another remote client needs confirming on this Mac",
+  "@ui_notify_confirmation_text": {
+    "description": "When notification kind confirmation is sent (N02)."
+  },
+  "ui_notify_conflict_label": "Merge conflict",
+  "@ui_notify_conflict_label": {
+    "description": "Notification kind conflict."
+  },
+  "ui_notify_conflict_text": "When merging a worktree back hits conflicts you need to resolve",
+  "@ui_notify_conflict_text": {
+    "description": "When notification kind conflict is sent (N02)."
+  },
+  "ui_notify_later": "Takes effect in a later version",
+  "@ui_notify_later": {
+    "description": "Second line under a notification type that this version cannot send yet (m2.md N24)."
+  },
+  "ui_rules_text": "When you choose “Always allow” or “Always deny” on an approval, rules for a workspace or for everywhere are listed here.",
+  "@ui_rules_text": {
+    "description": "Under the Rules heading."
+  },
+  "ui_rules_empty_title": "No rules yet",
+  "@ui_rules_empty_title": {
+    "description": "Empty rules tab: heading."
+  },
+  "ui_rules_empty_text": "Choose “Always allow” or “Always deny” when answering an approval, and the rule shows up here.",
+  "@ui_rules_empty_text": {
+    "description": "Empty rules tab: how rules get here (N05)."
+  },
+  "ui_rules_load_failed": "Couldn't load rules",
+  "@ui_rules_load_failed": {
+    "description": "Title of the error shown when rules can't be loaded."
+  },
+  "ui_start_agent_open": "Start agent",
+  "@ui_start_agent_open": {
+    "description": "Task details: secondary button under the status switch when the task has no agent yet (m2.md L44)."
+  },
+  "ui_start_agent_title": "Start an agent",
+  "@ui_start_agent_title": {
+    "description": "Start agent dialog: title (m2.md L46)."
+  },
+  "ui_start_agent_choose": "Choose an agent",
+  "@ui_start_agent_choose": {
+    "description": "Start agent dialog: placeholder of the agent field before an agent is chosen (L48)."
+  },
+  "ui_start_agent_message": "First message",
+  "@ui_start_agent_message": {
+    "description": "Start agent dialog: label of the message field; the text is the agent's first prompt (L46)."
+  },
+  "ui_start_agent_submit": "Start",
+  "@ui_start_agent_submit": {
+    "description": "Start agent dialog: submit button."
+  },
+  "ui_start_agent_failed": "Couldn't start the agent",
+  "@ui_start_agent_failed": {
+    "description": "Start agent dialog: title of the error when the backend refuses (L52)."
+  },
+  "ui_task_agent_retry": "Retry",
+  "@ui_task_agent_retry": {
+    "description": "Task details: button in the agent-exited notice that resumes the session (m2.md L56, L57)."
+  },
+  "ui_task_agent_retry_failed": "Couldn't retry the agent",
+  "@ui_task_agent_retry_failed": {
+    "description": "Task details: title of the error when resuming fails (L60)."
+  },
+  "ui_task_agent_not_resumable": "This agent can't be resumed.",
+  "@ui_task_agent_not_resumable": {
+    "description": "Task details: note in the agent-exited notice when the session can't be resumed (L58)."
+  },
+  "ui_release_notes_title": "OrielHub updated to {version}",
+  "@ui_release_notes_title": {
+    "description": "Title of the release notes dialog shown once after an update (RN02).",
+    "placeholders": { "version": { "type": "String" } }
+  },
+  "ui_release_notes_ok": "Got it",
+  "@ui_release_notes_ok": {
+    "description": "Button that closes the release notes dialog (RN02)."
+  },
+  "ui_markdown_image": "[Image: {alt}]",
+  "@ui_markdown_image": {
+    "description": "Agent answer: an image in the Markdown is not loaded; its alt text shows in its place (V09).",
+    "placeholders": {
+      "alt": {
+        "type": "String"
+      }
+    }
+  },
+  "ui_markdown_image_untitled": "[Image]",
+  "@ui_markdown_image_untitled": {
+    "description": "Agent answer: an image in the Markdown without alt text, which is not loaded (V09)."
+  },
+  "ui_nav_files": "Files",
+  "@ui_nav_files": {
+    "description": "Sidebar entry and title of the files page (D107)."
+  },
+  "ui_files_folders": "Folders",
+  "@ui_files_folders": {
+    "description": "Files page: section of folder cards, one per workspace (F01)."
+  },
+  "ui_files_folder_count": "{count, plural, one {# file} other {# files}}",
+  "@ui_files_folder_count": {
+    "description": "Files page: line under a folder card's name (F01).",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_files_search_folders": "Search folders",
+  "@ui_files_search_folders": {
+    "description": "Files page: search field over the folder cards (F07)."
+  },
+  "ui_files_no_folders": "No folders match “{query}”",
+  "@ui_files_no_folders": {
+    "description": "Files page: when the folder search finds nothing (F07).",
+    "placeholders": { "query": { "type": "String" } }
+  },
+  "ui_files_recent": "Recent files",
+  "@ui_files_recent": {
+    "description": "Files page: section listing the latest files across workspaces (F01)."
+  },
+  "ui_files_list": "Files",
+  "@ui_files_list": {
+    "description": "Files page of one workspace: section listing its files (F02)."
+  },
+  "ui_files_tabs": "Filter files",
+  "@ui_files_tabs": {
+    "description": "Files page: screen reader name of the file tabs (F12)."
+  },
+  "ui_files_tab_all": "All",
+  "@ui_files_tab_all": {
+    "description": "Files page: tab with every file (F12)."
+  },
+  "ui_files_tab_edited": "Changed",
+  "@ui_files_tab_edited": {
+    "description": "Files page: tab with files that were edited, deleted or moved (F12)."
+  },
+  "ui_files_tab_read": "Read",
+  "@ui_files_tab_read": {
+    "description": "Files page: tab with files that were only read or attached (F12)."
+  },
+  "ui_files_search_files": "Search files",
+  "@ui_files_search_files": {
+    "description": "Files page: search field over the file list (F13)."
+  },
+  "ui_files_no_match": "No files match “{query}”",
+  "@ui_files_no_match": {
+    "description": "Files page: when the file search finds nothing (F13).",
+    "placeholders": { "query": { "type": "String" } }
+  },
+  "ui_files_none_in_tab": "No files in this tab",
+  "@ui_files_none_in_tab": {
+    "description": "Files page: when the selected tab has no files and there is no search (F12)."
+  },
+  "ui_files_limited": "Showing the latest {limit}",
+  "@ui_files_limited": {
+    "description": "Files page: note under the recent files when there are more (F15).",
+    "placeholders": { "limit": { "type": "int" } }
+  },
+  "ui_files_empty_title": "No files used yet",
+  "@ui_files_empty_title": {
+    "description": "Files page: empty state title (F03)."
+  },
+  "ui_files_empty_text": "Files that agents read or change in your tasks, and files you attach to messages, show up here.",
+  "@ui_files_empty_text": {
+    "description": "Files page: empty state text (F03)."
+  },
+  "ui_files_load_failed": "Couldn't load files",
+  "@ui_files_load_failed": {
+    "description": "Files page: title when loading fails; the reason and Retry follow (F04)."
+  },
+  "ui_files_unknown_workspace": "Workspace not found",
+  "@ui_files_unknown_workspace": {
+    "description": "Files page of one workspace: when the workspace does not exist (F05)."
+  },
+  "ui_files_back": "Back to Files",
+  "@ui_files_back": {
+    "description": "Files page of one workspace: button in the not-found state (F05)."
+  },
+  "ui_files_via_read": "Read",
+  "@ui_files_via_read": {
+    "description": "Files page: how a file was last used – read by an agent (F11)."
+  },
+  "ui_files_via_edit": "Changed",
+  "@ui_files_via_edit": {
+    "description": "Files page: how a file was last used – edited by an agent (F11)."
+  },
+  "ui_files_via_delete": "Deleted",
+  "@ui_files_via_delete": {
+    "description": "Files page: how a file was last used – deleted by an agent (F11)."
+  },
+  "ui_files_via_move": "Moved",
+  "@ui_files_via_move": {
+    "description": "Files page: how a file was last used – moved by an agent (F11)."
+  },
+  "ui_files_via_attach": "Attached",
+  "@ui_files_via_attach": {
+    "description": "Files page: how a file was last used – attached to a message (F11)."
+  },
+  "ui_files_tasks": "{count, plural, one {# task} other {# tasks}}",
+  "@ui_files_tasks": {
+    "description": "Files page: how many tasks used a file, when more than one (F11).",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_files_sort_asc": "Sorted A to Z, sort Z to A",
+  "@ui_files_sort_asc": {
+    "description": "Files page: sort button while sorted A to Z (F08)."
+  },
+  "ui_files_sort_desc": "Sorted Z to A, sort A to Z",
+  "@ui_files_sort_desc": {
+    "description": "Files page: sort button while sorted Z to A (F08)."
+  },
+  "ui_files_view": "View",
+  "@ui_files_view": {
+    "description": "Files page: screen reader name of the grid / list switch (F09)."
+  },
+  "ui_files_view_grid": "Grid",
+  "@ui_files_view_grid": {
+    "description": "Files page: grid view of the folders (F09)."
+  },
+  "ui_files_view_list": "List",
+  "@ui_files_view_list": {
+    "description": "Files page: list view of the folders (F09)."
+  },
+  "ui_files_clear": "Clear search",
+  "@ui_files_clear": {
+    "description": "Files page: button that clears a search field."
+  },
+  "ui_files_path_separator": " › ",
+  "@ui_files_path_separator": {
+    "description": "Files page: separator between the workspace name and the folders of a file's path in a row (F14)."
+  },
+  "ui_files_show_more": "Show {count} more",
+  "@ui_files_show_more": {
+    "description": "Files page of one workspace: button under the file cards that shows the next batch (F15).",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_files_meta_separator": " · ",
+  "@ui_files_meta_separator": {
+    "description": "Files page of one workspace: separator between the details under a file card's name (F27)."
+  },
+  "ui_nav_pinned": "Pinned",
+  "@ui_nav_pinned": {
+    "description": "Sidebar: heading of the section with pinned tasks, newest pin first (m2.md G01, G02)."
+  },
+  "ui_task_pin": "Pin",
+  "@ui_task_pin": {
+    "description": "Task details: button beside the title that pins the task to the sidebar (G01)."
+  },
+  "ui_task_unpin": "Unpin",
+  "@ui_task_unpin": {
+    "description": "Task details: the pin button while the task is pinned, shown pressed (G01, G03)."
+  },
+  "ui_task_pin_failed": "Couldn't pin “{title}”",
+  "@ui_task_pin_failed": {
+    "description": "Task details: title of the error after pinning a task.",
+    "placeholders": { "title": { "type": "String" } }
+  },
+  "ui_task_unpin_failed": "Couldn't unpin “{title}”",
+  "@ui_task_unpin_failed": {
+    "description": "Task details: title of the error after unpinning a task.",
+    "placeholders": { "title": { "type": "String" } }
+  },
+  "ui_home_title": "Overview",
+  "@ui_home_title": {
+    "description": "Sidebar and breadcrumb: the home overview page (m2.md O01)."
+  },
+  "ui_home_usage_load_failed": "Couldn't load usage",
+  "@ui_home_usage_load_failed": {
+    "description": "Home overview: alert under the numbers when the usage summary can't be read (O04, D124)."
+  },
+  "ui_home_activity": "Activity",
+  "@ui_home_activity": {
+    "description": "Home overview: title of the dashed area around the away recap and running tasks (D130)."
+  },
+  "ui_home_features": "Features",
+  "@ui_home_features": {
+    "description": "Home overview: title of the dashed area at the bottom (D125)."
+  },
+  "ui_home_providers_title": "AI provider status",
+  "@ui_home_providers_title": {
+    "description": "Home overview: title of the provider status card in the features area (D131)."
+  },
+  "ui_home_providers_operational": "Operational",
+  "@ui_home_providers_operational": {
+    "description": "Provider status: a provider or a day with no problems (PS04)."
+  },
+  "ui_home_providers_degraded": "Degraded",
+  "@ui_home_providers_degraded": {
+    "description": "Provider status: degraded performance, partial outage or maintenance (PS05)."
+  },
+  "ui_home_providers_outage": "Outage",
+  "@ui_home_providers_outage": {
+    "description": "Provider status: a major outage (PS06)."
+  },
+  "ui_home_providers_stage_investigating": "Investigating",
+  "@ui_home_providers_stage_investigating": {
+    "description": "Provider status: incident update stage."
+  },
+  "ui_home_providers_stage_identified": "Identified",
+  "@ui_home_providers_stage_identified": {
+    "description": "Provider status: incident update stage."
+  },
+  "ui_home_providers_stage_monitoring": "Monitoring",
+  "@ui_home_providers_stage_monitoring": {
+    "description": "Provider status: incident update stage."
+  },
+  "ui_home_providers_stage_resolved": "Resolved",
+  "@ui_home_providers_stage_resolved": {
+    "description": "Provider status: incident update stage."
+  },
+  "ui_home_providers_all_operational": "All systems operational",
+  "@ui_home_providers_all_operational": {
+    "description": "Provider status: summary when every provider is operational."
+  },
+  "ui_home_providers_count_outage": "{count, plural, one {# outage} other {# outages}}",
+  "@ui_home_providers_count_outage": {
+    "description": "Provider status summary: providers with an outage.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_home_providers_count_degraded": "{count} degraded",
+  "@ui_home_providers_count_degraded": {
+    "description": "Provider status summary: degraded providers.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_home_providers_count_operational": "{count} operational",
+  "@ui_home_providers_count_operational": {
+    "description": "Provider status summary: operational providers.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_home_providers_loading": "Loading provider status",
+  "@ui_home_providers_loading": {
+    "description": "Provider status: first load (PS18)."
+  },
+  "ui_home_providers_checking": "Checking",
+  "@ui_home_providers_checking": {
+    "description": "Provider status: a check is running."
+  },
+  "ui_home_providers_waiting": "Waiting",
+  "@ui_home_providers_waiting": {
+    "description": "Provider status: countdown while loading."
+  },
+  "ui_home_providers_up_to_date": "Up to date",
+  "@ui_home_providers_up_to_date": {
+    "description": "Provider status: shown in place of the countdown when automatic checks are off."
+  },
+  "ui_home_providers_not_updated": "Not updated",
+  "@ui_home_providers_not_updated": {
+    "description": "Provider status: shown in place of the countdown after a failed check when automatic checks are off."
+  },
+  "ui_home_providers_refresh_in": "Refresh in {seconds}s",
+  "@ui_home_providers_refresh_in": {
+    "description": "Provider status: countdown to the next automatic check (PS20).",
+    "placeholders": { "seconds": { "type": "int" } }
+  },
+  "ui_home_providers_retry_in": "Retry in {seconds}s",
+  "@ui_home_providers_retry_in": {
+    "description": "Provider status: countdown after a failed check.",
+    "placeholders": { "seconds": { "type": "int" } }
+  },
+  "ui_home_providers_refresh_now": "Refresh now",
+  "@ui_home_providers_refresh_now": {
+    "description": "Provider status: refresh button label for screen readers (PS21)."
+  },
+  "ui_home_providers_retry_now": "Retry now",
+  "@ui_home_providers_retry_now": {
+    "description": "Provider status: refresh button after a failed check."
+  },
+  "ui_home_providers_checked": "Checked every provider.",
+  "@ui_home_providers_checked": {
+    "description": "Provider status: spoken after a manual check."
+  },
+  "ui_home_providers_refresh_failed": "Couldn’t refresh provider status",
+  "@ui_home_providers_refresh_failed": {
+    "description": "Provider status: a check failed without a specific reason."
+  },
+  "ui_home_providers_none_read": "Couldn’t read any status page",
+  "@ui_home_providers_none_read": {
+    "description": "Provider status: every provider failed and none was read before (PS25)."
+  },
+  "ui_home_providers_col_provider": "Provider",
+  "@ui_home_providers_col_provider": {
+    "description": "Provider status: column header."
+  },
+  "ui_home_providers_col_status": "Status",
+  "@ui_home_providers_col_status": {
+    "description": "Provider status: column header."
+  },
+  "ui_home_providers_col_days": "Last 30 days",
+  "@ui_home_providers_col_days": {
+    "description": "Provider status: column header."
+  },
+  "ui_home_providers_show_incident": "{name}, {health}. Show incident: {title}",
+  "@ui_home_providers_show_incident": {
+    "description": "Provider status: screen reader label of a row with an incident (PS07).",
+    "placeholders": { "name": { "type": "String" }, "health": { "type": "String" }, "title": { "type": "String" } }
+  },
+  "ui_home_providers_hide_incident": "{name}, {health}. Hide incident: {title}",
+  "@ui_home_providers_hide_incident": {
+    "description": "Provider status: screen reader label of an expanded row.",
+    "placeholders": { "name": { "type": "String" }, "health": { "type": "String" }, "title": { "type": "String" } }
+  },
+  "ui_home_providers_latency": "Median latency: no public source",
+  "@ui_home_providers_latency": {
+    "description": "Provider status: screen reader label of the p50 column, always a dash (PS03)."
+  },
+  "ui_home_providers_bar": "{name} uptime over the last 30 days: {pct}, {summary}. Use the arrow keys to inspect each day.",
+  "@ui_home_providers_bar": {
+    "description": "Provider status: screen reader label of the 30-day bar.",
+    "placeholders": { "name": { "type": "String" }, "pct": { "type": "String" }, "summary": { "type": "String" } }
+  },
+  "ui_home_providers_bar_outage_days": "{count, plural, one {# day with an outage} other {# days with an outage}}",
+  "@ui_home_providers_bar_outage_days": {
+    "description": "Provider status: part of the 30-day bar summary.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_home_providers_bar_degraded_days": "{count, plural, one {# degraded day} other {# degraded days}}",
+  "@ui_home_providers_bar_degraded_days": {
+    "description": "Provider status: part of the 30-day bar summary.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_home_providers_no_incidents": "No incidents",
+  "@ui_home_providers_no_incidents": {
+    "description": "Provider status: a day or a bar with no incidents."
+  },
+  "ui_home_providers_today": "Today",
+  "@ui_home_providers_today": {
+    "description": "Provider status: tooltip of the last day."
+  },
+  "ui_home_providers_no_data": "No data",
+  "@ui_home_providers_no_data": {
+    "description": "Provider status: a day the status page gives no data for (PS13, PS16, PS17)."
+  },
+  "ui_home_providers_uptime": "{pct} uptime",
+  "@ui_home_providers_uptime": {
+    "description": "Provider status: spoken uptime of a day.",
+    "placeholders": { "pct": { "type": "String" } }
+  },
+  "ui_home_providers_started": "Started {time}",
+  "@ui_home_providers_started": {
+    "description": "Provider status: incident panel, when it started.",
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "ui_home_providers_updated": "Updated {time}",
+  "@ui_home_providers_updated": {
+    "description": "Provider status: incident panel, latest update.",
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "ui_home_providers_resolved": "Resolved {time}",
+  "@ui_home_providers_resolved": {
+    "description": "Provider status: incident panel, when it was resolved.",
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "ui_home_providers_status_page": "Status page",
+  "@ui_home_providers_status_page": {
+    "description": "Provider status: link to the incident on the status page (PS07)."
+  },
+  "ui_home_providers_whole_page": "Whole status page",
+  "@ui_home_providers_whole_page": {
+    "description": "Provider status: detail line when the whole status page is counted (PS01)."
+  },
+  "ui_home_providers_show_more": "{count, plural, one {Show # more provider} other {Show # more providers}}",
+  "@ui_home_providers_show_more": {
+    "description": "Provider status: button under the folded list that shows the remaining providers (PS31, PS32).",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_home_providers_show_less": "Show fewer",
+  "@ui_home_providers_show_less": {
+    "description": "Provider status: button that folds the list back to the first six providers (PS32)."
+  },
+  "ui_home_keys_title": "Provider keys",
+  "@ui_home_keys_title": {
+    "description": "Provider keys: card title."
+  },
+  "ui_home_keys_description": "Kept in this Mac’s system keychain. OrielHub doesn’t use them to call models.",
+  "@ui_home_keys_description": {
+    "description": "Provider keys: card description (PK01)."
+  },
+  "ui_home_keys_add": "Add key",
+  "@ui_home_keys_add": {
+    "description": "Provider keys: the button that unfolds into the form (PK04)."
+  },
+  "ui_home_keys_count_unit": "{count, plural, one {key} other {keys}}",
+  "@ui_home_keys_count_unit": {
+    "description": "Provider keys: the word after the rolling number of saved keys.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_home_keys_list": "Saved keys",
+  "@ui_home_keys_list": {
+    "description": "Provider keys: screen reader name of the list."
+  },
+  "ui_home_keys_name": "Name",
+  "@ui_home_keys_name": {
+    "description": "Provider keys: label of the name field (PK06)."
+  },
+  "ui_home_keys_name_placeholder": "Work",
+  "@ui_home_keys_name_placeholder": {
+    "description": "Provider keys: example name in the empty name field."
+  },
+  "ui_home_keys_icon": "Provider icon",
+  "@ui_home_keys_icon": {
+    "description": "Provider keys: label of the icon dropdown (PK05)."
+  },
+  "ui_home_keys_icon_placeholder": "Choose an icon",
+  "@ui_home_keys_icon_placeholder": {
+    "description": "Provider keys: the icon dropdown before a choice."
+  },
+  "ui_home_keys_key": "Key",
+  "@ui_home_keys_key": {
+    "description": "Provider keys: label of the key field."
+  },
+  "ui_home_keys_key_placeholder": "Paste the key",
+  "@ui_home_keys_key_placeholder": {
+    "description": "Provider keys: placeholder of the key field."
+  },
+  "ui_home_keys_show_key": "Show key",
+  "@ui_home_keys_show_key": {
+    "description": "Provider keys: button that shows the pasted key."
+  },
+  "ui_home_keys_hide_key": "Hide key",
+  "@ui_home_keys_hide_key": {
+    "description": "Provider keys: button that hides the pasted key."
+  },
+  "ui_home_keys_form_hint": "Only the last four characters stay visible",
+  "@ui_home_keys_form_hint": {
+    "description": "Provider keys: quiet line beside Cancel and Save (PK02)."
+  },
+  "ui_home_keys_save": "Save key",
+  "@ui_home_keys_save": {
+    "description": "Provider keys: submit button of the form."
+  },
+  "ui_home_keys_key_ending": "Key ending in {last4}",
+  "@ui_home_keys_key_ending": {
+    "description": "Provider keys: screen reader text for the masked key.",
+    "placeholders": { "last4": { "type": "String" } }
+  },
+  "ui_home_keys_added": "Added {ago}",
+  "@ui_home_keys_added": {
+    "description": "Provider keys: line beside a key with when it was added (PK02).",
+    "placeholders": { "ago": { "type": "String" } }
+  },
+  "ui_home_keys_added_fact": "Added",
+  "@ui_home_keys_added_fact": {
+    "description": "Provider keys: label of the add time in a key's details."
+  },
+  "ui_home_keys_details": "{name} details",
+  "@ui_home_keys_details": {
+    "description": "Provider keys: screen reader name of a key's details.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_home_keys_remove_note": "Removing deletes the key from the system keychain for good.",
+  "@ui_home_keys_remove_note": {
+    "description": "Provider keys: note beside Hold to remove (PK11)."
+  },
+  "ui_home_keys_hold": "Hold to remove",
+  "@ui_home_keys_hold": {
+    "description": "Provider keys: hold-to-confirm button that removes a key (PK11, PK12)."
+  },
+  "ui_home_keys_removed": "Removed",
+  "@ui_home_keys_removed": {
+    "description": "Provider keys: the hold button once the hold completes."
+  },
+  "ui_home_keys_empty": "No keys added yet",
+  "@ui_home_keys_empty": {
+    "description": "Provider keys: the list before any key is saved (PK01)."
+  },
+  "ui_home_keys_empty_hint": "Use Add key to keep your first one here.",
+  "@ui_home_keys_empty_hint": {
+    "description": "Provider keys: line under the empty list (PK01)."
+  },
+  "ui_home_keys_announce_opened": "Name the key, choose its icon, and paste it",
+  "@ui_home_keys_announce_opened": {
+    "description": "Provider keys: spoken when the form opens."
+  },
+  "ui_home_keys_announce_discarded": "New key discarded",
+  "@ui_home_keys_announce_discarded": {
+    "description": "Provider keys: spoken when the form closes without saving."
+  },
+  "ui_home_keys_announce_added": "{name} added. Only its last four characters stay visible.",
+  "@ui_home_keys_announce_added": {
+    "description": "Provider keys: spoken after a key is saved.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_home_keys_announce_removed": "{name} removed",
+  "@ui_home_keys_announce_removed": {
+    "description": "Provider keys: spoken after a key is removed.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_home_keys_announce_details_opened": "{name} details opened",
+  "@ui_home_keys_announce_details_opened": {
+    "description": "Provider keys: spoken when a key's details open.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_home_keys_announce_details_closed": "{name} details closed",
+  "@ui_home_keys_announce_details_closed": {
+    "description": "Provider keys: spoken when a key's details close.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_home_keys_load_failed": "Couldn’t read the stored keys: {reason}",
+  "@ui_home_keys_load_failed": {
+    "description": "Provider keys: line under the list when listing failed.",
+    "placeholders": { "reason": { "type": "String" } }
+  },
+  "ui_home_keys_base_url": "Base URL (optional)",
+  "@ui_home_keys_base_url": {
+    "description": "Label of the optional base URL field (PK20)."
+  },
+  "ui_home_keys_base_url_placeholder": "Leave empty to use the official address",
+  "@ui_home_keys_base_url_placeholder": {
+    "description": "Placeholder of the base URL field (PK20)."
+  },
+  "ui_home_keys_base_url_fact": "Base URL",
+  "@ui_home_keys_base_url_fact": {
+    "description": "The base URL line in a key's details (PK27)."
+  },
+  "ui_home_keys_official": "Official address",
+  "@ui_home_keys_official": {
+    "description": "Shown in the details when a key has no base URL (PK27, PK29, PK35)."
+  },
+  "ui_home_keys_edit": "Edit",
+  "@ui_home_keys_edit": {
+    "description": "Opens the base URL editor in a key's details (PK27, PK28)."
+  },
+  "ui_home_keys_save_base_url": "Save",
+  "@ui_home_keys_save_base_url": {
+    "description": "Saves the edited base URL (PK28)."
+  },
+  "ui_home_keys_announce_editing": "Edit the base URL of {name}",
+  "@ui_home_keys_announce_editing": {
+    "description": "Spoken when the base URL editor opens (PK28).",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_home_keys_announce_base_url_saved": "Base URL of {name} saved",
+  "@ui_home_keys_announce_base_url_saved": {
+    "description": "Spoken when the edited base URL is saved (PK28, PK29).",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_home_keys_announce_edit_discarded": "Base URL edit discarded",
+  "@ui_home_keys_announce_edit_discarded": {
+    "description": "Spoken when the base URL editor closes without saving (PK31)."
+  },
+  "ui_home_empty_title": "Start your first task",
+  "@ui_home_empty_title": {
+    "description": "Home overview: empty state when there are no tasks and no workspaces (O03)."
+  },
+  "ui_home_empty_text": "Running tasks, what needs you, and each workspace's progress show up here.",
+  "@ui_home_empty_text": {
+    "description": "Home overview: text of the empty state (O03)."
+  },
+  "ui_home_new_task": "New task",
+  "@ui_home_new_task": {
+    "description": "Home overview: button in the empty state that opens the new task dialog (O03)."
+  },
+  "ui_home_count_running": "Running",
+  "@ui_home_count_running": {
+    "description": "Home overview: metric of running sessions across tasks (O06)."
+  },
+  "ui_home_count_waiting": "Needs you",
+  "@ui_home_count_waiting": {
+    "description": "Home overview: metric of pending approvals and failed operations, same as the sidebar count (O06)."
+  },
+  "ui_home_count_review": "Your turn",
+  "@ui_home_count_review": {
+    "description": "Home overview: metric of tasks whose agent finished and waits for the user (status in_review, O06)."
+  },
+  "ui_home_count_tokens": "Tokens today",
+  "@ui_home_count_tokens": {
+    "description": "Home overview: metric of today's tokens (O06)."
+  },
+  "ui_home_counts": "Overview numbers",
+  "@ui_home_counts": {
+    "description": "Home overview: accessible name of the metric ticker at the top (O06)."
+  },
+  "ui_home_ticker_updates": "Last {count} values",
+  "@ui_home_ticker_updates": {
+    "description": "Home overview: caption of a metric's trend panel, the number of values seen since the app started (O09b).",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_home_ticker_days": "Last 30 days",
+  "@ui_home_ticker_days": {
+    "description": "Home overview: caption of the tokens today trend panel (O09a)."
+  },
+  "ui_home_ticker_trending_up": "Trending up",
+  "@ui_home_ticker_trending_up": {
+    "description": "Home overview: trend panel, the values went up overall."
+  },
+  "ui_home_ticker_trending_down": "Trending down",
+  "@ui_home_ticker_trending_down": {
+    "description": "Home overview: trend panel, the values went down overall."
+  },
+  "ui_home_ticker_flat": "Flat",
+  "@ui_home_ticker_flat": {
+    "description": "Home overview: trend panel, first and last value are the same."
+  },
+  "ui_home_ticker_low": "Low",
+  "@ui_home_ticker_low": {
+    "description": "Home overview: trend panel, lowest value."
+  },
+  "ui_home_ticker_high": "High",
+  "@ui_home_ticker_high": {
+    "description": "Home overview: trend panel, highest value."
+  },
+  "ui_home_ticker_up": "up {amount}",
+  "@ui_home_ticker_up": {
+    "description": "Home overview: spoken change of a metric, after its label and value, such as 'Running, 3, up 1' (O08).",
+    "placeholders": { "amount": { "type": "String" } }
+  },
+  "ui_home_ticker_down": "down {amount}",
+  "@ui_home_ticker_down": {
+    "description": "Home overview: spoken change of a metric, after its label and value (O08).",
+    "placeholders": { "amount": { "type": "String" } }
+  },
+  "ui_home_ticker_no_changes": "No changes yet",
+  "@ui_home_ticker_no_changes": {
+    "description": "Home overview: trend panel while the metric has not changed since the app started (O09b)."
+  },
+  "ui_home_all": "All {count}",
+  "@ui_home_all": {
+    "description": "Home overview: link beside a section title when it shows only part of the list (O10, O15).",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_home_running": "Running",
+  "@ui_home_running": {
+    "description": "Home overview: title of the column of running tasks (O13)."
+  },
+  "ui_home_running_none": "No tasks are running",
+  "@ui_home_running_none": {
+    "description": "Home overview: the running column when it is empty (O14)."
+  },
+  "ui_home_board": "Board",
+  "@ui_home_board": {
+    "description": "Home overview: link from the running column to the task board (O13)."
+  },
+  "ui_home_ws_total": "Tasks",
+  "@ui_home_ws_total": {
+    "description": "Home overview: label of the total above a workspace card's status bar when no status is highlighted (O16)."
+  },
+  "ui_home_ws_bar": "Task statuses",
+  "@ui_home_ws_bar": {
+    "description": "Home overview: accessible name of the status bar on a workspace card (O29)."
+  },
+  "ui_home_ws_bar_role": "status bar",
+  "@ui_home_ws_bar_role": {
+    "description": "Home overview: screen reader role description of the status bar on a workspace card (O29)."
+  },
+  "ui_home_ws_bar_read": "{name}: {shares}. Use the arrow keys to read each status.",
+  "@ui_home_ws_bar_read": {
+    "description": "Home overview: what a screen reader says when the status bar gets focus; shares is each status with its percentage, joined by the list separator (O29).",
+    "placeholders": { "name": { "type": "String" }, "shares": { "type": "String" } }
+  },
+  "ui_home_ws_bar_segment": "{status}, {share}, {count}",
+  "@ui_home_ws_bar_segment": {
+    "description": "Home overview: read out when the arrow keys reach a status on the bar; share is a percentage, count the number of tasks (O28).",
+    "placeholders": { "status": { "type": "String" }, "share": { "type": "String" }, "count": { "type": "String" } }
+  },
+  "ui_home_ws_running": "{count} running",
+  "@ui_home_ws_running": {
+    "description": "Home overview: running sessions on a workspace card (O16).",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_home_ws_files": "{count, plural, one {# file} other {# files}}",
+  "@ui_home_ws_files": {
+    "description": "Home overview: files used in a workspace's tasks (O16).",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_home_ws_tokens": "{tokens} tokens in 7 days",
+  "@ui_home_ws_tokens": {
+    "description": "Home overview: tokens used in the workspace's folder over 7 days (O16).",
+    "placeholders": { "tokens": { "type": "String" } }
+  },
+  "ui_home_ws_waiting": "{count} need you",
+  "@ui_home_ws_waiting": {
+    "description": "Home overview: screen reader text of the count badge on a workspace card (O16).",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_home_ws_no_tasks": "No tasks yet",
+  "@ui_home_ws_no_tasks": {
+    "description": "Home overview: a workspace card without tasks (O17)."
+  },
+  "ui_usage_chart_mean": "Avg {value}",
+  "@ui_usage_chart_mean": {
+    "description": "Daily chart: label beside the dashed average line on the value axis; value is the average, often compact like 369M.",
+    "placeholders": { "value": { "type": "String" } }
+  },
+  "ui_task_pin_named": "Pin “{title}”",
+  "@ui_task_pin_named": {
+    "description": "Task board: screen reader name of the pin button on an unpinned task's card (m2.md G14, G19).",
+    "placeholders": { "title": { "type": "String" } }
+  },
+  "ui_task_unpin_named": "Unpin “{title}”",
+  "@ui_task_unpin_named": {
+    "description": "Task board and sidebar: screen reader name of the pressed pin button on a pinned task's card, and of the unpin button on a row in the sidebar's Pinned section (m2.md G15, G16, G19).",
+    "placeholders": { "title": { "type": "String" } }
+  },
+  "ui_task_pinned": "Pinned",
+  "@ui_task_pinned": {
+    "description": "Task board: part of a pinned task's card as screen readers read it (m2.md G15, G19)."
+  },
+  "ui_conv_open": "Open conversation",
+  "@ui_conv_open": {
+    "description": "Task details on the board: button that opens the task's conversation page (m2.md V01, V05)."
+  },
+  "ui_conv_details": "Details",
+  "@ui_conv_details": {
+    "description": "Conversation page: title of the details inspector, and the toggle on the right of the title bar that shows or hides it, pressed while shown (V54, V55)."
+  },
+  "ui_conv_not_found": "Task not found",
+  "@ui_conv_not_found": {
+    "description": "Conversation page: empty state when the task doesn't exist (V06)."
+  },
+  "ui_conv_not_found_detail": "It may have been deleted, or the link is wrong.",
+  "@ui_conv_not_found_detail": {
+    "description": "Conversation page: text under the not-found heading (V06)."
+  },
+  "ui_conv_back": "Back to tasks",
+  "@ui_conv_back": {
+    "description": "Conversation page: button in the not-found state that goes to the task board (V06)."
+  },
+  "ui_conv_archived": "Archived",
+  "@ui_conv_archived": {
+    "description": "Conversation page: tag beside the title of an archived task (V07)."
+  },
+  "ui_conv_no_agent": "No agent yet",
+  "@ui_conv_no_agent": {
+    "description": "Conversation page: empty state of a task without a session (V43)."
+  },
+  "ui_conv_no_agent_detail": "Start an agent; the conversation begins with the first message you write.",
+  "@ui_conv_no_agent_detail": {
+    "description": "Conversation page: text under the no-agent heading (V43)."
+  },
+  "ui_conv_label": "Conversation",
+  "@ui_conv_label": {
+    "description": "Conversation page: accessible name of the conversation region."
+  },
+  "ui_conv_loading": "Loading the conversation…",
+  "@ui_conv_loading": {
+    "description": "Conversation page: shown before the first event arrives."
+  },
+  "ui_conv_load_failed": "Couldn't load the conversation",
+  "@ui_conv_load_failed": {
+    "description": "Conversation page: title of the error when subscribing failed for a reason other than a missing task."
+  },
+  "ui_conv_reconnecting": "Reconnecting…",
+  "@ui_conv_reconnecting": {
+    "description": "Conversation page: banner at the top while the subscription is restarted (V24)."
+  },
+  "ui_conv_working": "{agent} is working",
+  "@ui_conv_working": {
+    "description": "Conversation page: loader under a turn that has started but has no output yet (V14).",
+    "placeholders": { "agent": { "type": "String" } }
+  },
+  "ui_conv_thinking": "Thinking",
+  "@ui_conv_thinking": {
+    "description": "Conversation page: loader while the agent is thinking (V13)."
+  },
+  "ui_conv_thought": "Thought process",
+  "@ui_conv_thought": {
+    "description": "Conversation page: the folded line of a finished thought; it opens to the full text (V13)."
+  },
+  "ui_conv_tools_used": "{count, plural, one {Used # tool} other {Used # tools}}",
+  "@ui_conv_tools_used": {
+    "description": "Conversation page: header of a group of tool calls once none runs (V16).",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_conv_tools_running": "Using tools…",
+  "@ui_conv_tools_running": {
+    "description": "Conversation page: header of a group of tool calls while one runs (V16)."
+  },
+  "ui_conv_tools_failed": "{count} failed",
+  "@ui_conv_tools_failed": {
+    "description": "Conversation page: after the group header, how many tool calls failed (V16).",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_conv_tool_failed": "Failed",
+  "@ui_conv_tool_failed": {
+    "description": "Conversation page: status of a failed tool call (V15)."
+  },
+  "ui_conv_tool_failed_default": "The tool call failed.",
+  "@ui_conv_tool_failed_default": {
+    "description": "Conversation page: body of a failed tool call (V15)."
+  },
+  "ui_conv_tool_input": "Input",
+  "@ui_conv_tool_input": {
+    "description": "Conversation page: section of an opened tool call with its input (V15)."
+  },
+  "ui_conv_tool_output": "Output",
+  "@ui_conv_tool_output": {
+    "description": "Conversation page: section of an opened tool call with its output (V15)."
+  },
+  "ui_conv_tool_waiting": "Waiting for output…",
+  "@ui_conv_tool_waiting": {
+    "description": "Conversation page: output section of a running tool call (V15)."
+  },
+  "ui_conv_tool_empty": "No input or output.",
+  "@ui_conv_tool_empty": {
+    "description": "Conversation page: an opened tool call without input or output (V15)."
+  },
+  "ui_conv_show_all": "Show all",
+  "@ui_conv_show_all": {
+    "description": "Conversation page: opens a long tool input or output (V15)."
+  },
+  "ui_conv_show_less": "Show less",
+  "@ui_conv_show_less": {
+    "description": "Conversation page: folds a long tool input or output again (V15)."
+  },
+  "ui_conv_copy_section": "Copy {section}",
+  "@ui_conv_copy_section": {
+    "description": "Conversation page: copy button of a tool call's input or output section; section is that section's name (V15).",
+    "placeholders": { "section": { "type": "String" } }
+  },
+  "ui_conv_tool_running": "{name} running",
+  "@ui_conv_tool_running": {
+    "description": "Conversation page: screen reader announcement when a tool call starts (V15, V52).",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_conv_tool_finished": "{name} finished",
+  "@ui_conv_tool_finished": {
+    "description": "Conversation page: screen reader announcement when a tool call completes (V15, V52).",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_conv_tool_failed_named": "{name} failed",
+  "@ui_conv_tool_failed_named": {
+    "description": "Conversation page: screen reader announcement when a tool call fails (V15, V52).",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_conv_plan": "Plan",
+  "@ui_conv_plan": {
+    "description": "Conversation page: heading of the agent's plan in a turn (V17)."
+  },
+  "ui_conv_redacted": "This message was deleted",
+  "@ui_conv_redacted": {
+    "description": "Conversation page: in place of a redacted message (V21)."
+  },
+  "ui_conv_copy": "Copy",
+  "@ui_conv_copy": {
+    "description": "Conversation page: tooltip of the copy action under a reply (V20)."
+  },
+  "ui_conv_copy_message": "Copy message",
+  "@ui_conv_copy_message": {
+    "description": "Conversation page: accessible name of the copy action under a reply (V20)."
+  },
+  "ui_conv_message_actions": "Message actions",
+  "@ui_conv_message_actions": {
+    "description": "Conversation page: accessible name of the bar under a reply (V20)."
+  },
+  "ui_conv_jump": "Jump to latest",
+  "@ui_conv_jump": {
+    "description": "Conversation page: button at the bottom after scrolling up (V23)."
+  },
+  "ui_conv_asks_waiting": "{count, plural, one {# approval waiting for you} other {# approvals waiting for you}}",
+  "@ui_conv_asks_waiting": {
+    "description": "Conversation page: line above the composer when a waiting approval is out of view; pressing it scrolls there (V30).",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_conv_ask_once": "Just this once",
+  "@ui_conv_ask_once": {
+    "description": "Conversation page: approval tray choice to answer only this request (V25)."
+  },
+  "ui_conv_ask_always": "Always…",
+  "@ui_conv_ask_always": {
+    "description": "Conversation page: approval tray choice that unfolds the options of a rule (V31)."
+  },
+  "ui_conv_ask_scope": "How to answer",
+  "@ui_conv_ask_scope": {
+    "description": "Conversation page: accessible name of the approval tray (V25)."
+  },
+  "ui_conv_ask_allowed": "Allowed",
+  "@ui_conv_ask_allowed": {
+    "description": "Conversation page: an approval folded after it was allowed (V26)."
+  },
+  "ui_conv_ask_denied": "Denied",
+  "@ui_conv_ask_denied": {
+    "description": "Conversation page: an approval folded after it was denied (V26)."
+  },
+  "ui_conv_ask_cancelled": "Cancelled",
+  "@ui_conv_ask_cancelled": {
+    "description": "Conversation page: an approval folded because its turn ended unanswered (V29)."
+  },
+  "ui_conv_rule_allowed": "Allowed by a rule",
+  "@ui_conv_rule_allowed": {
+    "description": "Conversation page: beside a request a saved rule allowed at once (V28)."
+  },
+  "ui_conv_rule_denied": "Denied by a rule",
+  "@ui_conv_rule_denied": {
+    "description": "Conversation page: beside a request a saved rule denied at once (V28)."
+  },
+  "ui_conv_placeholder": "Message {agent}…",
+  "@ui_conv_placeholder": {
+    "description": "Conversation page: placeholder of the composer (V33).",
+    "placeholders": { "agent": { "type": "String" } }
+  },
+  "ui_conv_composer": "Message composer",
+  "@ui_conv_composer": {
+    "description": "Conversation page: accessible name of the composer."
+  },
+  "ui_conv_message": "Message",
+  "@ui_conv_message": {
+    "description": "Conversation page: accessible name of the composer's text field."
+  },
+  "ui_conv_attach": "Attach files",
+  "@ui_conv_attach": {
+    "description": "Conversation page: composer button that picks files from the task's folder (V44)."
+  },
+  "ui_conv_folder": "Working folder: {name}",
+  "@ui_conv_folder": {
+    "description": "Conversation page: accessible text of the read-only workspace name under the composer card (V72, V76).",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_conv_agent": "Agent: {name}",
+  "@ui_conv_agent": {
+    "description": "Conversation page: accessible text of the read-only agent name under the composer card (V72, V76).",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_conv_model": "Model: {name}",
+  "@ui_conv_model": {
+    "description": "Conversation page: accessible name of the model button in the composer (V77, V89).",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_conv_models": "Models",
+  "@ui_conv_models": {
+    "description": "Conversation page: accessible name of the model menu (V79)."
+  },
+  "ui_conv_model_busy": "You can switch models after this turn ends",
+  "@ui_conv_model_busy": {
+    "description": "Conversation page: tooltip of the disabled model button while a turn runs (V81)."
+  },
+  "ui_conv_model_held": "Switches to {name} once the working folder is ready",
+  "@ui_conv_model_held": {
+    "description": "Conversation page: tooltip of the disabled model button when a picked model waits for the task's working folder, whose creation failed and waits for a retry (V85).",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_conv_model_failed": "Couldn't switch to {name}",
+  "@ui_conv_model_failed": {
+    "description": "Conversation page: above the composer when the agent refused or failed to switch models (V83).",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_conv_model_unavailable": "{name} is no longer available, using {current}",
+  "@ui_conv_model_unavailable": {
+    "description": "Conversation page: above the composer when the model picked earlier is gone after the agent resumed (V86).",
+    "placeholders": { "name": { "type": "String" }, "current": { "type": "String" } }
+  },
+  "ui_conv_model_gone": "{name} is no longer available",
+  "@ui_conv_model_gone": {
+    "description": "Conversation page: above the composer when the model picked earlier is gone and the resumed agent reports no models at all (V86).",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_conv_send": "Send",
+  "@ui_conv_send": {
+    "description": "Conversation page: composer send button (V33)."
+  },
+  "ui_conv_sending": "Sending…",
+  "@ui_conv_sending": {
+    "description": "Conversation page: the send button while the message is on its way (V36)."
+  },
+  "ui_conv_stop": "Stop",
+  "@ui_conv_stop": {
+    "description": "Conversation page: composer button that cancels the running turn (V38)."
+  },
+  "ui_conv_stopping": "Stopping…",
+  "@ui_conv_stopping": {
+    "description": "Conversation page: the stop button until the turn ends (V38)."
+  },
+  "ui_conv_send_failed": "Couldn't send the message",
+  "@ui_conv_send_failed": {
+    "description": "Conversation page: error above the composer after sending failed (V36)."
+  },
+  "ui_conv_stop_failed": "Couldn't stop the turn",
+  "@ui_conv_stop_failed": {
+    "description": "Conversation page: error above the composer after stopping failed (V38)."
+  },
+  "ui_conv_queued": "Queued",
+  "@ui_conv_queued": {
+    "description": "Conversation page: tag on a message waiting for the running turn to end (V37)."
+  },
+  "ui_conv_remove_attachment": "Remove {name}",
+  "@ui_conv_remove_attachment": {
+    "description": "Conversation page: button on an attached file above the composer (V44).",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_conv_attach_outside": "Only files in this task's folder can be attached: {name}",
+  "@ui_conv_attach_outside": {
+    "description": "Conversation page: a picked or dropped file outside the task's working folder (V45).",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_conv_attach_not_file": "Only files can be attached: {name} isn't a file",
+  "@ui_conv_attach_not_file": {
+    "description": "Conversation page: a dropped folder or other non-file (V46).",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_conv_attach_failed": "Couldn't attach the files",
+  "@ui_conv_attach_failed": {
+    "description": "Conversation page: error when checking or picking files failed (V44)."
+  },
+  "ui_conv_read_only_archived": "This task is archived, so the conversation is read-only.",
+  "@ui_conv_read_only_archived": {
+    "description": "Conversation page: in place of the composer for an archived task (V39)."
+  },
+  "ui_conv_read_only_closed": "This session is closed, so the conversation is read-only.",
+  "@ui_conv_read_only_closed": {
+    "description": "Conversation page: in place of the composer when the session is closed (V39)."
+  },
+  "ui_conv_read_only_conflicted": "This session was used outside OrielHub, so the conversation is read-only.",
+  "@ui_conv_read_only_conflicted": {
+    "description": "Conversation page: in place of the composer when the native session was used elsewhere."
+  },
+  "ui_conv_reply_done": "{agent} replied",
+  "@ui_conv_reply_done": {
+    "description": "Conversation page: screen reader announcement once a reply is complete (V52).",
+    "placeholders": { "agent": { "type": "String" } }
+  },
+  "ui_conv_dismiss": "Dismiss",
+  "@ui_conv_dismiss": {
+    "description": "Conversation page: closes a notice above the composer."
+  },
+  "ui_conv_outline": "Conversation outline",
+  "@ui_conv_outline": {
+    "description": "Task conversation page: accessible name of the rail at the right of the conversation that lists every user message and jumps to it (m2.md V66)."
+  },
+  "ui_conv_outline_item": "Message {index}: {text}",
+  "@ui_conv_outline_item": {
+    "description": "Task conversation page: start of the screen reader name of one mark on the conversation rail; the time and the state follow, joined by ui_list_separator (m2.md V67).",
+    "placeholders": { "index": { "type": "int" }, "text": { "type": "String" } }
+  },
+  "ui_conv_outline_attachment": "Attachment: {name}",
+  "@ui_conv_outline_attachment": {
+    "description": "Task conversation page: a row of the conversation outline for a message with attachments and no text, followed by the first file name (m2.md V58).",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_conv_outline_empty": "Empty message",
+  "@ui_conv_outline_empty": {
+    "description": "Task conversation page: a row of the conversation outline for a message with neither text nor attachments (m2.md V58)."
+  },
+  "ui_conv_outline_waiting": "Waiting for you",
+  "@ui_conv_outline_waiting": {
+    "description": "Task conversation page: state of a row in the conversation outline whose turn has an approval waiting for the user (m2.md V60)."
+  },
+  "ui_conv_outline_failed": "Failed",
+  "@ui_conv_outline_failed": {
+    "description": "Task conversation page: state of a row in the conversation outline whose turn failed (m2.md V61)."
+  },
+  "ui_conv_outline_stopped": "Stopped",
+  "@ui_conv_outline_stopped": {
+    "description": "Task conversation page: state of a row in the conversation outline whose turn was stopped (m2.md V61)."
+  },
+  "ui_recap_title": "While you were away",
+  "@ui_recap_title": {
+    "description": "Home: heading of the recap since you last left (m2.md R04, D115)."
+  },
+  "ui_recap_since": "Since {time}",
+  "@ui_recap_since": {
+    "description": "Home recap: when it starts. {time} is a short time.",
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "ui_recap_span_minutes": "{minutes}m",
+  "@ui_recap_span_minutes": {
+    "description": "Home recap: how long you were away, under an hour.",
+    "placeholders": { "minutes": { "type": "int" } }
+  },
+  "ui_recap_span_hours": "{hours}h {minutes}m",
+  "@ui_recap_span_hours": {
+    "description": "Home recap: how long you were away, under a day.",
+    "placeholders": { "hours": { "type": "int" }, "minutes": { "type": "int" } }
+  },
+  "ui_recap_span_days": "{days}d {hours}h",
+  "@ui_recap_span_days": {
+    "description": "Home recap: how long you were away, a day or more.",
+    "placeholders": { "days": { "type": "int" }, "hours": { "type": "int" } }
+  },
+  "ui_recap_count_needs": "need you",
+  "@ui_recap_count_needs": {
+    "description": "Home recap summary: after the number of items that need you."
+  },
+  "ui_recap_count_failed": "failed",
+  "@ui_recap_count_failed": {
+    "description": "Home recap summary: after the number of failed items."
+  },
+  "ui_recap_count_done": "done",
+  "@ui_recap_count_done": {
+    "description": "Home recap summary: after the number of done items."
+  },
+  "ui_recap_summary": "Summary",
+  "@ui_recap_summary": {
+    "description": "Home recap: accessible name of the counts next to the heading."
+  },
+  "ui_recap_lane_needs": "Needs you",
+  "@ui_recap_lane_needs": {
+    "description": "Home recap: lane of pending approvals (R06)."
+  },
+  "ui_recap_lane_failed": "Failed",
+  "@ui_recap_lane_failed": {
+    "description": "Home recap: lane of failed turns and suspended operations (R08)."
+  },
+  "ui_recap_lane_done": "Done",
+  "@ui_recap_lane_done": {
+    "description": "Home recap: lane of completed turns (R09)."
+  },
+  "ui_recap_empty_needs": "Nothing needs you",
+  "@ui_recap_empty_needs": {
+    "description": "Home recap: empty needs-you lane (R12)."
+  },
+  "ui_recap_empty_failed": "Nothing failed",
+  "@ui_recap_empty_failed": {
+    "description": "Home recap: empty failed lane (R12)."
+  },
+  "ui_recap_empty_done": "Nothing done yet",
+  "@ui_recap_empty_done": {
+    "description": "Home recap: empty done lane (R12)."
+  },
+  "ui_recap_showing": "Showing {shown} of {total}",
+  "@ui_recap_showing": {
+    "description": "Home recap: tooltip on a lane's count when it has more than it shows (R10).",
+    "placeholders": { "shown": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "ui_recap_review": "Review",
+  "@ui_recap_review": {
+    "description": "Home recap: second button on an approval, opens it in the conversation (R06)."
+  },
+  "ui_recap_done": "Done",
+  "@ui_recap_done": {
+    "description": "Home recap: status on a done card (R09)."
+  },
+  "ui_recap_working": "Working…",
+  "@ui_recap_working": {
+    "description": "Home recap: status while the main action runs (R07)."
+  },
+  "ui_recap_named": "{what}: {title}",
+  "@ui_recap_named": {
+    "description": "Home recap: a button's accessible name and announcements, the action and its card (R13).",
+    "placeholders": { "what": { "type": "String" }, "title": { "type": "String" } }
+  },
+  "ui_recap_action_failed": "Didn't work: {title}",
+  "@ui_recap_action_failed": {
+    "description": "Home recap: announced when the main action fails.",
+    "placeholders": { "title": { "type": "String" } }
+  },
+  "ui_recap_load_failed": "Couldn't load what happened while you were away",
+  "@ui_recap_load_failed": {
+    "description": "Home recap: title of the load error (R14)."
+  },
+  "ui_gate_title": "Waiting for your approval",
+  "@ui_gate_title": {
+    "description": "Needs attention: heading of a task's approval stack (m2.md D13, D116)."
+  },
+  "ui_gate_reason": "No rule allows this request",
+  "@ui_gate_reason": {
+    "description": "Needs attention approval card: why it needs a person – no rule matched (D02)."
+  },
+  "ui_gate_kind_tool": "Tool call",
+  "@ui_gate_kind_tool": {
+    "description": "Approval card: kind of request that runs or reads something."
+  },
+  "ui_gate_kind_file": "File change",
+  "@ui_gate_kind_file": {
+    "description": "Approval card: kind of request that edits, deletes or moves a file."
+  },
+  "ui_gate_data_tool": "Command or path",
+  "@ui_gate_data_tool": {
+    "description": "Approval card: label of the command or paths of a tool call."
+  },
+  "ui_gate_data_file": "Files",
+  "@ui_gate_data_file": {
+    "description": "Approval card: label of the paths of a file change."
+  },
+  "ui_gate_approved": "Approved",
+  "@ui_gate_approved": {
+    "description": "Approval card: the request was approved."
+  },
+  "ui_gate_edited": "Changed",
+  "@ui_gate_edited": {
+    "description": "Approval card: rejected and the change was sent to the agent (D39)."
+  },
+  "ui_gate_rejected": "Rejected",
+  "@ui_gate_rejected": {
+    "description": "Approval card: the request was rejected."
+  },
+  "ui_gate_state_waiting": "Waiting on you",
+  "@ui_gate_state_waiting": {
+    "description": "Approval stack: state pill while requests wait (D34)."
+  },
+  "ui_gate_state_running": "Running",
+  "@ui_gate_state_running": {
+    "description": "Approval stack: state pill while the task runs and nothing waits (D34)."
+  },
+  "ui_gate_state_done": "Paused",
+  "@ui_gate_state_done": {
+    "description": "Approval stack: state pill when the task isn't running and nothing waits (D34)."
+  },
+  "ui_gate_paused": "Paused – {count, plural, one {waiting on # request} other {waiting on # requests}}",
+  "@ui_gate_paused": {
+    "description": "Approval stack: run line while requests wait (D34).",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_gate_running": "Running – nothing waits",
+  "@ui_gate_running": {
+    "description": "Approval stack: run line while the task runs and nothing waits."
+  },
+  "ui_gate_all_through": "Everything here is decided",
+  "@ui_gate_all_through": {
+    "description": "Approval stack: run line when every request here was decided."
+  },
+  "ui_gate_stat_waiting": "Waiting on you",
+  "@ui_gate_stat_waiting": {
+    "description": "Approval stack: label of the waiting count (D34)."
+  },
+  "ui_gate_stat_decided": "Decided",
+  "@ui_gate_stat_decided": {
+    "description": "Approval stack: label of the decided count and the decided list (D34, D35)."
+  },
+  "ui_gate_stat_run": "Task",
+  "@ui_gate_stat_run": {
+    "description": "Approval stack: label of the run line (D34)."
+  },
+  "ui_gate_stack": "{count, plural, one {# request waiting} other {# requests waiting}}, {index} of {count}",
+  "@ui_gate_stack": {
+    "description": "Approval stack: accessible name of the stack (D29).",
+    "placeholders": { "count": { "type": "int" }, "index": { "type": "int" } }
+  },
+  "ui_gate_nothing_waits": "Nothing waits",
+  "@ui_gate_nothing_waits": {
+    "description": "Approval stack: accessible name when nothing waits."
+  },
+  "ui_gate_blocking": "Waiting",
+  "@ui_gate_blocking": {
+    "description": "Approval card: badge on the card on top."
+  },
+  "ui_gate_waiting_for_you": "{action}, waiting for you",
+  "@ui_gate_waiting_for_you": {
+    "description": "Approval card: accessible name of the card on top.",
+    "placeholders": { "action": { "type": "String" } }
+  },
+  "ui_gate_what_should_change": "What should change?",
+  "@ui_gate_what_should_change": {
+    "description": "Approval card: label of the text box when asking for changes to a file edit (D38)."
+  },
+  "ui_gate_change_placeholder": "e.g. Keep the old function name",
+  "@ui_gate_change_placeholder": {
+    "description": "Approval card: placeholder of the ask-for-changes box (D38)."
+  },
+  "ui_gate_edit_data": "Edit the command",
+  "@ui_gate_edit_data": {
+    "description": "Approval card: accessible name of the edit box (D38)."
+  },
+  "ui_gate_edit": "Edit",
+  "@ui_gate_edit": {
+    "description": "Approval card: button that opens the edit box (D38)."
+  },
+  "ui_gate_ask_for_changes": "Ask for changes",
+  "@ui_gate_ask_for_changes": {
+    "description": "Approval card: edit button on a file change (D38)."
+  },
+  "ui_gate_send_edit": "Send the change",
+  "@ui_gate_send_edit": {
+    "description": "Approval card: sends the edit – rejects and messages the agent (D39)."
+  },
+  "ui_gate_approve": "Approve",
+  "@ui_gate_approve": {
+    "description": "Approval card: approve button (D14)."
+  },
+  "ui_gate_reject": "Reject",
+  "@ui_gate_reject": {
+    "description": "Approval card: reject button (D14)."
+  },
+  "ui_gate_idle_title": "Nothing waits for you",
+  "@ui_gate_idle_title": {
+    "description": "Approval stack: empty card while the task runs."
+  },
+  "ui_gate_idle_sub": "New requests show up here as the agent asks",
+  "@ui_gate_idle_sub": {
+    "description": "Approval stack: empty card while the task runs."
+  },
+  "ui_gate_done_sub": "Nothing else here needs you",
+  "@ui_gate_done_sub": {
+    "description": "Approval stack: empty card after everything was decided."
+  },
+  "ui_gate_previous": "Previous request",
+  "@ui_gate_previous": {
+    "description": "Approval stack: previous button (D29)."
+  },
+  "ui_gate_next": "Next request",
+  "@ui_gate_next": {
+    "description": "Approval stack: next button (D29)."
+  },
+  "ui_gate_position": "{index} of {total}",
+  "@ui_gate_position": {
+    "description": "Approval stack: which request is on top (D29).",
+    "placeholders": { "index": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "ui_gate_just_now": "just now",
+  "@ui_gate_just_now": {
+    "description": "Approval stack: when a request was decided here."
+  },
+  "ui_gate_changed_to": "Changed to: {value}",
+  "@ui_gate_changed_to": {
+    "description": "Approval stack: note on an edited command (D39).",
+    "placeholders": { "value": { "type": "String" } }
+  },
+  "ui_gate_asked_for": "Asked for: {value}",
+  "@ui_gate_asked_for": {
+    "description": "Approval stack: note on a file change with requested changes (D39).",
+    "placeholders": { "value": { "type": "String" } }
+  },
+  "ui_gate_announce": "{outcome}: {action}. {left, plural, =0 {Nothing waits any more} one {# request left} other {# requests left}}",
+  "@ui_gate_announce": {
+    "description": "Approval stack: announced after a decision.",
+    "placeholders": { "outcome": { "type": "String" }, "action": { "type": "String" }, "left": { "type": "int" } }
+  },
+  "ui_gate_failed": "Didn't go through: {action}",
+  "@ui_gate_failed": {
+    "description": "Approval stack: announced when a decision failed and the card came back (D14).",
+    "placeholders": { "action": { "type": "String" } }
+  },
+  "ui_gate_always_saved": "Saved as a rule",
+  "@ui_gate_always_saved": {
+    "description": "Approval stack: note on a request answered with an always rule (D19)."
+  },
+  "ui_gate_edit_command": "Don't run `{command}`. Run this instead: `{instead}`",
+  "@ui_gate_edit_command": {
+    "description": "Message sent to the agent when an approval's command is edited (D39).",
+    "placeholders": { "command": { "type": "String" }, "instead": { "type": "String" } }
+  },
+  "ui_gate_edit_file": "Don't make that change to {target}. Instead: {instead}",
+  "@ui_gate_edit_file": {
+    "description": "Message sent to the agent when changes are asked for a file edit (D39).",
+    "placeholders": { "target": { "type": "String" }, "instead": { "type": "String" } }
+  },
+  "ui_gate_edit_unsent": "Rejected, but the change couldn't be sent",
+  "@ui_gate_edit_unsent": {
+    "description": "Needs attention: the rejection went out but the message with the change didn't (D39)."
+  },
+  "ui_gate_always": "Always…",
+  "@ui_gate_always": {
+    "description": "Approval card: opens the always-rule options in the card (D19)."
+  },
+  "ui_nav_attention_waiting": "{count, plural, one {# needs attention} other {# need attention}}",
+  "@ui_nav_attention_waiting": {
+    "description": "Sidebar: tooltip and screen-reader note on Needs attention while items wait (m2.md D45).",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_recap_show_lanes": "Show lanes",
+  "@ui_recap_show_lanes": {
+    "description": "Home recap: the header button that opens the Needs you / Failed / Done lanes (m2.md R18)."
+  },
+  "ui_recap_hide_lanes": "Hide lanes",
+  "@ui_recap_hide_lanes": {
+    "description": "Home recap: the header button that folds the Needs you / Failed / Done lanes away (m2.md R18)."
+  },
+  "ui_mascot_idle": "ready",
+  "@ui_mascot_idle": {
+    "description": "AI mascot: accessible status word when the agent is idle (m2.md Y23)."
+  },
+  "ui_mascot_listening": "waiting for your answer",
+  "@ui_mascot_listening": {
+    "description": "AI mascot: status word while an approval waits for the user (Y02, Y09)."
+  },
+  "ui_mascot_working": "working",
+  "@ui_mascot_working": {
+    "description": "AI mascot: status word read out while the agent thinks or writes; both read the same so a turn is not announced at every block (Y13)."
+  },
+  "ui_mascot_done": "done",
+  "@ui_mascot_done": {
+    "description": "AI mascot: status word when the turn finished and it is the user's turn (Y04, Y10)."
+  },
+  "ui_mascot_error": "something went wrong",
+  "@ui_mascot_error": {
+    "description": "AI mascot: status word on a failed operation or turn (Y01, Y10)."
+  },
+  "ui_mascot_label": "{agent}, {status}",
+  "@ui_mascot_label": {
+    "description": "AI mascot: accessible label and announcement, the agent's name and one of the ui_mascot_* status words (Y13).",
+    "placeholders": { "agent": { "type": "String" }, "status": { "type": "String" } }
+  },
+  "ui_tray_need_you": "Needs you",
+  "@ui_tray_need_you": {
+    "description": "Menu bar panel: heading of the approvals and failed operations waiting for the user (m2.md M32)."
+  },
+  "ui_tray_more": "{count} more",
+  "@ui_tray_more": {
+    "description": "Menu bar panel: last row of Your turn when more tasks wait than are listed; opens the main window (M35).",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_tray_quota_label": "{name} quota",
+  "@ui_tray_quota_label": {
+    "description": "Menu bar panel: screen-reader name of the tightest quota bar, name is bucket and window such as Claude Code \u00b7 5 hours (M43).",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_tray_quota_used": "{percent}% used",
+  "@ui_tray_quota_used": {
+    "description": "Menu bar panel: screen-reader value of the tightest quota bar (M43).",
+    "placeholders": { "percent": { "type": "int" } }
+  },
+  "ui_task_priority_urgent": "Urgent",
+  "@ui_task_priority_urgent": { "description": "Task priority (m2.md B18, D135)."},
+  "ui_task_priority_high": "High",
+  "@ui_task_priority_high": { "description": "Task priority."},
+  "ui_task_priority_medium": "Medium",
+  "@ui_task_priority_medium": { "description": "Task priority."},
+  "ui_task_priority_low": "Low",
+  "@ui_task_priority_low": { "description": "Task priority."},
+  "ui_task_priority_none": "No priority",
+  "@ui_task_priority_none": { "description": "Task priority: none set (the default)."},
+  "ui_task_priority_named": "Priority {priority}",
+  "@ui_task_priority_named": { "description": "Spoken part of a board card's name (m2.md B18).", "placeholders": {"priority": {"type": "String"}}},
+  "ui_task_labels_named": "Labels {labels}",
+  "@ui_task_labels_named": { "description": "Spoken part of a board card's name; labels joined by the list separator (m2.md B19).", "placeholders": {"labels": {"type": "String"}}},
+  "ui_task_agents_named": "Agent {agents}",
+  "@ui_task_agents_named": { "description": "Spoken part of a board card's name; the task's agents (m2.md B15).", "placeholders": {"agents": {"type": "String"}}},
+  "ui_task_priority_label": "Priority",
+  "@ui_task_priority_label": { "description": "Task details: label of the priority row (m2.md B21)."},
+  "ui_task_labels_label": "Labels",
+  "@ui_task_labels_label": { "description": "Task details: label of the labels row (m2.md B21)."},
+  "ui_task_agent_label": "Agent",
+  "@ui_task_agent_label": { "description": "Task details: label of the agent row (m2.md B21)."},
+  "ui_task_agent_none": "No agent yet",
+  "@ui_task_agent_none": { "description": "Task details: agent row of a task without sessions (m2.md B14)."},
+  "ui_task_labels_empty": "No labels",
+  "@ui_task_labels_empty": { "description": "Task details: labels row of a task without labels."},
+  "ui_task_priority_failed": "Couldn't change the priority of “{title}”",
+  "@ui_task_priority_failed": { "description": "Board or task details: title of the error when setting the priority failed (m2.md B20).", "placeholders": {"title": {"type": "String"}}},
+  "ui_task_labels_failed": "Couldn't change the labels of “{title}”",
+  "@ui_task_labels_failed": { "description": "Board or task details: title of the error when setting the labels failed (m2.md B20a).", "placeholders": {"title": {"type": "String"}}},
+  "ui_board_toolbar": "Board filters",
+  "@ui_board_toolbar": { "description": "Board: accessible name of the toolbar (m2.md B22)."},
+  "ui_board_search": "Filter tasks by title",
+  "@ui_board_search": { "description": "Board: accessible name of the search field (m2.md B23)."},
+  "ui_board_search_placeholder": "Filter tasks",
+  "@ui_board_search_placeholder": { "description": "Board: placeholder of the search field."},
+  "ui_board_filter_priority": "Priority",
+  "@ui_board_filter_priority": { "description": "Board: priority filter button (m2.md B24)."},
+  "ui_board_filter_labels": "Labels",
+  "@ui_board_filter_labels": { "description": "Board: labels filter button (m2.md B25)."},
+  "ui_board_filter_agent": "Agent",
+  "@ui_board_filter_agent": { "description": "Board: agent filter button (m2.md B26)."},
+  "ui_board_no_agent": "No agent",
+  "@ui_board_no_agent": { "description": "Board: the agent filter option and swimlane for tasks without sessions (m2.md B26, B28)."},
+  "ui_board_group": "Group by",
+  "@ui_board_group": { "description": "Board: accessible name of the grouping control (m2.md B22)."},
+  "ui_board_group_status": "Status",
+  "@ui_board_group_status": { "description": "Board: group by status."},
+  "ui_board_group_agent": "Agent",
+  "@ui_board_group_agent": { "description": "Board: group by agent into swimlanes (m2.md B28)."},
+  "ui_board_clear_filters": "Clear filters",
+  "@ui_board_clear_filters": { "description": "Board: clears search and filters (m2.md B27)."},
+  "ui_board_no_matches": "No tasks match the filters",
+  "@ui_board_no_matches": { "description": "Board: shown when filters leave no cards (m2.md B27a)."},
+  "ui_board_lane_locked": "A task's agent comes from its sessions, so the card stays in its lane.",
+  "@ui_board_lane_locked": { "description": "Board: spoken when a card is moved toward another agent's lane (m2.md B30)."},
+  "ui_board_card_menu": "Task actions",
+  "@ui_board_card_menu": { "description": "Board: accessible name of a card's right-click menu (m2.md B20b)."},
+  "ui_board_menu_priority": "Priority…",
+  "@ui_board_menu_priority": { "description": "Board card menu: opens the priority picker."},
+  "ui_board_menu_labels": "Labels…",
+  "@ui_board_menu_labels": { "description": "Board card menu: opens the labels picker."},
+  "ui_board_menu_open": "Open",
+  "@ui_board_menu_open": { "description": "Board card menu: opens the task."},
+  "ui_labels_none": "No labels yet",
+  "@ui_labels_none": { "description": "Labels filter or picker without any labels (m2.md B25)."},
+  "ui_labels_filter": "Find or create a label",
+  "@ui_labels_filter": { "description": "Labels picker: accessible name of the text field (m2.md B20a)."},
+  "ui_labels_filter_placeholder": "Label name",
+  "@ui_labels_filter_placeholder": { "description": "Labels picker: placeholder of the text field."},
+  "ui_labels_create": "Create label “{name}”",
+  "@ui_labels_create": { "description": "Labels picker: last row when no label has the typed name (m2.md B20a).", "placeholders": {"name": {"type": "String"}}},
+  "ui_labels_edit_named": "Edit “{name}”",
+  "@ui_labels_edit_named": { "description": "Labels picker: button on a label row (m2.md B21a).", "placeholders": {"name": {"type": "String"}}},
+  "ui_labels_name": "Name",
+  "@ui_labels_name": { "description": "Label editor: name field."},
+  "ui_labels_tone": "Color",
+  "@ui_labels_tone": { "description": "Label editor: color choice."},
+  "ui_labels_tone_teal": "Teal",
+  "@ui_labels_tone_teal": { "description": "Label color."},
+  "ui_labels_tone_sky": "Sky",
+  "@ui_labels_tone_sky": { "description": "Label color."},
+  "ui_labels_tone_orchid": "Orchid",
+  "@ui_labels_tone_orchid": { "description": "Label color."},
+  "ui_labels_tone_violet": "Violet",
+  "@ui_labels_tone_violet": { "description": "Label color."},
+  "ui_labels_tone_rose": "Rose",
+  "@ui_labels_tone_rose": { "description": "Label color."},
+  "ui_labels_tone_amber": "Amber",
+  "@ui_labels_tone_amber": { "description": "Label color."},
+  "ui_labels_tone_green": "Green",
+  "@ui_labels_tone_green": { "description": "Label color."},
+  "ui_labels_save": "Save",
+  "@ui_labels_save": { "description": "Label editor: save."},
+  "ui_labels_back": "Back",
+  "@ui_labels_back": { "description": "Label editor: back to the list without saving."},
+  "ui_labels_delete": "Delete label",
+  "@ui_labels_delete": { "description": "Label editor: delete the label (m2.md B21a)."},
+  "ui_labels_delete_confirm": "{count, plural, =0 {Delete this label?} one {It comes off # task. Delete?} other {It comes off # tasks. Delete?}}",
+  "@ui_labels_delete_confirm": { "description": "Label editor: confirmation before deleting; count is how many tasks carry the label (m2.md B21a).", "placeholders": {"count": {"type": "int"}}},
+  "ui_labels_delete_yes": "Delete",
+  "@ui_labels_delete_yes": { "description": "Label editor: confirm deleting."},
+  "ui_label_save_failed": "Couldn't save the label",
+  "@ui_label_save_failed": { "description": "Label editor: title of the error when saving failed."},
+  "ui_label_delete_failed": "Couldn't delete the label",
+  "@ui_label_delete_failed": { "description": "Label editor: title of the error when deleting failed."},
+  "ui_task_archive": "Archive",
+  "@ui_task_archive": {"description": "Board card menu and the task page's More menu: archive the task (m2.md AR06, AR10)."},
+  "ui_task_unarchive": "Unarchive",
+  "@ui_task_unarchive": {"description": "The task page's More menu and the archived list: bring an archived task back (AR11, AR20)."},
+  "ui_task_delete": "Delete…",
+  "@ui_task_delete": {"description": "The task page's More menu and the archived list: opens the confirmation to delete an archived task for good (DL13)."},
+  "ui_task_archive_running": "The agent is running; stop it to archive",
+  "@ui_task_archive_running": {"description": "Second line of the disabled Archive item while a session runs (AR08)."},
+  "ui_task_archived_toast": "Archived “{title}”",
+  "@ui_task_archived_toast": {"description": "Toast after archiving one task; it has an Undo button (AR06).", "placeholders": {"title": {"type": "String"}}},
+  "ui_undo": "Undo",
+  "@ui_undo": {"description": "Toast action that reverses what was just done, such as archiving (AR07)."},
+  "ui_task_archive_failed": "Couldn't archive “{title}”",
+  "@ui_task_archive_failed": {"description": "Title of the error when archiving failed (AR09).", "placeholders": {"title": {"type": "String"}}},
+  "ui_task_unarchive_failed": "Couldn't unarchive “{title}”",
+  "@ui_task_unarchive_failed": {"description": "Title of the error when unarchiving (or Undo) failed (AR07, AR11).", "placeholders": {"title": {"type": "String"}}},
+  "ui_task_more": "More",
+  "@ui_task_more": {"description": "Task page header: button that opens the task's menu (archive, unarchive, delete; AR10)."},
+  "ui_board_column_menu": "{column} actions",
+  "@ui_board_column_menu": {"description": "Board: name of the menu button at the end of a column head (AR13).", "placeholders": {"column": {"type": "String"}}},
+  "ui_board_archive_done": "{count, plural, one {Archive all done (#)} other {Archive all done (#)}}",
+  "@ui_board_archive_done": {"description": "Done column menu: archive every done task shown under the current filters (AR13, AR15).", "placeholders": {"count": {"type": "int"}}},
+  "ui_board_archive_done_title": "{count, plural, one {Archive # done task?} other {Archive # done tasks?}}",
+  "@ui_board_archive_done_title": {"description": "Confirmation before archiving every done task (AR13).", "placeholders": {"count": {"type": "int"}}},
+  "ui_board_archive_done_text": "You can find them again in Archived.",
+  "@ui_board_archive_done_text": {"description": "Confirmation before archiving every done task: they can be brought back (AR13)."},
+  "ui_board_archived_all": "{count, plural, one {Archived # done task} other {Archived # done tasks}}",
+  "@ui_board_archived_all": {"description": "Toast after archiving every done task succeeded (AR13).", "placeholders": {"count": {"type": "int"}}},
+  "ui_board_archived_some": "{failed, plural, one {Archived {done}, # not archived} other {Archived {done}, # not archived}}",
+  "@ui_board_archived_some": {"description": "Toast after archiving every done task when some were refused; the first reason follows (AR14).", "placeholders": {"done": {"type": "int"}, "failed": {"type": "int"}}},
+  "ui_board_show_older": "{count, plural, one {Show # older} other {Show # older}}",
+  "@ui_board_show_older": {"description": "Done column: row under the cards that shows the done tasks last updated more than 7 days ago (AR01, AR02).", "placeholders": {"count": {"type": "int"}}},
+  "ui_board_hide_older": "Hide older",
+  "@ui_board_hide_older": {"description": "Done column: the same row once the older cards are shown (AR02)."},
+  "ui_tasks_archived_open": "Archived · {count}",
+  "@ui_tasks_archived_open": {"description": "Board toolbar: opens the archived tasks list (AR17).", "placeholders": {"count": {"type": "int"}}},
+  "ui_archived_title": "Archived",
+  "@ui_archived_title": {"description": "Breadcrumb and title of the archived tasks list (AR18)."},
+  "ui_archived_list": "Archived tasks",
+  "@ui_archived_list": {"description": "Accessible name of the archived tasks list (AR18)."},
+  "ui_archived_empty": "No archived tasks",
+  "@ui_archived_empty": {"description": "Archived list: empty state (AR21)."},
+  "ui_archived_back": "Back to the board",
+  "@ui_archived_back": {"description": "Archived list: empty state button (AR21)."},
+  "ui_archived_unarchive_named": "Unarchive “{title}”",
+  "@ui_archived_unarchive_named": {"description": "Archived list: accessible name of a row's Unarchive button (AR20, AR24).", "placeholders": {"title": {"type": "String"}}},
+  "ui_archived_delete_named": "Delete “{title}”…",
+  "@ui_archived_delete_named": {"description": "Archived list: accessible name of a row's Delete button (AR20, AR24).", "placeholders": {"title": {"type": "String"}}},
+  "ui_task_delete_title": "Delete “{title}”?",
+  "@ui_task_delete_title": {"description": "Title of the confirmation before deleting a task for good (DL13).", "placeholders": {"title": {"type": "String"}}},
+  "ui_task_delete_text": "This deletes the conversation, approvals and file history, and can't be undone. The agent's own session records are kept.",
+  "@ui_task_delete_text": {"description": "Body of the delete confirmation (DL13, DL11)."},
+  "ui_task_delete_yes": "Delete",
+  "@ui_task_delete_yes": {"description": "Delete confirmation: the red button (DL13)."},
+  "ui_task_deleted_toast": "Deleted “{title}”",
+  "@ui_task_deleted_toast": {"description": "Toast after deleting a task; no undo (DL14).", "placeholders": {"title": {"type": "String"}}},
+  "ui_task_delete_failed": "Couldn't delete the task",
+  "@ui_task_delete_failed": {"description": "Delete confirmation: title of the error when deleting failed (DL15)."},
+  "ui_toasts": "Notifications",
+  "@ui_toasts": {"description": "Accessible name of the toast region at the bottom of the window."},
+  "ui_toast_dismiss": "Dismiss notification",
+  "@ui_toast_dismiss": {"description": "Toast: close button."},
+  "ui_toast_success": "Done",
+  "@ui_toast_success": {"description": "Toast: spoken prefix of a success toast."},
+  "ui_toast_info": "Info",
+  "@ui_toast_info": {"description": "Toast: spoken prefix of an info toast."},
+  "ui_toast_warning": "Warning",
+  "@ui_toast_warning": {"description": "Toast: spoken prefix of a warning toast."},
+  "ui_toast_error": "Error",
+  "@ui_toast_error": {"description": "Toast: spoken prefix of an error toast."},
+  "ui_toast_loading": "In progress",
+  "@ui_toast_loading": {"description": "Toast: spoken prefix of a loading toast."},
+  "ui_archived_empty_detail": "Archived tasks show up here, where you can bring them back or delete them for good.",
+  "@ui_archived_empty_detail": {"description": "Archived list: empty state description (AR21)."}
+}

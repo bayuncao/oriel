@@ -1,0 +1,8 @@
+# 第二次啟動：以 session/resume 接回，答出那個詞。
+{"client":{"id":1,"method":"initialize","params":{"protocolVersion":1}}}
+{"agent":{"jsonrpc":"2.0","id":1,"result":{"protocolVersion":1,"agentCapabilities":{"sessionCapabilities":{"resume":{}}}}}}
+{"client":{"id":2,"method":"session/resume","params":{"sessionId":"<session>","cwd":"<cwd>"}}}
+{"agent":{"jsonrpc":"2.0","id":2,"result":{}}}
+{"client":{"id":3,"method":"session/prompt","params":{"sessionId":"<session>","prompt":[{"type":"text","text":"What code word did I ask you to remember? Reply with only the code word. Do not use any tools."}]}}}
+{"agent":{"jsonrpc":"2.0","method":"session/update","params":{"sessionId":"<session>","update":{"sessionUpdate":"agent_message_chunk","content":{"type":"text","text":"ORIEL-42"}}}}}
+{"agent":{"jsonrpc":"2.0","id":3,"result":{"stopReason":"end_turn"}}}

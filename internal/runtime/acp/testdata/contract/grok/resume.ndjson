@@ -1,0 +1,12 @@
+{"client":{"id":1,"method":"initialize","params":{"clientCapabilities":{"auth":{},"fs":{}},"protocolVersion":1}}}
+{"agent":{"id":1,"jsonrpc":"2.0","result":{"agentCapabilities":{"auth":{},"loadSession":true,"mcpCapabilities":{"http":true,"sse":true},"promptCapabilities":{"audio":false,"embeddedContext":true,"image":true},"sessionCapabilities":{"close":{},"list":{},"resume":{}}},"authMethods":[{"description":"XAI_API_KEY or api_key/env_key in config.toml","id":"xai.api_key","name":"xai.api_key"},{"description":"Sign in with Grok","id":"grok.com","name":"Grok"}],"protocolVersion":1}}}
+{"client":{"id":2,"method":"session/new","params":{"cwd":"<cwd>","mcpServers":[]}}}
+{"agent":{"id":2,"jsonrpc":"2.0","result":{"sessionId":"<session>"}}}
+{"client":{"id":3,"method":"session/prompt","params":{"prompt":[{"text":"Remember the code word ORIEL-42. Reply with only: OK. Do not use any tools.","type":"text"}],"sessionId":"<session>"}}}
+{"agent":{"jsonrpc":"2.0","method":"session/update","params":{"sessionId":"<session>","update":{"availableCommands":[],"sessionUpdate":"available_commands_update"}}}}
+{"agent":{"jsonrpc":"2.0","method":"session/update","params":{"sessionId":"<session>","update":{"availableCommands":[],"sessionUpdate":"available_commands_update"}}}}
+{"agent":{"jsonrpc":"2.0","method":"session/update","params":{"sessionId":"<session>","update":{"content":{"text":"I will remember the ","type":"text"},"sessionUpdate":"agent_thought_chunk"}}}}
+{"agent":{"jsonrpc":"2.0","method":"session/update","params":{"sessionId":"<session>","update":{"content":{"text":"code word ORIEL-42 and reply with OK.","type":"text"},"sessionUpdate":"agent_thought_chunk"}}}}
+{"agent":{"jsonrpc":"2.0","method":"session/update","params":{"sessionId":"<session>","update":{"content":{"text":"OK","type":"text"},"sessionUpdate":"agent_message_chunk"}}}}
+{"agent":{"jsonrpc":"2.0","method":"session/update","params":{"sessionId":"<session>","update":{"availableCommands":[],"sessionUpdate":"available_commands_update"}}}}
+{"agent":{"id":3,"jsonrpc":"2.0","result":{"stopReason":"end_turn"}}}

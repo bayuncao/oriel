@@ -1,0 +1,111 @@
+{
+  "Task": {
+    "id": "t-golden",
+    "title": "Beta",
+    "workspace": "w-1",
+    "status": "in_progress",
+    "archived": false,
+    "sessions": 3,
+    "running": 1,
+    "pendingAsks": 1,
+    "confirmations": 1,
+    "failed": 1,
+    "updatedAt": "2026-11-02T09:00:29Z",
+    "pinnedAt": "2026-11-02T09:00:19Z",
+    "priority": "none",
+    "labels": [],
+    "agents": [
+      {
+        "id": "test",
+        "name": "Test Agent"
+      }
+    ],
+    "version": 30
+  },
+  "Confirmations": [
+    {
+      "id": "c10",
+      "task": "t-golden",
+      "kind": "merge",
+      "requestedBy": "d9",
+      "requestedAt": "2026-11-02T09:00:00Z"
+    }
+  ],
+  "Search": [
+    {
+      "seq": 3,
+      "kind": "prompt",
+      "ref": "p3",
+      "text": "first"
+    },
+    {
+      "seq": 6,
+      "kind": "reply",
+      "ref": "m6",
+      "agent": "Test Agent",
+      "text": "hello"
+    },
+    {
+      "seq": 12,
+      "kind": "label",
+      "text": "Beta\nsecond"
+    },
+    {
+      "seq": 19,
+      "kind": "prompt",
+      "ref": "p20",
+      "text": "see"
+    },
+    {
+      "seq": 22,
+      "kind": "prompt",
+      "ref": "p23",
+      "text": "\n  fix it  \nmore"
+    },
+    {
+      "seq": 28,
+      "kind": "prompt",
+      "ref": "p29",
+      "text": "stop"
+    }
+  ],
+  "Unsearch": null,
+  "Files": [
+    {
+      "path": "/repo/a.go",
+      "outside": true,
+      "via": "attach",
+      "at": "2026-11-02T09:00:18Z",
+      "edited": true
+    },
+    {
+      "path": "/repo/b.go",
+      "outside": true,
+      "via": "attach",
+      "at": "2026-11-02T09:00:24Z",
+      "edited": true
+    }
+  ],
+  "Turns": [
+    {
+      "session": "s22",
+      "turn": "t24",
+      "result": "failed",
+      "text": "fix it",
+      "problem": {
+        "code": "proc.exited"
+      },
+      "endedAt": "2026-11-02T09:00:23Z"
+    },
+    {
+      "session": "s22",
+      "turn": "t27",
+      "result": "completed",
+      "text": "",
+      "attachment": "b.go",
+      "endedAt": "2026-11-02T09:00:26Z"
+    }
+  ],
+  "Links": null,
+  "Reported": null
+}
