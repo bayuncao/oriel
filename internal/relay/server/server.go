@@ -29,10 +29,16 @@ const (
 	defaultPing          = 30 * time.Second
 	pingTimeout          = 10 * time.Second
 	helloTimeout         = 10 * time.Second
-	// queueLen 是一條連線待寫的幀數上限：寫不出去的一方被斷開，不拖住
-	// 同房間的其他連線（RL06）。一幀最多 relay.MaxFrame（約 64 KiB），所
-	// 以一條連線最多積壓約 4 MiB，全部連線最多約 MaxConns × 4 MiB（RL15）。
+	// queueLen 是一條連線待寫的資料幀上限（RL15）。一幀最多
+	// relay.MaxFrame（約 64 KiB），所以一條連線最多積壓約 4 MiB 的資料，全
+	// 部連線最多約 MaxConns × 4 MiB。寫給 App 的幀超過它，斷開這台 App：
+	// Mac 不被讀得慢的 App 拖住（RL06）；App 轉給 Mac 的幀到了它，讓送的
+	// App 等（RL16）。
 	queueLen = 64
+	// controlLen 是 Mac 的寫入佇列另外留給控制幀（Open、Close）的位置：
+	// App 轉來的資料幀佔滿 queueLen 時，加入與離開照常通知 Mac（RL18）。
+	// 控制幀很小，連資料一起仍約 4 MiB。
+	controlLen = 64
 )
 
 // Options 是中繼服務的設定；零值可用。
@@ -78,6 +84,9 @@ type Server struct {
 	left func(relay.RoomID)
 	// freed 不為 nil 時，每條連線的名額還回去之後呼叫（RL13）。
 	freed func()
+	// waiting 不為 nil 時，App 轉給 Mac 的幀因 Mac 的佇列滿了而要等時呼
+	// 叫（RL16）；測試靠它知道佇列已滿。
+	waiting func()
 }
 
 type room struct {
@@ -234,9 +243,30 @@ func (s *Server) release(r *room) {
 // peer 是一條客戶端連線：讀在 ServeHTTP 的 goroutine，寫在 writeLoop。
 type peer struct {
 	ws     *websocket.Conn
-	out    chan []byte
+	out    chan outbound
 	ctx    context.Context
 	cancel context.CancelFunc
+	// credit 是 Mac 的佇列裡 App 轉來的資料幀的名額，寫出一則還一個
+	// （RL16）；App 的 peer 沒有它。
+	credit chan struct{}
+}
+
+// outbound 是寫入佇列裡的一則訊息。b 為 nil 表示寫完前面的之後斷開；
+// credit 表示它佔著一個 credit 名額。
+type outbound struct {
+	b      []byte
+	credit bool
+}
+
+// queue 依角色建立寫入佇列：Mac 的佇列讓轉來的資料幀等名額，並給控制
+// 幀留位置（RL16、RL18）；App 的佇列滿了就斷開它（RL06）。
+func (p *peer) queue(role relay.Role) {
+	if role == relay.RoleMac {
+		p.out = make(chan outbound, queueLen+controlLen)
+		p.credit = make(chan struct{}, queueLen)
+		return
+	}
+	p.out = make(chan outbound, queueLen)
 }
 
 // send 把幀排進寫入佇列。
@@ -246,10 +276,40 @@ func (p *peer) send(f relay.Frame) { p.enqueue(f.Marshal()) }
 // 表示寫完前面的之後斷開。
 func (p *peer) enqueue(b []byte) {
 	select {
-	case p.out <- b:
+	case p.out <- outbound{b: b}:
 	default:
 		p.cancel()
 	}
+}
+
+// forward 把 App 轉來的資料幀排進 Mac 的寫入佇列。佇列裡已有 queueLen
+// 則轉來的幀時，等 Mac 讀走一則再排：送得快的 App 等，Mac 不被斷開
+// （RL16）。等的時候不讀這台 App，收不到它的 Pong：Mac 久讀不動時，心跳
+// 逾時斷開它，不會一直等下去。waiting 不為 nil 時在開始等時呼叫。Mac 斷
+// 開時丟掉這則；from 結束時放棄並回 false。
+func (p *peer) forward(from context.Context, b []byte, waiting func()) bool {
+	select {
+	case p.credit <- struct{}{}:
+	default:
+		if waiting != nil {
+			waiting()
+		}
+		select {
+		case p.credit <- struct{}{}:
+		case <-p.ctx.Done():
+			return true
+		case <-from.Done():
+			return false
+		}
+	}
+	select {
+	case p.out <- outbound{b: b, credit: true}:
+	default:
+		// 控制幀把留給它們的位置也佔滿了：Mac 確實讀不動。
+		<-p.credit
+		p.cancel()
+	}
+	return true
 }
 
 // finish 送完已排的幀與 f 之後斷開。
@@ -263,12 +323,16 @@ func (p *peer) writeLoop() {
 		select {
 		case <-p.ctx.Done():
 			return
-		case b := <-p.out:
-			if b == nil {
+		case o := <-p.out:
+			if o.b == nil {
 				p.cancel()
 				return
 			}
-			if err := p.ws.Write(p.ctx, websocket.MessageBinary, b); err != nil {
+			err := p.ws.Write(p.ctx, websocket.MessageBinary, o.b)
+			if o.credit {
+				<-p.credit
+			}
+			if err != nil {
 				p.cancel()
 				return
 			}
@@ -335,7 +399,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	ws.SetReadLimit(relay.MaxFrame)
 	ctx, cancel := context.WithCancel(s.ctx)
-	p := &peer{ws: ws, out: make(chan []byte, queueLen), ctx: ctx, cancel: cancel}
+	p := &peer{ws: ws, ctx: ctx, cancel: cancel}
 	var loops sync.WaitGroup
 	defer func() {
 		cancel() // 先停寫入與心跳，再等它們，最後關連線
@@ -348,6 +412,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		s.reject(p, err)
 		return
 	}
+	p.queue(hello.Role)
 	loops.Go(p.writeLoop)
 	loops.Go(func() { p.pingLoop(s.opts.PingInterval) })
 
@@ -529,10 +594,17 @@ func (s *Server) serveApp(p *peer, h relay.Hello) {
 		s.mu.Lock()
 		// 送給舊世代的幀丟掉：那是 Mac 換連線之前的 Noise 會話，新的 Mac
 		// 會把它當成壞的握手。
+		var mac *peer
 		if r.mac != nil && f.Conn == r.gen {
-			r.mac.enqueue(relay.Reframe(b, relay.KindData, conn))
+			mac = r.mac
 		}
 		s.mu.Unlock()
+		// 不持鎖等：只有送給這個 Mac 的 App 幀等它讀，其他房間與 Mac 寫給
+		// App 的方向照常（RL16）。等的時候 Mac 換了連線，這則跟著舊的 Mac
+		// 丟掉。
+		if mac != nil && !mac.forward(p.ctx, relay.Reframe(b, relay.KindData, conn), s.waiting) {
+			break
+		}
 	}
 
 	s.mu.Lock()

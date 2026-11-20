@@ -3,8 +3,10 @@ package server
 import (
 	"bytes"
 	"context"
+	"encoding/binary"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http/httptest"
 	"strings"
@@ -435,8 +437,9 @@ func TestCancelledSendKeepsTheLink(t *testing.T) {
 	roundTrip(t, as, s, "after cancel")
 }
 
-func TestSlowStreamIsClosedAlone(t *testing.T) {
-	// Mac 不讀的那條連線收件匣滿了：只斷開它，Mac 的其他連線照常。
+func TestRL17SlowStreamIsClosedAlone(t *testing.T) {
+	// Mac 不讀的那條連線收件匣滿了：只斷開它，Mac 的其他連線照常。中繼
+	// 讓送得快的 App 等（RL16），不斷開 Mac，所以 257 則都送得到 Mac。
 	h := newHarness(t, Options{})
 	key := newKey(t)
 	m := h.mac(key)
@@ -460,6 +463,151 @@ func TestSlowStreamIsClosedAlone(t *testing.T) {
 		t.Fatalf("mac link closed: %v", m.Err())
 	}
 	roundTrip(t, other, so, "other app")
+}
+
+// maxFlood 是 fullMac 最多送的幀數：每則一個 MaxPayload，共約 256 MiB，
+// 遠大於 App → 中繼 → Mac 一路上的 socket 緩衝，Mac 不讀時中繼的 Mac 佇
+// 列一定在這之前滿。
+const maxFlood = 4096
+
+// floodEnd 是 fullMac 最後一則的序號，表示 App 送完了。
+const floodEnd = ^uint32(0)
+
+// withWaiting 在 App 轉給 Mac 的幀開始等 Mac 時通知 waiting。
+func withWaiting(waiting chan struct{}) func(*Server) {
+	return func(s *Server) {
+		s.waiting = func() {
+			select {
+			case waiting <- struct{}{}:
+			default:
+			}
+		}
+	}
+}
+
+// fullMac 讓房間裡的一台 App 不停送幀給一個還不讀的 Mac，等到中繼的 Mac
+// 佇列滿了、App 轉來的幀開始等（RL16）；之後 App 送完手上那則就以
+// floodEnd 收尾。回傳 Mac 的原始連線，與 App 送完時收到結果的通道。
+func fullMac(t *testing.T, h *harness, key relay.RoomKey, waiting <-chan struct{}) (*websocket.Conn, <-chan error) {
+	t.Helper()
+	mac := h.raw(relay.Hello{V: relay.Version, Role: relay.RoleMac, Key: key.String()})
+	mac.SetReadLimit(relay.MaxFrame)
+	s := waitOnline(t, h.app(key.Room()), true)
+	stop := make(chan struct{})
+	sent := make(chan error, 1)
+	go func() {
+		msg := make([]byte, relay.MaxPayload)
+		for i := range uint32(maxFlood) {
+			select {
+			case <-stop:
+				i = floodEnd
+			default:
+			}
+			binary.BigEndian.PutUint32(msg, i)
+			if err := s.Send(context.Background(), msg); err != nil {
+				sent <- fmt.Errorf("send %d: %w", i, err)
+				return
+			}
+			if i == floodEnd {
+				sent <- nil
+				return
+			}
+		}
+		sent <- fmt.Errorf("sent %d frames without waiting for the Mac", maxFlood)
+	}()
+	select {
+	case <-waiting:
+	case err := <-sent:
+		t.Fatal(err)
+	case <-ctx(t).Done():
+		t.Fatal("app frames never waited for the Mac")
+	}
+	close(stop)
+	return mac, sent
+}
+
+// drain 讀到 floodEnd 為止，確認資料幀依序來自 conn，回傳期間的控制幀。
+// 中繼斷開 Mac 時失敗。
+func drain(t *testing.T, mac *websocket.Conn, conn uint32) []relay.Frame {
+	t.Helper()
+	var control []relay.Frame
+	for next := uint32(0); ; {
+		f, err := readFrame(t, mac)
+		if err != nil {
+			t.Fatalf("mac disconnected after %d frames: %v", next, err)
+		}
+		if f.Kind != relay.KindData {
+			control = append(control, f)
+			continue
+		}
+		seq := binary.BigEndian.Uint32(f.Payload)
+		if seq == floodEnd && f.Conn == conn {
+			if next <= queueLen {
+				t.Fatalf("only %d frames before the end, want more than the queue holds", next)
+			}
+			return control
+		}
+		if f.Conn != conn || seq != next {
+			t.Fatalf("frame %d: conn %d seq %d, want conn %d seq %d", next, f.Conn, seq, conn, next)
+		}
+		next++
+	}
+}
+
+func TestRL16FastAppWaitsForTheMac(t *testing.T) {
+	waiting := make(chan struct{}, 1)
+	h := newHarness(t, Options{}, withWaiting(waiting))
+	key := newKey(t)
+	mac, sent := fullMac(t, h, key, waiting)
+
+	// 佇列滿著，另一個房間照常。
+	other := newKey(t)
+	m := h.mac(other)
+	roundTrip(t, waitOnline(t, h.app(other.Room()), true), accept(t, m), "other room")
+
+	// Mac 開始讀：沒被斷開，App 送的全部依序送到。
+	control := drain(t, mac, 1)
+	if err := <-sent; err != nil {
+		t.Fatal(err)
+	}
+	want := []relay.Frame{{Kind: relay.KindReady}, {Kind: relay.KindOpen, Conn: 1}}
+	if !equalFrames(control, want) {
+		t.Fatalf("control frames %v, want %v", control, want)
+	}
+}
+
+func TestRL18JoinAndLeaveReachAFullMac(t *testing.T) {
+	waiting := make(chan struct{}, 1)
+	h := newHarness(t, Options{}, withWaiting(waiting))
+	key := newKey(t)
+	mac, sent := fullMac(t, h, key, waiting)
+
+	// Mac 的資料幀佔滿佇列時，另一台 App 加入又離開。
+	b := h.app(key.Room())
+	waitOnline(t, b, true)
+	b.Close()
+	h.waitLeft()
+
+	control := drain(t, mac, 1)
+	if err := <-sent; err != nil {
+		t.Fatal(err)
+	}
+	want := []relay.Frame{{Kind: relay.KindReady}, {Kind: relay.KindOpen, Conn: 1}, {Kind: relay.KindOpen, Conn: 2}, {Kind: relay.KindClose, Conn: 2}}
+	if !equalFrames(control, want) {
+		t.Fatalf("control frames %v, want %v", control, want)
+	}
+}
+
+func equalFrames(got, want []relay.Frame) bool {
+	if len(got) != len(want) {
+		return false
+	}
+	for i := range got {
+		if got[i].Kind != want[i].Kind || got[i].Conn != want[i].Conn || !bytes.Equal(got[i].Payload, want[i].Payload) {
+			return false
+		}
+	}
+	return true
 }
 
 func TestHandshakeRefusedThroughRelay(t *testing.T) {

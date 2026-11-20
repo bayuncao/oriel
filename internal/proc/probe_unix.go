@@ -23,24 +23,37 @@ func isolate(cmd *exec.Cmd) {
 
 // terminate 結束 cmd 的整個群組：先送 SIGTERM 讓程式自行收尾，
 // done（cmd.Wait 的結果）在 grace 內沒有回報就送 SIGKILL。
-// 群組領頭結束後仍送一次 SIGKILL，不留下忽略 SIGTERM 的子孫。
+// 群組領頭結束後以 reapGroup 收掉留下的子孫，包括忽略 SIGTERM 的。
 func terminate(cmd *exec.Cmd, done <-chan error, grace time.Duration) {
 	signalGroup(cmd, syscall.SIGTERM)
 	t := time.NewTimer(grace)
 	defer t.Stop()
 	select {
 	case <-done:
-		killGroup(cmd)
 	case <-t.C:
-		killGroup(cmd)
+		signalGroup(cmd, syscall.SIGKILL)
 		<-done
 	}
+	reapGroup(cmd)
 }
 
-// killGroup 也用在領頭已被回收之後：群組只要還有成員，ID 就不會
-// 被重用；沒有成員時訊號只會得到 ESRCH（除非這個 ID 恰好在其間
-// 被新的群組取得，機率可忽略）。
-func killGroup(cmd *exec.Cmd) { signalGroup(cmd, syscall.SIGKILL) }
+// reapGroup 在領頭已被回收之後結束群組裡留下的子孫：送 SIGKILL，直到
+// 群組沒有成員（ESRCH）。一次 SIGKILL 會漏掉當時正在 fork 出來的行程
+// （macOS 上它這時還不在群組裡），它在父行程從 fork 返回之後才在群組
+// 裡，所以隔 reapInterval 再送；群組空了就沒有誰能再 fork 出新成員。
+// 群組只要還有成員，ID 就不會被重用。最多送 reapTries 次：殺不掉的
+// 行程（卡在核心裡）不讓呼叫方一直等。
+func reapGroup(cmd *exec.Cmd) {
+	if cmd.Process == nil {
+		return
+	}
+	for range reapTries {
+		if syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL) != nil {
+			return
+		}
+		time.Sleep(reapInterval)
+	}
+}
 
 func signalGroup(cmd *exec.Cmd, sig syscall.Signal) {
 	if cmd.Process != nil {

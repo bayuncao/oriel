@@ -110,7 +110,7 @@ func (p *Process) watch(runnerStop <-chan struct{}, grace time.Duration) {
 		p.terminate(exited, grace)
 	}
 	<-exited
-	killGroup(p.cmd) // 群組裡留下的子孫
+	reapGroup(p.cmd) // 群組裡留下的子孫
 	p.stdin.Close()
 	p.exit = agentExit(p.cmd, waitErr)
 	close(p.done)

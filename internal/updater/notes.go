@@ -39,14 +39,14 @@ type NotesOptions struct {
 	Enabled func() bool
 	// Fetch 取 version 的 release-notes.json 的內容。Enabled 為真時必填。
 	Fetch func(ctx context.Context, version string) ([]byte, error)
-	// Timeout 是一次拉取的時限；0 → 10 秒（RN05）。
+	// Timeout 是一次拉取的時限；0 → 40 秒（RN05）：夠先等 GitHub、再等備用源各 15 秒（US08）。
 	Timeout time.Duration
 	// Logger 記錄拉取與記錄檔的失敗；nil → 記錄時的 slog.Default()。
 	Logger *slog.Logger
 }
 
 // notesTimeout 是一次拉取的預設時限。
-const notesTimeout = 10 * time.Second
+const notesTimeout = 40 * time.Second
 
 // MaxReleaseNotes 是 release-notes.json 最多多少位元組；更大的不顯示。
 const MaxReleaseNotes = 1 << 20

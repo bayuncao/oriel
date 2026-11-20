@@ -19,6 +19,10 @@ const (
 	defaultGrace = 2 * time.Second
 	// waitDelay 是程式結束後等子孫關閉輸出的時間，之後 Wait 不再等。
 	waitDelay = time.Second
+	// reapTries 與 reapInterval 是 reapGroup 送 SIGKILL 的次數上限與間隔：
+	// 最多約 100 毫秒。
+	reapTries    = 20
+	reapInterval = 5 * time.Millisecond
 )
 
 // Probe 是為得知某事而執行的短命程式：shell 的
@@ -132,7 +136,7 @@ func (r *Runner) stopLocked() chan struct{} {
 
 // Close 終止所有仍在執行的探測（它們回報 ErrClosed）、拒絕新的
 // 探測，並等每個 Run 都回傳後才回傳：此時每個群組都已收到 SIGKILL。
-// 最久約為 Grace 加 1 秒（等子孫關閉輸出）。
+// 最久約為 Grace 加 1.1 秒（等子孫關閉輸出，再收掉群組）。
 func (r *Runner) Close() {
 	r.mu.Lock()
 	if !r.closed {
@@ -146,7 +150,7 @@ func (r *Runner) Close() {
 // exited 是程式自行結束後的結果。群組裡留下的子孫是已結束探測的
 // 孤兒，一併結束。
 func exited(cmd *exec.Cmd, stdout *head, stderr *tail, err error) Result {
-	killGroup(cmd)
+	reapGroup(cmd)
 	return result(cmd, stdout, stderr, exitErr(cmd, err))
 }
 
