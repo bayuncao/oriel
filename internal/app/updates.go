@@ -17,9 +17,11 @@ import (
 // feeds 是各渠道取更新的地方，按應用名稱（mygo.config.ts 的 name）分（D151）。
 // Repo 須與 mygo.config.ts 裡該渠道的 updates.github 相同；本機構建與發布
 // 構建同名，但沒有更新源（mygo.Updater.Enabled 為否），不檢查也不拉取
-// （US10、RN08）。正式版的 Mirror 是香港的備用源（US02），測試渠道沒有。
+// （US10、RN08）。正式版的 Mirror 是香港的備用源（US02）：阿里雲 OSS 的
+// oriel 桶（香港），前面是同名域名的 CDN，由 scripts/publish-mirror.sh 上
+// 傳；測試渠道沒有。
 var feeds = map[string]updater.FeedOptions{
-	"OrielHub":         {Repo: "bayuncao/oriel"},
+	"OrielHub":         {Repo: "bayuncao/oriel", Mirror: "https://updates.oriel.today"},
 	"OrielHub Staging": {Repo: "Kynos-AI/OrielHub-Releases-Staging"},
 }
 
