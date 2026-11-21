@@ -3,20 +3,39 @@ package mygoipc
 import (
 	"context"
 	"log/slog"
+	"sync/atomic"
 
 	"github.com/egoist/mygo"
 
 	"github.com/bayuncao/oriel/internal/hub"
 	"github.com/bayuncao/oriel/internal/task"
+	"github.com/bayuncao/oriel/internal/transport"
 	"github.com/bayuncao/oriel/internal/transport/remote"
 )
 
 // Remote 是 設置 › 遠程 的 IPC 服務（BindAs "Remote"，D145，remote.md DV）：開關、中繼
-// 地址、連線狀態、配對連結與設備列表，都轉給 remote.Control。
-type Remote struct{ late[*remote.Control] }
+// 地址、連線狀態、配對連結與設備列表，都轉給 remote.Control。每個渠道都綁它，所以生成
+// 的 src/mygo.ts 不隨渠道而變（DV19）；沒有遠程的構建由 DisableRemote 停用它。
+type Remote struct {
+	late[*remote.Control]
+	off atomic.Bool
+}
 
 // ConnectRemote 給 Remote 服務接上後端（D61：包級函式，不是頁面可呼叫的方法）。
 func ConnectRemote(s *Remote, c *remote.Control, log *slog.Logger) { s.connect(c, log) }
+
+// DisableRemote 標明這個構建沒有遠程（正式版，D149）：之後每個方法立即回
+// mygoipc.remote_unavailable，不回 mygoipc.not_ready，頁面不會當作還在啟動而一直重試（DV18）。
+func DisableRemote(s *Remote) { s.off.Store(true) }
+
+// get 是 late.get，停用時改回 mygoipc.remote_unavailable。
+func (s *Remote) get() (*remote.Control, *slog.Logger, *transport.Error) {
+	if s.off.Load() {
+		e, _ := transport.Wire(errRemoteUnavailable)
+		return nil, nil, e
+	}
+	return s.late.get()
+}
 
 // Status 回目前的開關、中繼地址與連線狀態。
 func (s *Remote) Status() (remote.Status, error) {

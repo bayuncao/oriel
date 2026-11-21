@@ -10,13 +10,17 @@ const (
 	CodeNotReady Code = "mygoipc.not_ready"
 	// CodeUnsupportedLink：Desktop.OpenLink 只開 http、https 與 mailto（m2.md V10）。
 	CodeUnsupportedLink Code = "mygoipc.unsupported_link"
+	// CodeRemoteUnavailable：這個構建沒有遠程（正式版，D149，remote.md DV18），Remote 的方法立即回它。
+	CodeRemoteUnavailable Code = "mygoipc.remote_unavailable"
 )
 
 // Params 回傳代碼的參數名。
 func (c Code) Params() []string { return nil }
 
 // Codes 是本套件的所有代碼。
-func Codes() []Code { return []Code{CodeNeedsProfile, CodeNotReady, CodeUnsupportedLink} }
+func Codes() []Code {
+	return []Code{CodeNeedsProfile, CodeNotReady, CodeUnsupportedLink, CodeRemoteUnavailable}
+}
 
 // codeError 是帶代碼的錯誤（無參數）。
 type codeError struct{ code Code }
@@ -26,6 +30,7 @@ func (e codeError) ErrorCode() string              { return string(e.code) }
 func (e codeError) ErrorParams() map[string]string { return nil }
 
 var (
-	errNotReady        = codeError{CodeNotReady}
-	errUnsupportedLink = codeError{CodeUnsupportedLink}
+	errNotReady          = codeError{CodeNotReady}
+	errUnsupportedLink   = codeError{CodeUnsupportedLink}
+	errRemoteUnavailable = codeError{CodeRemoteUnavailable}
 )

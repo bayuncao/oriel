@@ -1816,6 +1816,22 @@ func (msgs Messages) MygoipcUnsupportedLink() string {
 	return Catalog.Format(msgs.locale, "mygoipc_unsupported_link", nil)
 }
 
+// MygoipcRemoteUnavailable says "This build has no remote control"
+// in the language the app shows.
+//
+// A page called the Remote service in a build without remote control, such
+// as production (D149, remote.md DV18).
+func MygoipcRemoteUnavailable() string { return In(i18n.Locale()).MygoipcRemoteUnavailable() }
+
+// MygoipcRemoteUnavailable says "This build has no remote control"
+// in the language of msgs.
+//
+// A page called the Remote service in a build without remote control, such
+// as production (D149, remote.md DV18).
+func (msgs Messages) MygoipcRemoteUnavailable() string {
+	return Catalog.Format(msgs.locale, "mygoipc_remote_unavailable", nil)
+}
+
 // AppStartFailed says "OrielHub could not start: {detail}"
 // in the language the app shows.
 //

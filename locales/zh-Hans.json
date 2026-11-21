@@ -285,6 +285,10 @@
   "@mygoipc_unsupported_link": {
     "description": "A link in the conversation uses a scheme other than http, https or mailto (m2.md V10)."
   },
+  "mygoipc_remote_unavailable": "这个版本没有远程操控",
+  "@mygoipc_remote_unavailable": {
+    "description": "A page called the Remote service in a build without remote control, such as production (D149, remote.md DV18)."
+  },
   "app_start_failed": "OrielHub 无法启动：{detail}",
   "@app_start_failed": {
     "description": "The application could not start.",

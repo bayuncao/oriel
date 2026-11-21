@@ -293,6 +293,47 @@ func TestNotReady(t *testing.T) {
 	}
 }
 
+// DV18：沒有遠程的構建（正式版）停用 Remote，每個方法立即回 mygoipc.remote_unavailable；
+// 沒停用、只是還沒接上時仍是 mygoipc.not_ready（頁面稍後再試）。
+func TestRemoteDisabled(t *testing.T) {
+	calls := func(s *Remote) map[string]func() error {
+		return map[string]func() error{
+			"Status":       func() error { _, err := s.Status(); return err },
+			"Watch":        func() error { return s.Watch(ctxb(), nil) },
+			"SetOn":        func() error { return s.SetOn(true) },
+			"SetRelay":     func() error { return s.SetRelay("wss://relay.example") },
+			"Retry":        func() error { return s.Retry() },
+			"Offer":        func() error { _, err := s.Offer(); return err },
+			"CancelOffer":  func() error { return s.CancelOffer() },
+			"Reset":        func() error { return s.Reset(ctxb()) },
+			"WatchDevices": func() error { return s.WatchDevices(ctxb(), nil) },
+			"Rename":       func() error { _, err := s.Rename(ctxb(), "d", "Phone"); return err },
+			"Revoke":       func() error { return s.Revoke(ctxb(), "d") },
+		}
+	}
+	for _, tc := range []struct {
+		name    string
+		disable bool
+		want    Code
+	}{
+		{name: "not connected yet", want: CodeNotReady},
+		{name: "build without remote", disable: true, want: CodeRemoteUnavailable},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			s := &Remote{}
+			if tc.disable {
+				DisableRemote(s)
+			}
+			for name, call := range calls(s) {
+				var we *transport.Error
+				if err := call(); !errors.As(err, &we) || we.Code != string(tc.want) {
+					t.Errorf("Remote.%s: %v, want %s", name, err, tc.want)
+				}
+			}
+		})
+	}
+}
+
 // C1：綁定型別的導出方法就是頁面 API（D61），方法集用白名單鎖住。
 func TestBoundMethodsArePageAPI(t *testing.T) {
 	want := map[reflect.Type][]string{

@@ -154,9 +154,11 @@ func main() {
 	mygo.BindAs("Usage", usageSvc)
 	mygo.BindAs("Providers", providersSvc)
 	mygo.BindAs("Keys", keysSvc)
-	// 正式版先沒有遠程（D149）：不綁 Remote，頁面呼叫它直接失敗，不會當作“還在啟動”一直重試。
-	if app.RemoteAvailable() {
-		mygo.BindAs("Remote", remoteSvc)
+	// 每個渠道都綁 Remote，src/mygo.ts 才不隨渠道而變，前端在正式版照樣編譯（DV19）。正式版先沒有
+	// 遠程（D149）：停用它，頁面呼叫它立即失敗，不會當作“還在啟動”一直重試（DV18）。
+	mygo.BindAs("Remote", remoteSvc)
+	if !app.RemoteAvailable() {
+		mygoipc.DisableRemote(remoteSvc)
 	}
 	// 自動更新（ADR-27、D76）：菜單欄面板的更新按鈕經 Desktop 讀它。
 	updates := app.NewUpdater()
