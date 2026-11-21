@@ -15,6 +15,7 @@ import (
 	"github.com/bayuncao/oriel/internal/provider"
 	"github.com/bayuncao/oriel/internal/relay"
 	"github.com/bayuncao/oriel/internal/runtime/acp"
+	"github.com/bayuncao/oriel/internal/runtime/claude"
 	"github.com/bayuncao/oriel/internal/store"
 	"github.com/bayuncao/oriel/internal/task"
 	"github.com/bayuncao/oriel/internal/transport"
@@ -38,6 +39,9 @@ func errorCodes() []errorCode {
 		out = append(out, errorCode{string(c), c.Params()})
 	}
 	for _, c := range acp.Codes() {
+		out = append(out, errorCode{string(c), c.Params()})
+	}
+	for _, c := range claude.Codes() {
 		out = append(out, errorCode{string(c), c.Params()})
 	}
 	for _, c := range proc.Codes() {

@@ -289,6 +289,75 @@
   "@mygoipc_remote_unavailable": {
     "description": "A page called the Remote service in a build without remote control, such as production (D149, remote.md DV18)."
   },
+  "claude_start_timed_out": "Claude Code 没有按时启动",
+  "@claude_start_timed_out": {
+    "description": "Claude Code did not answer initialize within the start time limit (m3.md CL04)."
+  },
+  "claude_permission_mode": "Claude Code 以 {mode} 权限模式启动，工具不会经 OrielHub 审批",
+  "@claude_permission_mode": {
+    "description": "Claude Code reported a starting permission mode other than the one that asks for every tool (m3.md CL01).",
+    "placeholders": {
+      "mode": {
+        "type": "String"
+      }
+    }
+  },
+  "claude_request_failed": "Claude Code 拒绝了 {request}：{detail}",
+  "@claude_request_failed": {
+    "description": "Claude Code answered a control request with an error.",
+    "placeholders": {
+      "request": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "claude_turn_failed": "这一轮失败了：{detail}",
+  "@claude_turn_failed": {
+    "description": "Claude Code ended the turn with an error, such as not being logged in (m3.md CL19).",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "claude_max_turns": "Claude Code 达到了轮数上限",
+  "@claude_max_turns": {
+    "description": "The turn ended with error_max_turns (m3.md CL19)."
+  },
+  "claude_execution_error": "Claude Code 出错停止：{detail}",
+  "@claude_execution_error": {
+    "description": "The turn ended with error_during_execution (m3.md CL19).",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "claude_attachment_unsupported": "暂时还不能把 {name} 附给 Claude Code",
+  "@claude_attachment_unsupported": {
+    "description": "A prompt carried an attachment Claude Code cannot be given yet (m3.md CL12).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "claude_protocol_error": "Claude Code 违反了协议：{detail}",
+  "@claude_protocol_error": {
+    "description": "Claude Code wrote something OrielHub cannot read, or kept running with stdout closed (m3.md CL23).",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "claude_set_model_timed_out": "Claude Code 没有按时切换模型",
+  "@claude_set_model_timed_out": {
+    "description": "Claude Code did not answer set_model within the time limit (m3.md CL07)."
+  },
   "app_start_failed": "OrielHub 无法启动：{detail}",
   "@app_start_failed": {
     "description": "The application could not start.",

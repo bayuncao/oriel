@@ -320,6 +320,31 @@ func TestProbeFailureDoesNotBlock(t *testing.T) {
 	}
 }
 
+// m3.md CL50：原生協議的 agent（Claude Code）的能力取自 Definition，不探測。
+func TestLaunchNativeUsesDefinitionCaps(t *testing.T) {
+	home, bin := fakeHome(t)
+	writeExe(t, bin, "grok", fakeGrok("1.0.70", filepath.Join(t.TempDir(), "log"), false)) // launchApp 等它就緒
+	if err := os.MkdirAll(filepath.Join(home, ".claude", "local"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	writeExe(t, filepath.Join(home, ".claude", "local"), "claude",
+		"#!/bin/sh\ncase \"$1\" in\n--version) echo '2.1.311 (Claude Code)';;\nauth) echo '{\"loggedIn\": true}';;\nesac\n")
+	a := launchApp(t, home)
+	waitReady(t, a, "claude")
+	probe := func(context.Context, proc.Command) (task.Capabilities, error) {
+		t.Error("probed a native-protocol agent")
+		return task.Capabilities{}, nil
+	}
+	l := newLauncher(a.disc, catalog(a.agents.log), probe, a.agents.log)
+	snap, err := l.Launch(ctxb2(), "claude")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if snap.Protocol != task.ProtocolClaude || snap.Caps != (task.Capabilities{Resume: true}) {
+		t.Fatalf("launch %+v, want the claude protocol with Caps{Resume: true}", snap)
+	}
+}
+
 // P03、P04、P09、I01：不能啟動時不建 Task、不登記 Workspace；沒選 agent 照舊。
 func TestCreateTaskWithAgentRejects(t *testing.T) {
 	home, bin := fakeHome(t)

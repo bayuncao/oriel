@@ -1832,6 +1832,148 @@ func (msgs Messages) MygoipcRemoteUnavailable() string {
 	return Catalog.Format(msgs.locale, "mygoipc_remote_unavailable", nil)
 }
 
+// ClaudeStartTimedOut says "Claude Code did not start in time"
+// in the language the app shows.
+//
+// Claude Code did not answer initialize within the start time limit (m3.md
+// CL04).
+func ClaudeStartTimedOut() string { return In(i18n.Locale()).ClaudeStartTimedOut() }
+
+// ClaudeStartTimedOut says "Claude Code did not start in time"
+// in the language of msgs.
+//
+// Claude Code did not answer initialize within the start time limit (m3.md
+// CL04).
+func (msgs Messages) ClaudeStartTimedOut() string {
+	return Catalog.Format(msgs.locale, "claude_start_timed_out", nil)
+}
+
+// ClaudePermissionMode says "Claude Code started in permission mode {mode}, so its tools would not ask OrielHub"
+// in the language the app shows.
+//
+// Claude Code reported a starting permission mode other than the one that
+// asks for every tool (m3.md CL01).
+func ClaudePermissionMode(mode string) string { return In(i18n.Locale()).ClaudePermissionMode(mode) }
+
+// ClaudePermissionMode says "Claude Code started in permission mode {mode}, so its tools would not ask OrielHub"
+// in the language of msgs.
+//
+// Claude Code reported a starting permission mode other than the one that
+// asks for every tool (m3.md CL01).
+func (msgs Messages) ClaudePermissionMode(mode string) string {
+	return Catalog.Format(msgs.locale, "claude_permission_mode", map[string]any{"mode": mode})
+}
+
+// ClaudeRequestFailed says "Claude Code refused {request}: {detail}"
+// in the language the app shows.
+//
+// Claude Code answered a control request with an error.
+func ClaudeRequestFailed(request string, detail string) string {
+	return In(i18n.Locale()).ClaudeRequestFailed(request, detail)
+}
+
+// ClaudeRequestFailed says "Claude Code refused {request}: {detail}"
+// in the language of msgs.
+//
+// Claude Code answered a control request with an error.
+func (msgs Messages) ClaudeRequestFailed(request string, detail string) string {
+	return Catalog.Format(msgs.locale, "claude_request_failed", map[string]any{"request": request, "detail": detail})
+}
+
+// ClaudeTurnFailed says "The turn failed: {detail}"
+// in the language the app shows.
+//
+// Claude Code ended the turn with an error, such as not being logged in
+// (m3.md CL19).
+func ClaudeTurnFailed(detail string) string { return In(i18n.Locale()).ClaudeTurnFailed(detail) }
+
+// ClaudeTurnFailed says "The turn failed: {detail}"
+// in the language of msgs.
+//
+// Claude Code ended the turn with an error, such as not being logged in
+// (m3.md CL19).
+func (msgs Messages) ClaudeTurnFailed(detail string) string {
+	return Catalog.Format(msgs.locale, "claude_turn_failed", map[string]any{"detail": detail})
+}
+
+// ClaudeMaxTurns says "Claude Code reached its turn limit"
+// in the language the app shows.
+//
+// The turn ended with error_max_turns (m3.md CL19).
+func ClaudeMaxTurns() string { return In(i18n.Locale()).ClaudeMaxTurns() }
+
+// ClaudeMaxTurns says "Claude Code reached its turn limit"
+// in the language of msgs.
+//
+// The turn ended with error_max_turns (m3.md CL19).
+func (msgs Messages) ClaudeMaxTurns() string {
+	return Catalog.Format(msgs.locale, "claude_max_turns", nil)
+}
+
+// ClaudeExecutionError says "Claude Code stopped with an error: {detail}"
+// in the language the app shows.
+//
+// The turn ended with error_during_execution (m3.md CL19).
+func ClaudeExecutionError(detail string) string {
+	return In(i18n.Locale()).ClaudeExecutionError(detail)
+}
+
+// ClaudeExecutionError says "Claude Code stopped with an error: {detail}"
+// in the language of msgs.
+//
+// The turn ended with error_during_execution (m3.md CL19).
+func (msgs Messages) ClaudeExecutionError(detail string) string {
+	return Catalog.Format(msgs.locale, "claude_execution_error", map[string]any{"detail": detail})
+}
+
+// ClaudeAttachmentUnsupported says "{name} cannot be attached to Claude Code yet"
+// in the language the app shows.
+//
+// A prompt carried an attachment Claude Code cannot be given yet (m3.md
+// CL12).
+func ClaudeAttachmentUnsupported(name string) string {
+	return In(i18n.Locale()).ClaudeAttachmentUnsupported(name)
+}
+
+// ClaudeAttachmentUnsupported says "{name} cannot be attached to Claude Code yet"
+// in the language of msgs.
+//
+// A prompt carried an attachment Claude Code cannot be given yet (m3.md
+// CL12).
+func (msgs Messages) ClaudeAttachmentUnsupported(name string) string {
+	return Catalog.Format(msgs.locale, "claude_attachment_unsupported", map[string]any{"name": name})
+}
+
+// ClaudeProtocolError says "Claude Code broke the protocol: {detail}"
+// in the language the app shows.
+//
+// Claude Code wrote something OrielHub cannot read, or kept running with
+// stdout closed (m3.md CL23).
+func ClaudeProtocolError(detail string) string { return In(i18n.Locale()).ClaudeProtocolError(detail) }
+
+// ClaudeProtocolError says "Claude Code broke the protocol: {detail}"
+// in the language of msgs.
+//
+// Claude Code wrote something OrielHub cannot read, or kept running with
+// stdout closed (m3.md CL23).
+func (msgs Messages) ClaudeProtocolError(detail string) string {
+	return Catalog.Format(msgs.locale, "claude_protocol_error", map[string]any{"detail": detail})
+}
+
+// ClaudeSetModelTimedOut says "Claude Code did not switch models in time"
+// in the language the app shows.
+//
+// Claude Code did not answer set_model within the time limit (m3.md CL07).
+func ClaudeSetModelTimedOut() string { return In(i18n.Locale()).ClaudeSetModelTimedOut() }
+
+// ClaudeSetModelTimedOut says "Claude Code did not switch models in time"
+// in the language of msgs.
+//
+// Claude Code did not answer set_model within the time limit (m3.md CL07).
+func (msgs Messages) ClaudeSetModelTimedOut() string {
+	return Catalog.Format(msgs.locale, "claude_set_model_timed_out", nil)
+}
+
 // AppStartFailed says "OrielHub could not start: {detail}"
 // in the language the app shows.
 //

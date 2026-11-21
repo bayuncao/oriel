@@ -67,7 +67,8 @@ func (l *launcher) Launch(ctx context.Context, id task.AgentID) (task.LaunchSnap
 	if err := inst.Unready(); err != nil {
 		return task.LaunchSnapshot{}, err
 	}
-	var caps task.Capabilities
+	// 原生協議的能力寫在 Definition 裡；ACP agent 的要對本機裝的版本探測（D98）。
+	caps := def.Caps
 	if def.Protocol == task.ProtocolACP {
 		if caps, err = l.capabilities(ctx, def, inst); err != nil {
 			return task.LaunchSnapshot{}, err

@@ -7,9 +7,11 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"os/signal"
 	"strconv"
 	"strings"
 	"sync"
+	"syscall"
 )
 
 // 測試二進位以這些環境變數重啟自己時扮演 agent（K02）或錄製代理（K04）。
@@ -126,6 +128,15 @@ func replay(path string) int {
 		case l.CloseStdout:
 			out.Flush()
 			os.Stdout.Close()
+		case l.CloseStdin:
+			os.Stdin.Close()
+		case l.Hold:
+			out.Flush()
+			// 等轉接器結束行程群組（SIGTERM）；只是 select{} 的話 runtime 會判成死鎖而結束。
+			stop := make(chan os.Signal, 1)
+			signal.Notify(stop, syscall.SIGTERM, os.Interrupt)
+			<-stop
+			return 143
 		case l.EchoEnv != "":
 			fmt.Fprintf(os.Stderr, "%s=%s\n", l.EchoEnv, os.Getenv(l.EchoEnv))
 		case l.Exit != nil:

@@ -18,8 +18,10 @@ var icon []byte
 // 以 auto 啟動），工具呼叫會在詢問 OrielHub 之前就被放行。見
 // docs/research/claude-control-protocol.md。
 func Definition() agent.Definition {
-	// 字面值的容量等於長度，兩次 append 各自配置新陣列。
-	base := []string{"-p", "--input-format", "stream-json", "--output-format", "stream-json", "--verbose", "--permission-prompt-tool", "stdio"}
+	// 字面值的容量等於長度，兩次 append 各自配置新陣列。--include-partial-messages 讓文字邊寫邊送（CL13）；
+	// 會話 ID（--session-id / --resume）由轉接器在啟動時加上。
+	base := []string{"-p", "--input-format", "stream-json", "--output-format", "stream-json", "--verbose",
+		"--include-partial-messages", "--permission-prompt-tool", "stdio"}
 	return agent.Definition{
 		ID:       "claude",
 		Name:     "Claude Code",
@@ -44,5 +46,7 @@ func Definition() agent.Definition {
 			Commands: map[string]string{"darwin": "brew install --cask claude-code", "linux": "curl -fsSL https://claude.ai/install.sh | bash"},
 		},
 		Supersedes: []string{"claude-acp"},
+		// 以 --resume 接回同一個會話 ID（CL02）。刪除原生會話檔 hub 還做不到，所以不宣告 DeleteNative。
+		Caps: task.Capabilities{Resume: true},
 	}
 }

@@ -1,0 +1,13 @@
+# A tool call that asks OrielHub, is allowed and runs.
+{"client":{"type":"control_request","request_id":"oriel-1","request":{"subtype":"initialize"}}}
+{"agent":{"type":"control_response","response":{"subtype":"success","request_id":"oriel-1","response":{"current_permission_mode":"default","models":[{"value":"default","displayName":"Default (recommended)","description":"Use the default model","resolvedModel":"claude-test-1"},{"value":"fast","displayName":"Fast","description":"Quick answers","resolvedModel":"claude-test-fast"}]}}}}
+{"client":{"type":"user","message":{"role":"user"}}}
+{"agent":{"type":"system","subtype":"init","session_id":"<session>","model":"claude-test-1"}}
+{"agent":{"type":"assistant","session_id":"<session>","parent_tool_use_id":null,"message":{"id":"m1","model":"claude-test-1","content":[{"type":"tool_use","id":"toolu_1","name":"Bash","input":{"command":"printf ok > orielhub-contract.txt","description":"Write the contract file"}}]}}}
+{"agent":{"type":"control_request","request_id":"cli-1","request":{"subtype":"can_use_tool","tool_name":"Bash","input":{"command":"printf ok > orielhub-contract.txt","description":"Write the contract file"},"tool_use_id":"toolu_1"}}}
+{"client":{"type":"control_response","response":{"subtype":"success","request_id":"cli-1","response":{"behavior":"allow","updatedInput":{"command":"printf ok > orielhub-contract.txt"}}}}}
+{"agent":{"type":"user","session_id":"<session>","parent_tool_use_id":null,"message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_1","content":"","is_error":false}]}}}
+{"agent":{"type":"stream_event","session_id":"<session>","uuid":"u-m2","parent_tool_use_id":null,"event":{"type":"message_start","message":{"id":"m2"}}}}
+{"agent":{"type":"stream_event","session_id":"<session>","uuid":"u-m2-1","parent_tool_use_id":null,"event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"done"}}}}
+{"agent":{"type":"assistant","session_id":"<session>","parent_tool_use_id":null,"message":{"id":"m2","model":"claude-test-1","content":[{"type":"text","text":"done"}]}}}
+{"agent":{"type":"result","subtype":"success","is_error":false,"result":"done","session_id":"<session>","num_turns":1,"duration_ms":1,"duration_api_ms":1,"usage":{"input_tokens":12,"output_tokens":3,"cache_read_input_tokens":0,"cache_creation_input_tokens":0}}}

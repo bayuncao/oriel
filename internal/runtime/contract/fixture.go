@@ -25,6 +25,10 @@ type Line struct {
 	Raw string `json:"raw,omitempty"`
 	// Touch 建立這個檔案：前面的行都已寫出（C25 用它確認 agent 沒被卡住）。
 	Touch string `json:"touch,omitempty"`
+	// CloseStdin 關掉 stdin、行程繼續在：OrielHub 之後的寫入失敗（m3.md CL40 的重試）。
+	CloseStdin bool `json:"closeStdin,omitempty"`
+	// Hold 停在這裡不結束，直到行程被結束（配 CloseStdin：寫不進去而行程還在）。
+	Hold bool `json:"hold,omitempty"`
 }
 
 // 夾具裡的佔位值：錄製時換掉、回放時換回（K04）。

@@ -19,6 +19,7 @@ import (
 	"github.com/bayuncao/oriel/internal/proc"
 	"github.com/bayuncao/oriel/internal/provider"
 	"github.com/bayuncao/oriel/internal/runtime/acp"
+	"github.com/bayuncao/oriel/internal/runtime/claude"
 	"github.com/bayuncao/oriel/internal/store"
 	"github.com/bayuncao/oriel/internal/task"
 	"github.com/bayuncao/oriel/internal/transport/remote"
@@ -99,11 +100,13 @@ func New(ctx context.Context, o Options) (*App, error) {
 	git := workspace.New(workspace.Options{
 		Runner: runner, Env: disc.Env, Root: o.Root})
 	acpRuntime := acp.New(acp.Options{Runner: runner, Version: o.Version, Logger: o.Logger})
+	claudeRuntime := claude.New(claude.Options{Runner: runner, Logger: o.Logger})
 	h := hub.New(hub.Options{
 		Log: db, Config: db, Index: db,
 		Notifier: o.Notifier,
 		Runtimes: map[task.Protocol]hub.Runtime{
-			task.ProtocolACP: acpRuntime,
+			task.ProtocolACP:    acpRuntime,
+			task.ProtocolClaude: claudeRuntime,
 		},
 		Launcher:     newLauncher(disc, defs, acpRuntime.Capabilities, log),
 		Git:          git,

@@ -1,0 +1,6 @@
+# Claude Code dies in the middle of a turn.
+{"client":{"type":"control_request","request_id":"oriel-1","request":{"subtype":"initialize"}}}
+{"agent":{"type":"control_response","response":{"subtype":"success","request_id":"oriel-1","response":{"current_permission_mode":"default","models":[{"value":"default","displayName":"Default (recommended)","description":"Use the default model","resolvedModel":"claude-test-1"},{"value":"fast","displayName":"Fast","description":"Quick answers","resolvedModel":"claude-test-fast"}]}}}}
+{"client":{"type":"user","message":{"role":"user"}}}
+{"stderr":"boom"}
+{"exit":3}

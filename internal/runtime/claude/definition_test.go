@@ -13,6 +13,9 @@ func TestLaunchPinsPermissionMode(t *testing.T) {
 		args []string
 		mode string
 	}{{l.Args, "default"}, {l.Native, "bypassPermissions"}} {
+		if !slices.Contains(c.args, "--include-partial-messages") {
+			t.Errorf("%q: no --include-partial-messages (CL13)", c.args)
+		}
 		if i := slices.Index(c.args, "--permission-prompt-tool"); i < 0 || c.args[i+1] != "stdio" {
 			t.Errorf("%q: no --permission-prompt-tool stdio", c.args)
 		}
