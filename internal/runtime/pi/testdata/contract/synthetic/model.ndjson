@@ -1,0 +1,9 @@
+# Switching the model with set_model.
+{"client": {"id": "oriel-1", "type": "get_state"}}
+{"agent": {"id": "oriel-1", "type": "response", "command": "get_state", "success": true, "data": {"model": {"provider": "anthropic", "id": "claude-a", "name": "Claude A", "api": "anthropic-messages", "reasoning": true, "contextWindow": 200000}, "thinkingLevel": "medium", "isStreaming": false, "isCompacting": false, "steeringMode": "one-at-a-time", "followUpMode": "one-at-a-time", "sessionFile": "<home>/.pi/agent/sessions/--cwd--/2026-11-22T00-00-00-000Z_<session>.jsonl", "sessionId": "<session>", "autoCompactionEnabled": true, "messageCount": 0, "pendingMessageCount": 0}}}
+{"client": {"id": "oriel-2", "type": "get_available_models"}}
+{"agent": {"id": "oriel-2", "type": "response", "command": "get_available_models", "success": true, "data": {"models": [{"provider": "anthropic", "id": "claude-a", "name": "Claude A", "api": "anthropic-messages", "reasoning": true, "contextWindow": 200000}, {"provider": "openai", "id": "gpt-b", "name": "GPT B", "api": "openai-responses", "reasoning": true, "contextWindow": 400000}]}}}
+{"client": {"id": "oriel-3", "type": "get_commands"}}
+{"agent": {"id": "oriel-3", "type": "response", "command": "get_commands", "success": true, "data": {"commands": [{"name": "orielhub-approvals", "description": "Tool calls ask OrielHub before they run", "source": "extension", "sourceInfo": {"path": "<any>", "source": "cli", "scope": "temporary", "origin": "top-level"}}]}}}
+{"client": {"id": "oriel-4", "type": "set_model", "provider": "openai", "modelId": "gpt-b"}}
+{"agent": {"id": "oriel-4", "type": "response", "command": "set_model", "success": true, "data": {"provider": "openai", "id": "gpt-b", "name": "GPT B", "api": "openai-responses", "reasoning": true, "contextWindow": 400000}}}

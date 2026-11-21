@@ -1974,6 +1974,268 @@ func (msgs Messages) ClaudeSetModelTimedOut() string {
 	return Catalog.Format(msgs.locale, "claude_set_model_timed_out", nil)
 }
 
+// CodexStartTimedOut says "Codex did not start in time"
+// in the language the app shows.
+//
+// Codex did not finish initialize and starting the session within the start
+// time limit (m3.md CX05).
+func CodexStartTimedOut() string { return In(i18n.Locale()).CodexStartTimedOut() }
+
+// CodexStartTimedOut says "Codex did not start in time"
+// in the language of msgs.
+//
+// Codex did not finish initialize and starting the session within the start
+// time limit (m3.md CX05).
+func (msgs Messages) CodexStartTimedOut() string {
+	return Catalog.Format(msgs.locale, "codex_start_timed_out", nil)
+}
+
+// CodexApprovalPolicy says "Codex started with approval policy {policy}, so its tools would not ask OrielHub"
+// in the language the app shows.
+//
+// The thread did not start with the untrusted policy reviewed by the client
+// (m3.md CX01).
+func CodexApprovalPolicy(policy string) string { return In(i18n.Locale()).CodexApprovalPolicy(policy) }
+
+// CodexApprovalPolicy says "Codex started with approval policy {policy}, so its tools would not ask OrielHub"
+// in the language of msgs.
+//
+// The thread did not start with the untrusted policy reviewed by the client
+// (m3.md CX01).
+func (msgs Messages) CodexApprovalPolicy(policy string) string {
+	return Catalog.Format(msgs.locale, "codex_approval_policy", map[string]any{"policy": policy})
+}
+
+// CodexRequestFailed says "Codex refused {method}: {detail}"
+// in the language the app shows.
+//
+// Codex answered a JSON-RPC request with an error.
+func CodexRequestFailed(method string, detail string) string {
+	return In(i18n.Locale()).CodexRequestFailed(method, detail)
+}
+
+// CodexRequestFailed says "Codex refused {method}: {detail}"
+// in the language of msgs.
+//
+// Codex answered a JSON-RPC request with an error.
+func (msgs Messages) CodexRequestFailed(method string, detail string) string {
+	return Catalog.Format(msgs.locale, "codex_request_failed", map[string]any{"method": method, "detail": detail})
+}
+
+// CodexTurnFailed says "The turn failed: {detail}"
+// in the language the app shows.
+//
+// Codex ended the turn with an error (m3.md CX19).
+func CodexTurnFailed(detail string) string { return In(i18n.Locale()).CodexTurnFailed(detail) }
+
+// CodexTurnFailed says "The turn failed: {detail}"
+// in the language of msgs.
+//
+// Codex ended the turn with an error (m3.md CX19).
+func (msgs Messages) CodexTurnFailed(detail string) string {
+	return Catalog.Format(msgs.locale, "codex_turn_failed", map[string]any{"detail": detail})
+}
+
+// CodexAuthRequired says "Codex needs you to log in first"
+// in the language the app shows.
+//
+// The turn failed because Codex is not logged in (m3.md CX19).
+func CodexAuthRequired() string { return In(i18n.Locale()).CodexAuthRequired() }
+
+// CodexAuthRequired says "Codex needs you to log in first"
+// in the language of msgs.
+//
+// The turn failed because Codex is not logged in (m3.md CX19).
+func (msgs Messages) CodexAuthRequired() string {
+	return Catalog.Format(msgs.locale, "codex_auth_required", nil)
+}
+
+// CodexUsageLimit says "Codex reached its usage limit"
+// in the language the app shows.
+//
+// The turn failed with usageLimitExceeded (m3.md CX19).
+func CodexUsageLimit() string { return In(i18n.Locale()).CodexUsageLimit() }
+
+// CodexUsageLimit says "Codex reached its usage limit"
+// in the language of msgs.
+//
+// The turn failed with usageLimitExceeded (m3.md CX19).
+func (msgs Messages) CodexUsageLimit() string {
+	return Catalog.Format(msgs.locale, "codex_usage_limit", nil)
+}
+
+// CodexContextWindow says "The conversation no longer fits in the model's context window"
+// in the language the app shows.
+//
+// The turn failed with contextWindowExceeded (m3.md CX19).
+func CodexContextWindow() string { return In(i18n.Locale()).CodexContextWindow() }
+
+// CodexContextWindow says "The conversation no longer fits in the model's context window"
+// in the language of msgs.
+//
+// The turn failed with contextWindowExceeded (m3.md CX19).
+func (msgs Messages) CodexContextWindow() string {
+	return Catalog.Format(msgs.locale, "codex_context_window", nil)
+}
+
+// CodexAttachmentUnsupported says "{name} cannot be attached to Codex yet"
+// in the language the app shows.
+//
+// A prompt carried an attachment Codex cannot be given yet (m3.md CX12).
+func CodexAttachmentUnsupported(name string) string {
+	return In(i18n.Locale()).CodexAttachmentUnsupported(name)
+}
+
+// CodexAttachmentUnsupported says "{name} cannot be attached to Codex yet"
+// in the language of msgs.
+//
+// A prompt carried an attachment Codex cannot be given yet (m3.md CX12).
+func (msgs Messages) CodexAttachmentUnsupported(name string) string {
+	return Catalog.Format(msgs.locale, "codex_attachment_unsupported", map[string]any{"name": name})
+}
+
+// CodexProtocolError says "Codex broke the protocol: {detail}"
+// in the language the app shows.
+//
+// Codex wrote something OrielHub cannot read, or kept running with stdout
+// closed (m3.md CX21).
+func CodexProtocolError(detail string) string { return In(i18n.Locale()).CodexProtocolError(detail) }
+
+// CodexProtocolError says "Codex broke the protocol: {detail}"
+// in the language of msgs.
+//
+// Codex wrote something OrielHub cannot read, or kept running with stdout
+// closed (m3.md CX21).
+func (msgs Messages) CodexProtocolError(detail string) string {
+	return Catalog.Format(msgs.locale, "codex_protocol_error", map[string]any{"detail": detail})
+}
+
+// PiStartTimedOut says "pi did not start in time"
+// in the language the app shows.
+//
+// pi did not answer get_state, get_available_models and get_commands within
+// the start time limit (m3.md PI05).
+func PiStartTimedOut() string { return In(i18n.Locale()).PiStartTimedOut() }
+
+// PiStartTimedOut says "pi did not start in time"
+// in the language of msgs.
+//
+// pi did not answer get_state, get_available_models and get_commands within
+// the start time limit (m3.md PI05).
+func (msgs Messages) PiStartTimedOut() string {
+	return Catalog.Format(msgs.locale, "pi_start_timed_out", nil)
+}
+
+// PiApprovalsUnavailable says "pi did not load the OrielHub approvals extension, so its tools would not ask OrielHub"
+// in the language the app shows.
+//
+// Approvals go through OrielHub but get_commands has no orielhub-approvals
+// command (m3.md PI03).
+func PiApprovalsUnavailable() string { return In(i18n.Locale()).PiApprovalsUnavailable() }
+
+// PiApprovalsUnavailable says "pi did not load the OrielHub approvals extension, so its tools would not ask OrielHub"
+// in the language of msgs.
+//
+// Approvals go through OrielHub but get_commands has no orielhub-approvals
+// command (m3.md PI03).
+func (msgs Messages) PiApprovalsUnavailable() string {
+	return Catalog.Format(msgs.locale, "pi_approvals_unavailable", nil)
+}
+
+// PiRequestFailed says "pi refused {command}: {detail}"
+// in the language the app shows.
+//
+// pi answered a command with success: false, or OrielHub could not write it
+// (m3.md PI05, PI10).
+func PiRequestFailed(command string, detail string) string {
+	return In(i18n.Locale()).PiRequestFailed(command, detail)
+}
+
+// PiRequestFailed says "pi refused {command}: {detail}"
+// in the language of msgs.
+//
+// pi answered a command with success: false, or OrielHub could not write it
+// (m3.md PI05, PI10).
+func (msgs Messages) PiRequestFailed(command string, detail string) string {
+	return Catalog.Format(msgs.locale, "pi_request_failed", map[string]any{"command": command, "detail": detail})
+}
+
+// PiSetModelTimedOut says "pi did not switch models in time"
+// in the language the app shows.
+//
+// pi did not answer set_model within the time limit (m3.md PI07).
+func PiSetModelTimedOut() string { return In(i18n.Locale()).PiSetModelTimedOut() }
+
+// PiSetModelTimedOut says "pi did not switch models in time"
+// in the language of msgs.
+//
+// pi did not answer set_model within the time limit (m3.md PI07).
+func (msgs Messages) PiSetModelTimedOut() string {
+	return Catalog.Format(msgs.locale, "pi_set_model_timed_out", nil)
+}
+
+// PiTurnFailed says "The turn failed: {detail}"
+// in the language the app shows.
+//
+// The last assistant message of the turn ended with an error (m3.md PI17).
+func PiTurnFailed(detail string) string { return In(i18n.Locale()).PiTurnFailed(detail) }
+
+// PiTurnFailed says "The turn failed: {detail}"
+// in the language of msgs.
+//
+// The last assistant message of the turn ended with an error (m3.md PI17).
+func (msgs Messages) PiTurnFailed(detail string) string {
+	return Catalog.Format(msgs.locale, "pi_turn_failed", map[string]any{"detail": detail})
+}
+
+// PiAuthRequired says "pi needs you to log in to a model provider first"
+// in the language the app shows.
+//
+// pi rejected the prompt because the selected model has no API key (m3.md
+// PI10).
+func PiAuthRequired() string { return In(i18n.Locale()).PiAuthRequired() }
+
+// PiAuthRequired says "pi needs you to log in to a model provider first"
+// in the language of msgs.
+//
+// pi rejected the prompt because the selected model has no API key (m3.md
+// PI10).
+func (msgs Messages) PiAuthRequired() string {
+	return Catalog.Format(msgs.locale, "pi_auth_required", nil)
+}
+
+// PiAttachmentUnsupported says "{name} cannot be attached to pi yet"
+// in the language the app shows.
+//
+// A prompt carried an attachment pi cannot be given yet (m3.md PI12).
+func PiAttachmentUnsupported(name string) string {
+	return In(i18n.Locale()).PiAttachmentUnsupported(name)
+}
+
+// PiAttachmentUnsupported says "{name} cannot be attached to pi yet"
+// in the language of msgs.
+//
+// A prompt carried an attachment pi cannot be given yet (m3.md PI12).
+func (msgs Messages) PiAttachmentUnsupported(name string) string {
+	return Catalog.Format(msgs.locale, "pi_attachment_unsupported", map[string]any{"name": name})
+}
+
+// PiProtocolError says "pi broke the protocol: {detail}"
+// in the language the app shows.
+//
+// pi wrote something OrielHub cannot read, or kept running with stdout
+// closed (m3.md PI20).
+func PiProtocolError(detail string) string { return In(i18n.Locale()).PiProtocolError(detail) }
+
+// PiProtocolError says "pi broke the protocol: {detail}"
+// in the language of msgs.
+//
+// pi wrote something OrielHub cannot read, or kept running with stdout
+// closed (m3.md PI20).
+func (msgs Messages) PiProtocolError(detail string) string {
+	return Catalog.Format(msgs.locale, "pi_protocol_error", map[string]any{"detail": detail})
+}
+
 // AppStartFailed says "OrielHub could not start: {detail}"
 // in the language the app shows.
 //

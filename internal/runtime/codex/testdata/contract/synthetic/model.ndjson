@@ -1,0 +1,8 @@
+# Switching the model needs no request: the next turn/start carries it.
+{"client": {"id": 1, "method": "initialize", "params": {"clientInfo": {"name": "orielhub", "title": "OrielHub"}}}}
+{"agent": {"id": 1, "result": {"userAgent": "codex_cli_rs/0.153.4", "codexHome": "<home>/.codex", "platformFamily": "unix", "platformOs": "macos"}}}
+{"client": {"method": "initialized"}}
+{"client": {"id": 2, "method": "model/list"}}
+{"agent": {"id": 2, "result": {"data": [{"id": "gpt-a", "model": "gpt-a", "displayName": "GPT A", "description": "The default", "isDefault": true, "hidden": false}, {"id": "gpt-b", "model": "gpt-b", "displayName": "GPT B", "description": "Quick", "isDefault": false, "hidden": false}, {"id": "gpt-h", "model": "gpt-h", "displayName": "Hidden", "isDefault": false, "hidden": true}], "nextCursor": null}}}
+{"client": {"id": 3, "method": "thread/start", "params": {"cwd": "<cwd>", "approvalPolicy": "untrusted", "approvalsReviewer": "user", "sandbox": "workspace-write"}}}
+{"agent": {"id": 3, "result": {"thread": {"id": "thr_1"}, "model": "gpt-a", "approvalPolicy": "untrusted", "approvalsReviewer": "user", "sandbox": {"type": "workspaceWrite"}, "cwd": "<cwd>", "modelProvider": "openai"}}}

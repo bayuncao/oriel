@@ -5,8 +5,10 @@ package app
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"sync"
 	"syscall"
@@ -181,7 +183,7 @@ func gatedLauncher(t *testing.T, fail bool) (a *App, l *launcher, log, gate stri
 	}
 	writeExe(t, bin, "grok", fakeGrok("1.0.70", log, fail))
 	a = launchApp(t, home, "GROK_GATE="+gate)
-	l = newLauncher(a.disc, catalog(a.agents.log), acp.New(acp.Options{Runner: a.runner}).Capabilities, a.agents.log)
+	l = newLauncher(a.disc, catalog(a.agents.log, nil), acp.New(acp.Options{Runner: a.runner}).Capabilities, a.agents.log)
 	waiting = make(chan struct{}, 16)
 	l.waiting = func() { waiting <- struct{}{} }
 	return a, l, log, gate, waiting
@@ -320,6 +322,30 @@ func TestProbeFailureDoesNotBlock(t *testing.T) {
 	}
 }
 
+// m3.md CX53、PI54：目錄只把內建、且 hub 有它協議轉接器的 agent 標成能啟動（從 newRuntimes 推出，不另列一份）。
+func TestLaunchableFollowsRuntimes(t *testing.T) {
+	runner := &proc.Runner{}
+	defer runner.Close()
+	launchable := func(runtimes map[task.Protocol]hub.Runtime) []task.AgentID {
+		var out []task.AgentID
+		for _, d := range catalog(slog.New(slog.DiscardHandler), runtimes) {
+			if d.Launchable {
+				out = append(out, d.ID)
+			}
+		}
+		return out
+	}
+	runtimes := newRuntimes(runner, "test", nil, acp.New(acp.Options{Runner: runner}))
+	all := []task.AgentID{"claude", "codex", "pi", "grok", "gemini", "opencode", "cursor", "copilot", "qwen"}
+	if got := launchable(runtimes); !slices.Equal(got, all) {
+		t.Fatalf("launchable %q, want %q", got, all)
+	}
+	delete(runtimes, task.ProtocolPi)
+	if got := launchable(runtimes); slices.Contains(got, "pi") {
+		t.Fatalf("launchable %q: pi is listed without a runtime for its protocol", got)
+	}
+}
+
 // m3.md CL50：原生協議的 agent（Claude Code）的能力取自 Definition，不探測。
 func TestLaunchNativeUsesDefinitionCaps(t *testing.T) {
 	home, bin := fakeHome(t)
@@ -335,7 +361,7 @@ func TestLaunchNativeUsesDefinitionCaps(t *testing.T) {
 		t.Error("probed a native-protocol agent")
 		return task.Capabilities{}, nil
 	}
-	l := newLauncher(a.disc, catalog(a.agents.log), probe, a.agents.log)
+	l := newLauncher(a.disc, catalog(a.agents.log, nil), probe, a.agents.log)
 	snap, err := l.Launch(ctxb2(), "claude")
 	if err != nil {
 		t.Fatal(err)
@@ -345,19 +371,16 @@ func TestLaunchNativeUsesDefinitionCaps(t *testing.T) {
 	}
 }
 
-// P03、P04、P09、I01：不能啟動時不建 Task、不登記 Workspace；沒選 agent 照舊。
+// P03、P09、I01：不能啟動時不建 Task、不登記 Workspace；沒選 agent 照舊（P04 沒有轉接器的協議見 hub 的 launch_test.go）。
 func TestCreateTaskWithAgentRejects(t *testing.T) {
 	home, bin := fakeHome(t)
 	writeExe(t, bin, "grok", fakeGrok("1.0.70", filepath.Join(t.TempDir(), "log"), false))
-	writeExe(t, filepath.Join(home, ".local", "bin"), "pi", "#!/bin/sh\necho 0.50.0\n")
 	a := launchApp(t, home)
-	waitReady(t, a, "pi")
 	for _, tc := range []struct {
 		agent task.AgentID
 		code  string
 	}{
 		{"gemini", string(agent.CodeNotInstalled)},
-		{"pi", string(hub.CodeAgentUnsupported)},
 		{"nobody", string(agent.CodeUnknownAgent)},
 	} {
 		_, _, err := a.Hub().CreateTaskWithAgent(ctxb2(), hub.LocalOwner, t.TempDir(),

@@ -358,6 +358,125 @@
   "@claude_set_model_timed_out": {
     "description": "Claude Code did not answer set_model within the time limit (m3.md CL07)."
   },
+  "codex_start_timed_out": "Codex 没有按时启动",
+  "@codex_start_timed_out": {
+    "description": "Codex did not finish initialize and starting the session within the start time limit (m3.md CX05)."
+  },
+  "codex_approval_policy": "Codex 以审批策略 {policy} 启动，工具不会经 OrielHub 审批",
+  "@codex_approval_policy": {
+    "description": "The thread did not start with the untrusted policy reviewed by the client (m3.md CX01).",
+    "placeholders": {
+      "policy": {
+        "type": "String"
+      }
+    }
+  },
+  "codex_request_failed": "Codex 拒绝了 {method}：{detail}",
+  "@codex_request_failed": {
+    "description": "Codex answered a JSON-RPC request with an error.",
+    "placeholders": {
+      "method": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "codex_turn_failed": "这一轮失败了：{detail}",
+  "@codex_turn_failed": {
+    "description": "Codex ended the turn with an error (m3.md CX19).",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "codex_auth_required": "Codex 需要先登录",
+  "@codex_auth_required": {
+    "description": "The turn failed because Codex is not logged in (m3.md CX19)."
+  },
+  "codex_usage_limit": "Codex 已达到用量上限",
+  "@codex_usage_limit": {
+    "description": "The turn failed with usageLimitExceeded (m3.md CX19)."
+  },
+  "codex_context_window": "对话已超出模型的上下文长度",
+  "@codex_context_window": {
+    "description": "The turn failed with contextWindowExceeded (m3.md CX19)."
+  },
+  "codex_attachment_unsupported": "暂时还不能把 {name} 附给 Codex",
+  "@codex_attachment_unsupported": {
+    "description": "A prompt carried an attachment Codex cannot be given yet (m3.md CX12).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "codex_protocol_error": "Codex 违反了协议：{detail}",
+  "@codex_protocol_error": {
+    "description": "Codex wrote something OrielHub cannot read, or kept running with stdout closed (m3.md CX21).",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "pi_start_timed_out": "pi 没有按时启动",
+  "@pi_start_timed_out": {
+    "description": "pi did not answer get_state, get_available_models and get_commands within the start time limit (m3.md PI05)."
+  },
+  "pi_approvals_unavailable": "pi 没有加载 OrielHub 的审批扩展，工具不会经 OrielHub 审批",
+  "@pi_approvals_unavailable": {
+    "description": "Approvals go through OrielHub but get_commands has no orielhub-approvals command (m3.md PI03)."
+  },
+  "pi_request_failed": "pi 拒绝了 {command}：{detail}",
+  "@pi_request_failed": {
+    "description": "pi answered a command with success: false, or OrielHub could not write it (m3.md PI05, PI10).",
+    "placeholders": {
+      "command": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "pi_set_model_timed_out": "pi 没有按时切换模型",
+  "@pi_set_model_timed_out": {
+    "description": "pi did not answer set_model within the time limit (m3.md PI07)."
+  },
+  "pi_turn_failed": "这一轮失败了：{detail}",
+  "@pi_turn_failed": {
+    "description": "The last assistant message of the turn ended with an error (m3.md PI17).",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "pi_auth_required": "pi 需要先登录一个模型提供方",
+  "@pi_auth_required": {
+    "description": "pi rejected the prompt because the selected model has no API key (m3.md PI10)."
+  },
+  "pi_attachment_unsupported": "暂时还不能把 {name} 附给 pi",
+  "@pi_attachment_unsupported": {
+    "description": "A prompt carried an attachment pi cannot be given yet (m3.md PI12).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pi_protocol_error": "pi 违反了协议：{detail}",
+  "@pi_protocol_error": {
+    "description": "pi wrote something OrielHub cannot read, or kept running with stdout closed (m3.md PI20).",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
   "app_start_failed": "OrielHub 无法启动：{detail}",
   "@app_start_failed": {
     "description": "The application could not start.",

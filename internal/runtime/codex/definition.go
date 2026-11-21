@@ -35,5 +35,7 @@ func Definition() agent.Definition {
 			Commands: map[string]string{"darwin": "brew install --cask codex", "linux": "npm install -g @openai/codex"},
 		},
 		Supersedes: []string{"codex-acp"},
+		// 以 thread/resume 接回（CX02）。刪除原生會話 hub 還做不到，所以不宣告 DeleteNative（CX50）。
+		Caps: task.Capabilities{Resume: true},
 	}
 }

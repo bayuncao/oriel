@@ -1,0 +1,29 @@
+# A shell command that asks OrielHub and is denied; pi carries on.
+{"client": {"id": "oriel-1", "type": "get_state"}}
+{"agent": {"id": "oriel-1", "type": "response", "command": "get_state", "success": true, "data": {"model": {"provider": "anthropic", "id": "claude-a", "name": "Claude A", "api": "anthropic-messages", "reasoning": true, "contextWindow": 200000}, "thinkingLevel": "medium", "isStreaming": false, "isCompacting": false, "steeringMode": "one-at-a-time", "followUpMode": "one-at-a-time", "sessionFile": "<home>/.pi/agent/sessions/--cwd--/2026-11-22T00-00-00-000Z_<session>.jsonl", "sessionId": "<session>", "autoCompactionEnabled": true, "messageCount": 0, "pendingMessageCount": 0}}}
+{"client": {"id": "oriel-2", "type": "get_available_models"}}
+{"agent": {"id": "oriel-2", "type": "response", "command": "get_available_models", "success": true, "data": {"models": [{"provider": "anthropic", "id": "claude-a", "name": "Claude A", "api": "anthropic-messages", "reasoning": true, "contextWindow": 200000}, {"provider": "openai", "id": "gpt-b", "name": "GPT B", "api": "openai-responses", "reasoning": true, "contextWindow": 400000}]}}}
+{"client": {"id": "oriel-3", "type": "get_commands"}}
+{"agent": {"id": "oriel-3", "type": "response", "command": "get_commands", "success": true, "data": {"commands": [{"name": "orielhub-approvals", "description": "Tool calls ask OrielHub before they run", "source": "extension", "sourceInfo": {"path": "<any>", "source": "cli", "scope": "temporary", "origin": "top-level"}}]}}}
+{"client": {"id": "oriel-4", "type": "prompt", "message": "Use your shell tool to run exactly this command: printf ok > orielhub-contract.txt. Then reply with: done."}}
+{"agent": {"id": "oriel-4", "type": "response", "command": "prompt", "success": true, "data": {"disposition": "started"}}}
+{"agent": {"type": "agent_start"}}
+{"agent": {"type": "turn_start"}}
+{"agent": {"type": "message_start", "message": {"role": "user", "content": [{"type": "text", "text": "Use your shell tool to run exactly this command: printf ok > orielhub-contract.txt. Then reply with: done."}], "timestamp": 1795277530927}}}
+{"agent": {"type": "message_end", "message": {"role": "user", "content": [{"type": "text", "text": "Use your shell tool to run exactly this command: printf ok > orielhub-contract.txt. Then reply with: done."}], "timestamp": 1795277530927}}}
+{"agent": {"type": "message_start", "message": {"role": "assistant", "api": "anthropic-messages", "provider": "anthropic", "model": "claude-a", "timestamp": 1795277530930, "content": [], "usage": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0, "totalTokens": 0, "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0, "total": 0}}, "stopReason": "pending"}}}
+{"agent": {"type": "message_end", "message": {"role": "assistant", "api": "anthropic-messages", "provider": "anthropic", "model": "claude-a", "timestamp": 1795277530930, "content": [{"type": "toolCall", "id": "call_1", "name": "bash", "arguments": {"command": "printf ok > orielhub-contract.txt"}}], "usage": {"input": 1300, "output": 20, "cacheRead": 0, "cacheWrite": 0, "reasoning": 0, "totalTokens": 1320, "cost": {"input": 0.0003, "output": 0.0006, "cacheRead": 0, "cacheWrite": 0, "total": 0.0009}}, "stopReason": "toolUse"}}}
+{"agent": {"type": "tool_execution_start", "toolCallId": "call_1", "toolName": "bash", "args": {"command": "printf ok > orielhub-contract.txt"}}}
+{"agent": {"type": "extension_ui_request", "id": "ui-1", "method": "confirm", "title": "orielhub.permission", "message": "{\"toolCallId\":\"call_1\",\"toolName\":\"bash\",\"input\":{\"command\":\"printf ok > orielhub-contract.txt\"}}"}}
+{"client": {"type": "extension_ui_response", "id": "ui-1", "confirmed": false}}
+{"agent": {"type": "tool_execution_end", "toolCallId": "call_1", "toolName": "bash", "result": {"content": [{"type": "text", "text": "Denied in OrielHub"}], "details": {}}, "isError": true}}
+{"agent": {"type": "message_start", "message": {"role": "toolResult", "toolCallId": "call_1", "toolName": "bash", "content": [{"type": "text", "text": "Denied in OrielHub"}], "isError": true}}}
+{"agent": {"type": "message_end", "message": {"role": "toolResult", "toolCallId": "call_1", "toolName": "bash", "content": [{"type": "text", "text": "Denied in OrielHub"}], "isError": true}}}
+{"agent": {"type": "turn_end", "message": {"role": "assistant"}, "toolResults": []}}
+{"agent": {"type": "turn_start"}}
+{"agent": {"type": "message_start", "message": {"role": "assistant", "api": "anthropic-messages", "provider": "anthropic", "model": "claude-a", "timestamp": 1795277530930, "content": [], "usage": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0, "totalTokens": 0, "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0, "total": 0}}, "stopReason": "pending"}}}
+{"agent": {"type": "message_update", "usage": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0, "totalTokens": 0, "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0, "total": 0}}, "assistantMessageEvent": {"type": "text_delta", "contentIndex": 0, "delta": "The command was denied."}}}
+{"agent": {"type": "message_end", "message": {"role": "assistant", "api": "anthropic-messages", "provider": "anthropic", "model": "claude-a", "timestamp": 1795277530930, "content": [{"type": "text", "text": "The command was denied."}], "usage": {"input": 1400, "output": 4, "cacheRead": 0, "cacheWrite": 0, "reasoning": 0, "totalTokens": 1404, "cost": {"input": 0.0003, "output": 0.0006, "cacheRead": 0, "cacheWrite": 0, "total": 0.0009}}, "stopReason": "stop"}}}
+{"agent": {"type": "turn_end", "message": {"role": "assistant"}, "toolResults": []}}
+{"agent": {"type": "agent_end", "messages": [], "willRetry": false}}
+{"agent": {"type": "agent_settled", "aborted": false}}

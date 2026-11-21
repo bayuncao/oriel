@@ -19,9 +19,7 @@ import (
 	"github.com/bayuncao/oriel/internal/proc"
 	"github.com/bayuncao/oriel/internal/provider"
 	"github.com/bayuncao/oriel/internal/runtime/acp"
-	"github.com/bayuncao/oriel/internal/runtime/claude"
 	"github.com/bayuncao/oriel/internal/store"
-	"github.com/bayuncao/oriel/internal/task"
 	"github.com/bayuncao/oriel/internal/transport/remote"
 	"github.com/bayuncao/oriel/internal/usage"
 	"github.com/bayuncao/oriel/internal/workspace"
@@ -94,20 +92,17 @@ func New(ctx context.Context, o Options) (*App, error) {
 	disc := agent.NewDiscovery(agent.DiscoveryOptions{
 		Runner: runner, Root: o.Root, Inherited: o.Inherited})
 	log := cmp.Or(o.Logger, slog.Default())
-	defs := catalog(log) // 唯讀，Discovery、Launcher 與 Agents 共用
+	acpRuntime := acp.New(acp.Options{Runner: runner, Version: o.Version, Logger: o.Logger})
+	runtimes := newRuntimes(runner, o.Version, o.Logger, acpRuntime)
+	defs := catalog(log, runtimes) // 唯讀，Discovery、Launcher 與 Agents 共用
 	disc.SetAgents(defs, nil)
 	toClose = append(toClose, disc.Close)
 	git := workspace.New(workspace.Options{
 		Runner: runner, Env: disc.Env, Root: o.Root})
-	acpRuntime := acp.New(acp.Options{Runner: runner, Version: o.Version, Logger: o.Logger})
-	claudeRuntime := claude.New(claude.Options{Runner: runner, Logger: o.Logger})
 	h := hub.New(hub.Options{
 		Log: db, Config: db, Index: db,
-		Notifier: o.Notifier,
-		Runtimes: map[task.Protocol]hub.Runtime{
-			task.ProtocolACP:    acpRuntime,
-			task.ProtocolClaude: claudeRuntime,
-		},
+		Notifier:     o.Notifier,
+		Runtimes:     newRuntimes(runner, o.Version, o.Logger, acpRuntime),
 		Launcher:     newLauncher(disc, defs, acpRuntime.Capabilities, log),
 		Git:          git,
 		Env:          disc.Env,

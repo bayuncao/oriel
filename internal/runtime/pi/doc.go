@@ -1,6 +1,4 @@
-// Package pi 匯出內建的 pi coding agent 的 agent.Definition。
-//
-// 經 `pi --mode rpc`（stdio 上的 JSONL）驅動 pi、並以權限擴充
-// 接上 OrielHub 核准的轉接器隨 roadmap M3 加入，協議見
-// docs/architecture/runtime.md。
+// Package pi 是內建的 pi coding agent：agent.Definition、本機用量記錄，以及經 `pi --mode rpc`
+// （stdio 上的 JSONL）驅動 pi 的 hub.Runtime。pi 自己不做審批，審批經 OrielHub 時由內嵌的擴充
+// （approvals.ts）在工具執行前詢問。協議見 docs/research/pi-rpc.md，場景見 docs/acceptance/m3.md 第 3 節。
 package pi

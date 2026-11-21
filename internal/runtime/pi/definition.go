@@ -28,12 +28,16 @@ func Definition() agent.Definition {
 			NPM:     []string{"@earendil-works/pi-coding-agent", "@mariozechner/pi-coding-agent"},
 			Brew:    []string{"pi-coding-agent"},
 		},
-		Launch:  agent.LaunchSpec{Args: []string{"--mode", "rpc"}},
-		Version: &agent.VersionProbe{Args: []string{"--version"}, Pattern: agent.BareVersion},
+		Launch: agent.LaunchSpec{Args: []string{"--mode", "rpc"}},
+		// 轉接器要 0.99.0 起才有的 prompt 回應的 disposition（之前的還缺 agent_settled、--session-id），
+		// 見 docs/research/pi-rpc.md。
+		Version: &agent.VersionProbe{Args: []string{"--version"}, Pattern: agent.BareVersion, Min: "0.99.0"},
 		Install: agent.InstallHint{
 			DocsURL:  "https://pi.dev/",
 			Commands: map[string]string{"darwin": "brew install pi-coding-agent", "linux": "npm install -g @earendil-works/pi-coding-agent"},
 		},
 		Supersedes: []string{"pi-acp"},
+		// 以 --session-id 接回（PI02）。刪除原生會話 hub 還做不到，所以不宣告 DeleteNative（PI50）。
+		Caps: task.Capabilities{Resume: true},
 	}
 }

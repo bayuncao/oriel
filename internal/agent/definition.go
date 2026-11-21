@@ -22,7 +22,10 @@ type Definition struct {
 	Auth     *AuthProbe        `json:"auth"`    // nil：認證狀態永遠未知
 	Install  InstallHint       `json:"install"`
 	Caps     task.Capabilities `json:"caps"`
-	Modes    []Mode            `json:"modes"` // Profile.Mode 可接受的值
+	// Launchable 是能不能用它建 Task、啟動 Session：內建、且 hub 有它協議的轉接器。由 app 組目錄時
+	// 填（m3.md CX53）；頁面的 Agent 欄位只列這些，不自己判斷協議。
+	Launchable bool   `json:"launchable"`
+	Modes      []Mode `json:"modes"` // Profile.Mode 可接受的值
 	// Supersedes 是此 builtin 已原生支援的 ACP Registry 條目 ID
 	// （claude 對應的 claude-acp）；ListRegistry 會隱藏它們。
 	Supersedes []string `json:"supersedes,omitzero"`

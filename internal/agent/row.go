@@ -14,6 +14,8 @@ type AgentRow struct {
 	Protocol     task.Protocol `json:"protocol"`
 	Install      InstallHint   `json:"install"`
 	Installation Installation  `json:"installation"`
+	// Launchable 同 Definition.Launchable。
+	Launchable bool `json:"launchable"`
 }
 
 // Rows 按 defs 的順序給每個定義一行，接上它的發現結果；沒有發現結果的
@@ -26,7 +28,7 @@ func Rows(defs []Definition, installs []Installation) []AgentRow {
 	rows := make([]AgentRow, len(defs))
 	for i, d := range defs {
 		rows[i] = AgentRow{ID: d.ID, Name: d.Name, Icon: d.Icon, Source: d.Source,
-			Protocol: d.Protocol, Install: d.Install, Installation: byAgent[d.ID]}
+			Protocol: d.Protocol, Install: d.Install, Installation: byAgent[d.ID], Launchable: d.Launchable}
 	}
 	return rows
 }
