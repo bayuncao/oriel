@@ -13,6 +13,7 @@ import (
 	"github.com/bayuncao/oriel/internal/hub"
 	"github.com/bayuncao/oriel/internal/proc"
 	"github.com/bayuncao/oriel/internal/task"
+	"github.com/bayuncao/oriel/internal/usage"
 )
 
 // defaultStartTimeout 是 initialize 的時限（CL04）。
@@ -42,6 +43,9 @@ type Options struct {
 	// ExitGrace 是 stdout 關閉後等行程結束、行程結束後等 stdout 關閉的時間，寫入失敗時也等這麼久看
 	// 行程是否走了（CL23）；0 → 3 秒。僅測試改它。
 	ExitGrace time.Duration
+	// Quota 收下 Claude 報來的額度快照（rate_limit_event，D87、m3.md CQ）；app 傳
+	// usage.Tracker.Report。不能阻塞（讀取迴圈直接呼叫）；nil → 不記。
+	Quota func(usage.Quota)
 }
 
 // Runtime 是 Claude Code 的 hub.Runtime：每個 Session 一個常駐的 claude 行程，stdin/stdout 上
@@ -52,6 +56,7 @@ type Runtime struct {
 	startTimeout    time.Duration
 	setModelTimeout time.Duration
 	exitGrace       time.Duration
+	quota           func(usage.Quota)
 }
 
 var _ hub.Runtime = (*Runtime)(nil)
@@ -60,7 +65,7 @@ func New(o Options) *Runtime {
 	return &Runtime{runner: o.Runner, logger: cmp.Or(o.Logger, slog.Default()),
 		startTimeout:    cmp.Or(o.StartTimeout, defaultStartTimeout),
 		setModelTimeout: cmp.Or(o.SetModelTimeout, defaultSetModelTimeout),
-		exitGrace:       cmp.Or(o.ExitGrace, defaultExitGrace)}
+		exitGrace:       cmp.Or(o.ExitGrace, defaultExitGrace), quota: o.Quota}
 }
 
 // Start 啟動 Claude Code 並做 initialize（CL01–CL06）。新會話的 ID 由 OrielHub 產生、以

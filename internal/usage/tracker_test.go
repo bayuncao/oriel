@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -748,4 +749,105 @@ func (t *Tracker) State() ReadState {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	return t.state
+}
+
+// reportedQuota 是 agent 經協議報來的一份額度快照（m3.md CQ）。
+func reportedQuota(at time.Time, used float64) Quota {
+	return Quota{Agent: "claude", Bucket: "claude", At: at,
+		Windows: []Limit{{Minutes: 300, UsedPercent: used, ResetsAt: at.Add(time.Hour)}}}
+}
+
+func (f *fixture) quotas(tr *Tracker) []Quota {
+	f.t.Helper()
+	s, err := tr.Summary(context.Background())
+	if err != nil {
+		f.t.Fatal(err)
+	}
+	return s.Quotas
+}
+
+// CQ08、CQ10、CQ11：報來的快照在背景寫入，不必先 Start；寫好後 QuotaAt 換成它的時間（Rev 加一）；
+// 每個桶只留最晚的一份；讀本機記錄的一輪不覆蓋它，QuotaAt 也照舊。
+func TestReportedQuotas(t *testing.T) {
+	synctest.Test(t, func(t *testing.T) {
+		f := newFixture(t)
+		tr := f.tracker()
+		rev := tr.State().Rev
+		tr.Report(reportedQuota(day0, 42))
+		synctest.Wait()
+		s := tr.State()
+		if !s.QuotaAt.Equal(day0) || s.Rev != rev+1 {
+			t.Fatalf("state %+v (rev before %d)", s, rev)
+		}
+		if q := f.quotas(tr); len(q) != 1 || q[0].Windows[0].UsedPercent != 42 {
+			t.Fatalf("quotas %+v", q)
+		}
+
+		tr.Report(reportedQuota(day0.Add(-time.Hour), 10)) // 較早收到的另一個 Session 的
+		synctest.Wait()
+		if s := tr.State(); !s.QuotaAt.Equal(day0) || s.Rev != rev+1 {
+			t.Fatalf("an older quota changed the state: %+v", s)
+		}
+		if q := f.quotas(tr); q[0].Windows[0].UsedPercent != 42 {
+			t.Fatalf("an older quota replaced the newer: %+v", q)
+		}
+
+		tr.Report(reportedQuota(day0.Add(time.Minute), 43))
+		tr.Report(reportedQuota(day0.Add(2*time.Minute), 44))
+		synctest.Wait()
+		if q := f.quotas(tr); len(q) != 1 || q[0].Windows[0].UsedPercent != 44 {
+			t.Fatalf("quotas %+v", q)
+		}
+
+		f.write("a.jsonl", ln("k1", day0, 1, 0))
+		f.refresh(tr)
+		if s := tr.State(); !s.QuotaAt.Equal(day0.Add(2 * time.Minute)) {
+			t.Fatalf("a reading round dropped QuotaAt: %+v", s)
+		}
+		if q := f.quotas(tr); len(q) != 1 || q[0].Agent != "claude" {
+			t.Fatalf("a reading round changed the reported quota: %+v", q)
+		}
+	})
+}
+
+// CQ09：寫不進去時記日誌，QuotaAt 不變，這份留著；下一次 Report 時連同它一起寫入。
+func TestReportedQuotaWriteFails(t *testing.T) {
+	synctest.Test(t, func(t *testing.T) {
+		f := newFixture(t)
+		var logs bytes.Buffer
+		f.opts.Logger = slog.New(slog.NewTextHandler(&logs, nil))
+		tr := f.tracker()
+		f.store.FailWrites(errors.New("disk full"))
+		tr.Report(reportedQuota(day0, 42))
+		synctest.Wait()
+		if s := tr.State(); !s.QuotaAt.IsZero() || !strings.Contains(logs.String(), "saving a reported quota failed") {
+			t.Fatalf("state %+v, logs %q", s, logs.String())
+		}
+		f.store.FailWrites(nil)
+		other := reportedQuota(day0.Add(time.Minute), 43)
+		other.Bucket = "other"
+		tr.Report(other)
+		synctest.Wait()
+		if s := tr.State(); !s.QuotaAt.Equal(day0.Add(time.Minute)) {
+			t.Fatalf("state %+v", s)
+		}
+		q := f.quotas(tr)
+		if len(q) != 2 || q[0].Bucket != "claude" || q[0].Windows[0].UsedPercent != 42 || !q[0].Reported {
+			t.Fatalf("the failed quota was not written again: %+v", q)
+		}
+	})
+}
+
+// Close 之後報來的丟掉。
+func TestReportAfterClose(t *testing.T) {
+	synctest.Test(t, func(t *testing.T) {
+		f := newFixture(t)
+		tr := f.tracker()
+		tr.Close()
+		tr.Report(reportedQuota(day0, 42))
+		synctest.Wait()
+		if q, _ := f.store.UsageQuotas(context.Background()); len(q) != 0 {
+			t.Fatalf("quotas %+v", q)
+		}
+	})
 }

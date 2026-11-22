@@ -34,10 +34,11 @@ func usageSources() []usage.Source {
 }
 
 // newRuntimes 是 hub 的各協議轉接器；ACP 的另由 launcher 用來探測能力（D98），所以由呼叫者傳入。
-func newRuntimes(runner *proc.Runner, version string, log *slog.Logger, acpRuntime *acp.Runtime) map[task.Protocol]hub.Runtime {
+// quota 收下協議報來的額度快照（usage.Tracker.Report，D87）。
+func newRuntimes(runner *proc.Runner, version string, log *slog.Logger, acpRuntime *acp.Runtime, quota func(usage.Quota)) map[task.Protocol]hub.Runtime {
 	return map[task.Protocol]hub.Runtime{
 		task.ProtocolACP:    acpRuntime,
-		task.ProtocolClaude: claude.New(claude.Options{Runner: runner, Logger: log}),
+		task.ProtocolClaude: claude.New(claude.Options{Runner: runner, Logger: log, Quota: quota}),
 		task.ProtocolCodex:  codex.New(codex.Options{Runner: runner, Version: version, Logger: log}),
 		task.ProtocolPi:     pi.New(pi.Options{Runner: runner, Logger: log}),
 	}

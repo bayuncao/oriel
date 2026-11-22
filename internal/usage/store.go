@@ -98,6 +98,7 @@ type MemStore struct {
 	files    map[string]FileState
 	links    map[recordKey]task.TaskID // 鍵的 key 是原生會話 ID
 	reported map[reportKey]Reported
+	applyErr error // FailWrites 設的錯誤
 }
 
 type reportKey struct {
@@ -158,12 +159,22 @@ func (m *MemStore) UsageFiles(ctx context.Context) ([]FileState, error) {
 	return out, nil
 }
 
+// FailWrites 讓之後的 ApplyUsage 都回 err（nil 恢復正常），像磁碟寫不進去時的 store.Store。
+func (m *MemStore) FailWrites(err error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.applyErr = err
+}
+
 func (m *MemStore) ApplyUsage(ctx context.Context, b Batch) error {
 	if err := ctx.Err(); err != nil {
 		return err
 	}
 	m.mu.Lock()
 	defer m.mu.Unlock()
+	if m.applyErr != nil {
+		return m.applyErr
+	}
 	for _, r := range b.Records {
 		k := recordKey{r.Agent, r.Key}
 		if old, ok := m.records[k]; ok {

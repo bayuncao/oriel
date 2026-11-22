@@ -1769,13 +1769,18 @@
   "@ui_usage_quota_empty": {
     "description": "Empty state of the quota section."
   },
-  "ui_usage_quota_claude": "Claude Code's quota appears after OrielHub runs Claude Code.",
+  "ui_usage_quota_claude": "Claude Code's quota appears after OrielHub runs Claude Code signed in with a Claude subscription.",
   "@ui_usage_quota_claude": {
-    "description": "Explains why Claude Code has no quota yet (D87)."
+    "description": "Explains why Claude Code has no quota yet (D87, m3.md CQ12)."
   },
   "ui_usage_quota_as_of": "As of {time}, from the latest {agent} call on this Mac; use on other devices shows up after the next one here.",
   "@ui_usage_quota_as_of": {
     "description": "Where a quota snapshot comes from; time is relative, agent the agent's name.",
+    "placeholders": { "time": { "type": "String" }, "agent": { "type": "String" } }
+  },
+  "ui_usage_quota_as_of_orielhub": "As of {time}, from the latest {agent} call OrielHub ran; use outside OrielHub, including {agent} in a terminal, shows up after OrielHub runs it again.",
+  "@ui_usage_quota_as_of_orielhub": {
+    "description": "Where a quota snapshot reported while OrielHub runs the agent comes from (Claude Code, D87); time is relative, agent the agent's name.",
     "placeholders": { "time": { "type": "String" }, "agent": { "type": "String" } }
   },
   "ui_usage_quota_plan": "Plan: {plan}",

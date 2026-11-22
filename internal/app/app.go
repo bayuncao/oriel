@@ -92,8 +92,16 @@ func New(ctx context.Context, o Options) (*App, error) {
 	disc := agent.NewDiscovery(agent.DiscoveryOptions{
 		Runner: runner, Root: o.Root, Inherited: o.Inherited})
 	log := cmp.Or(o.Logger, slog.Default())
+	// 用量先建好（Start 在 hub 之後）：Claude 的轉接器把協議報來的額度交給它（D87）。
+	sources := o.UsageSources
+	if sources == nil {
+		sources = usageSources()
+	}
+	tracker := usage.New(usage.Options{Sources: sources, Store: db, Env: disc.Env,
+		OnResume: o.OnResume, Logger: o.Logger})
+	toClose = append(toClose, tracker.Close)
 	acpRuntime := acp.New(acp.Options{Runner: runner, Version: o.Version, Logger: o.Logger})
-	runtimes := newRuntimes(runner, o.Version, o.Logger, acpRuntime)
+	runtimes := newRuntimes(runner, o.Version, o.Logger, acpRuntime, tracker.Report)
 	defs := catalog(log, runtimes) // 唯讀，Discovery、Launcher 與 Agents 共用
 	disc.SetAgents(defs, nil)
 	toClose = append(toClose, disc.Close)
@@ -102,7 +110,7 @@ func New(ctx context.Context, o Options) (*App, error) {
 	h := hub.New(hub.Options{
 		Log: db, Config: db, Index: db,
 		Notifier:     o.Notifier,
-		Runtimes:     newRuntimes(runner, o.Version, o.Logger, acpRuntime),
+		Runtimes:     runtimes,
 		Launcher:     newLauncher(disc, defs, acpRuntime.Capabilities, log),
 		Git:          git,
 		Env:          disc.Env,
@@ -115,12 +123,6 @@ func New(ctx context.Context, o Options) (*App, error) {
 		return fail(err)
 	}
 	disc.Start()
-	sources := o.UsageSources
-	if sources == nil {
-		sources = usageSources()
-	}
-	tracker := usage.New(usage.Options{Sources: sources, Store: db, Env: disc.Env,
-		OnResume: o.OnResume, Logger: o.Logger})
 	tracker.Start()
 	client := registryHTTP(o, disc)
 	status := provider.New(provider.Options{HTTP: client, UserAgent: "OrielHub/" + cmp.Or(o.Version, "dev"),
@@ -172,8 +174,9 @@ func (a *App) Close() {
 		a.remote.Close()
 	}
 	a.status.Close()
-	a.usage.Close()
+	// hub 先關：它結束 Claude 的行程時報來的最後一份額度，usage 還收得下（D156）。
 	a.hub.Close()
+	a.usage.Close()
 	a.disc.Close()
 	a.runner.Close()
 	a.db.Close()

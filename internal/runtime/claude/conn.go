@@ -18,6 +18,7 @@ import (
 
 	"github.com/bayuncao/oriel/internal/proc"
 	"github.com/bayuncao/oriel/internal/task"
+	"github.com/bayuncao/oriel/internal/usage"
 )
 
 const (
@@ -34,8 +35,11 @@ const (
 // 讀取不會停下來。寫 stdin 從不持有 mu：讀取迴圈要 mu 才能繼續讀，持著 mu 寫時，Claude 寫滿
 // stdout 停下來、不再讀 stdin，兩邊就互相等住了。
 type conn struct {
-	proc            *proc.Process
-	logger          *slog.Logger
+	proc   *proc.Process
+	logger *slog.Logger
+	quota  func(usage.Quota) // 見 Options.Quota；nil → 不記
+	// lastQuota 是這個行程最近報來的額度快照（confirmQuota 再報它）；只有讀取的 goroutine 讀寫。
+	lastQuota       *usage.Quota
 	setModelTimeout time.Duration
 	exitGrace       time.Duration
 	workdir         string
@@ -95,7 +99,7 @@ type reply struct {
 }
 
 func (r *Runtime) open(p *proc.Process, emit func(task.Command), sid task.NativeSessionID, workdir string) *conn {
-	c := &conn{proc: p, logger: r.logger, setModelTimeout: r.setModelTimeout, exitGrace: r.exitGrace, workdir: workdir, sid: sid,
+	c := &conn{proc: p, logger: r.logger, quota: r.quota, setModelTimeout: r.setModelTimeout, exitGrace: r.exitGrace, workdir: workdir, sid: sid,
 		out: newOutbox[task.Command](), replies: newOutbox[map[string]any](), stdin: p.Stdin(),
 		eof: make(chan struct{}), ended: make(chan struct{}), pumped: make(chan struct{}), replied: make(chan struct{}),
 		waiting: map[string]chan reply{}, streamed: map[string]bool{}, tools: map[string]*toolState{},
@@ -328,6 +332,8 @@ func (c *conn) route(line []byte) {
 		err = c.result(line)
 	case "system":
 		err = c.system(line)
+	case "rate_limit_event":
+		err = c.rateLimit(line)
 	}
 	if err != nil {
 		c.logger.Debug("claude: skipped a message OrielHub could not read", "type", head.Type, "bytes", len(line))

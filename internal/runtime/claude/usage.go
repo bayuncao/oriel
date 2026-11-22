@@ -15,12 +15,15 @@ import (
 	"github.com/bayuncao/oriel/internal/usage"
 )
 
+// claudeAgent 是 Claude Code 的 AgentID：本機記錄與協議報來的額度都記在它名下。
+const claudeAgent task.AgentID = "claude"
+
 // Usage 是讀 Claude Code 本機用量記錄的 usage.Source。
 func Usage() usage.Source { return source{} }
 
 type source struct{}
 
-func (source) Agent() task.AgentID                             { return "claude" }
+func (source) Agent() task.AgentID                             { return claudeAgent }
 func (source) Unreported() []usage.Category                    { return nil }
 func (source) Notes() []usage.Note                             { return nil }
 func (source) Parser(usage.File, []byte) (usage.Parser, error) { return parser{}, nil }

@@ -95,6 +95,9 @@ type Quota struct {
 	Windows []Limit `json:"windows"`
 	// At 是寫下這份快照的時間。
 	At time.Time `json:"at"`
+	// Reported 表示快照是 OrielHub 運行 agent 時經協議報來的（Tracker.Report，Claude 的
+	// rate_limit_event，D156），不是讀本機記錄得來的：頁面據此說明截至何時的來源。
+	Reported bool `json:"reported,omitzero"`
 }
 
 // Limit 是額度的一個窗口（不叫 Window：會遮住 DOM 的同名型別）。

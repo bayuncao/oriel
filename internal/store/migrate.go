@@ -88,6 +88,9 @@ var migrations = [][]string{
 	{ // v13：Session 列的投影沒有讀者（Task 列已帶 Session 數、運行數與 agent），刪掉
 		`DROP TABLE sessions_view`,
 	},
+	{ // v14：額度快照是 agent 經協議報來的（Claude 的 rate_limit_event，D156），還是讀本機記錄得來的
+		`ALTER TABLE usage_quotas ADD COLUMN reported INTEGER NOT NULL DEFAULT 0`,
+	},
 }
 
 // migrate 依序套用比 user_version 新的版本。

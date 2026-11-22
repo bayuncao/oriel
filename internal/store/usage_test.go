@@ -93,7 +93,10 @@ func TestUsageQuotasKeepTheLatest(t *testing.T) {
 			older := usage.Quota{Agent: "codex", Bucket: "codex", Plan: "plus", At: u0.Add(-time.Hour),
 				Windows: []usage.Limit{{Minutes: 300, UsedPercent: 99}}}
 			other := usage.Quota{Agent: "codex", Bucket: "a_other", Name: "Other", At: u0, Windows: []usage.Limit{{Minutes: 60, UsedPercent: 5}}}
-			for _, b := range []usage.Batch{{Quotas: []usage.Quota{newer}}, {Quotas: []usage.Quota{older, other}}} {
+			// 協議報來的（D156）：Reported 存下來、讀回來。
+			reported := usage.Quota{Agent: "claude", Bucket: "claude", At: u0, Reported: true,
+				Windows: []usage.Limit{{Minutes: 300, UsedPercent: 25, ResetsAt: u0.Add(time.Hour)}}}
+			for _, b := range []usage.Batch{{Quotas: []usage.Quota{newer}}, {Quotas: []usage.Quota{older, other, reported}}} {
 				if err := s.ApplyUsage(ctx, b); err != nil {
 					t.Fatal(err)
 				}
@@ -102,8 +105,8 @@ func TestUsageQuotasKeepTheLatest(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if !reflect.DeepEqual(got, []usage.Quota{other, newer}) {
-				t.Fatalf("quotas\n got %+v\nwant %+v", got, []usage.Quota{other, newer})
+			if want := []usage.Quota{reported, other, newer}; !reflect.DeepEqual(got, want) {
+				t.Fatalf("quotas\n got %+v\nwant %+v", got, want)
 			}
 		})
 	}

@@ -10,11 +10,13 @@ import (
 	"regexp"
 	"slices"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
 	"github.com/bayuncao/oriel/internal/hub"
 	"github.com/bayuncao/oriel/internal/task"
+	"github.com/bayuncao/oriel/internal/usage"
 )
 
 // CL01、CL02：新會話以 --session-id=<UUID> 啟動、native_bound 報出它；恢復時以 --resume=<ID> 接回同一個
@@ -498,4 +500,105 @@ func TestCloseTwice(t *testing.T) {
 		t.Fatal(err)
 	}
 	got.nextKind(t, task.FactExited)
+}
+
+// lRateLimit 是一則 rate_limit_event，rate_limit_info 由呼叫者給（欄位取自 Claude Code 2.1.311 的 schema）。
+func lRateLimit(info string) string {
+	return lAgent(`{"type":"rate_limit_event","rate_limit_info":` + info + `,"uuid":"u-rl","session_id":"<session>"}`)
+}
+
+// CQ01–CQ07：rate_limit_event 的 unifiedWindows 記成 Claude 的額度快照（5 小時與 7 天），時間是收到的時間；
+// 沒有可記的窗口時不記，讀不懂的窗口跳過，讀不懂的事件丟掉；都不產生事實，這一輪照常。
+func TestRateLimit(t *testing.T) {
+	const t1, t2 = 1795000000, 1795500000
+	var mu sync.Mutex
+	var quotas []usage.Quota
+	o := Options{Quota: func(q usage.Quota) {
+		mu.Lock()
+		defer mu.Unlock()
+		quotas = append(quotas, q)
+	}}
+	before := time.Now().UTC()
+	c, got, err := start(t, o, testLaunch(), "", fixture(t, append(started, lUser,
+		// CQ01、CQ04：兩個窗口；超額的窗口與頂層欄位不讀。
+		lRateLimit(`{"status":"allowed_warning","rateLimitType":"seven_day_overage_included","utilization":0.9,"resetsAt":1,`+
+			`"unifiedWindows":{"five_hour":{"utilization":0.25,"resetsAt":1795000000,"status":"allowed"},`+
+			`"seven_day":{"utilization":0.5,"resetsAt":1795500000},`+
+			`"seven_day_overage_included":{"utilization":0.9,"resetsAt":1}},"overageStatus":"rejected","isUsingOverage":false}`),
+		// CQ02、CQ05：只有 5 小時，超過上限。
+		lRateLimit(`{"status":"rejected","unifiedWindows":{"five_hour":{"utilization":1.25,"resetsAt":1795000000}}}`),
+		// CQ03：API key 的會話沒有 unifiedWindows；只有超額窗口也不記。
+		lRateLimit(`{"status":"allowed"}`),
+		lRateLimit(`{"status":"allowed","unifiedWindows":{"seven_day_overage_included":{"utilization":0.1,"resetsAt":1}}}`),
+		// CQ06：讀不懂的窗口跳過，另一個照記；兩個都讀不懂時不記。
+		lRateLimit(`{"status":"allowed","unifiedWindows":{"five_hour":{"utilization":"high","resetsAt":1795000000},`+
+			`"seven_day":{"utilization":0.5,"resetsAt":1795500000}}}`),
+		lRateLimit(`{"status":"allowed","unifiedWindows":{"five_hour":{"resetsAt":1795000000},"seven_day":{"utilization":0.5}}}`),
+		// CQ07：rate_limit_info 不是物件。
+		lRateLimit(`"soon"`),
+		lOK)...))
+	if err != nil {
+		t.Fatalf("start: %v", err)
+	}
+	prompt(t, c, "hi")
+	wantTurn(t, got.turnEnd(t), task.TurnOK, "", nil)
+	after := time.Now().UTC()
+
+	five := func(used float64) usage.Limit {
+		return usage.Limit{Minutes: 300, UsedPercent: used, ResetsAt: time.Unix(t1, 0).UTC()}
+	}
+	seven := usage.Limit{Minutes: 10080, UsedPercent: 50, ResetsAt: time.Unix(t2, 0).UTC()}
+	want := [][]usage.Limit{{five(25), seven}, {five(125)}, {seven}}
+	mu.Lock()
+	defer mu.Unlock()
+	if len(quotas) != len(want) {
+		t.Fatalf("quotas %+v, want %d", quotas, len(want))
+	}
+	for i, q := range quotas {
+		if q.Agent != "claude" || q.Bucket != "claude" || q.At.Before(before) || q.At.After(after) || !slices.Equal(q.Windows, want[i]) {
+			t.Fatalf("quota %d: %+v, want windows %+v at [%v, %v]", i, q, want[i], before, after)
+		}
+	}
+	for _, f := range got.all() {
+		if f.Kind != task.FactNativeBound && f.Kind != task.FactModelReported && f.Kind != task.FactUsage &&
+			f.Kind != task.FactTurnEnded {
+			t.Fatalf("unexpected fact %s: %+v", f.Kind, f)
+		}
+	}
+}
+
+// CQ14：呼叫過模型而成功結束的一輪之後，最近的額度以當時的時間再報一次；沒有用量的一輪、失敗的一輪不報。
+func TestQuotaConfirmedAtTurnEnd(t *testing.T) {
+	var mu sync.Mutex
+	var quotas []usage.Quota
+	o := Options{Quota: func(q usage.Quota) {
+		mu.Lock()
+		defer mu.Unlock()
+		quotas = append(quotas, q)
+	}}
+	used := `"usage":{"input_tokens":10,"output_tokens":3,"cache_read_input_tokens":0,"cache_creation_input_tokens":0}`
+	c, got, err := start(t, o, testLaunch(), "", fixture(t, append(started,
+		lUser, lOK, // 還沒收到過額度：沒有可再報的
+		lUser, lRateLimit(`{"status":"allowed","unifiedWindows":{"five_hour":{"utilization":0.25,"resetsAt":1795000000}}}`),
+		lResult(`"subtype":"success","is_error":false,`+used),
+		lUser, lOK, // 沒有用量
+		lUser, lResult(`"subtype":"error_during_execution","is_error":true,`+used),
+		lUser, lResult(`"subtype":"success","is_error":false,`+used))...))
+	if err != nil {
+		t.Fatalf("start: %v", err)
+	}
+	for range 5 {
+		prompt(t, c, "hi")
+		got.turnEnd(t)
+	}
+	mu.Lock()
+	defer mu.Unlock()
+	if len(quotas) != 3 {
+		t.Fatalf("quotas %+v, want the event and two confirmations", quotas)
+	}
+	for i := 1; i < len(quotas); i++ {
+		if !slices.Equal(quotas[i].Windows, quotas[0].Windows) || quotas[i].At.Before(quotas[i-1].At) {
+			t.Fatalf("confirmation %d: %+v after %+v", i, quotas[i], quotas[i-1])
+		}
+	}
 }

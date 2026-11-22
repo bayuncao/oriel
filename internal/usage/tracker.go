@@ -10,6 +10,7 @@ import (
 	"errors"
 	"io"
 	"log/slog"
+	"maps"
 	"os"
 	"path/filepath"
 	"slices"
@@ -32,6 +33,8 @@ const (
 	// 一段至多讀這麼多位元組或用量，讀到的用量與讀取位置在一個事務裡寫入。
 	defaultChunkBytes   = 8 << 20
 	defaultChunkRecords = 2000
+	// reportWait 是寫一份報來的額度的時限：Close 等寫入中的那份寫完，資料庫卡住時不能讓退出跟著卡住。
+	reportWait = 5 * time.Second
 )
 
 // Timer 是排定的計時器；Stop 停掉它，回傳是否停得及。
@@ -67,6 +70,9 @@ type ReadState struct {
 	Total int64 `json:"total"`
 	// ReadAt 是上一輪讀完的時間；還沒讀完過一輪時為零值。
 	ReadAt time.Time `json:"readAt,omitzero"`
+	// QuotaAt 是最近一次寫入的、agent 經協議報來的額度快照的時間（Report，m3.md CQ10）：
+	// 變了頁面就重取彙總；還沒有時為零值。
+	QuotaAt time.Time `json:"quotaAt,omitzero"`
 	// Rev 每次變化加一：同一份狀態經推送與呼叫結果兩條路到頁面時，取 Rev 大的。
 	Rev uint64 `json:"rev"`
 }
@@ -91,6 +97,11 @@ type Tracker struct {
 	offResume  func()
 	infos      map[task.AgentID]SourceInfo // 上一輪的記錄來源
 	retry      bool                        // 上一輪沒讀成
+	// reported 是 Report 收下、還沒寫入的額度快照，每個桶只留最新的一份；writing 是
+	// writeReported 在跑；quotaAt 是寫入過的最晚的快照時間（ReadState.QuotaAt）。
+	reported map[quotaKey]Quota
+	writing  bool
+	quotaAt  time.Time
 }
 
 // New 回傳還沒開始讀的 Tracker；Start 之後才讀。
@@ -307,6 +318,7 @@ func (t *Tracker) resumed() {
 
 // setLocked 換上新狀態（Rev 加一）並叫醒等待者。
 func (t *Tracker) setLocked(s ReadState) {
+	s.QuotaAt = t.quotaAt
 	s.Rev = t.state.Rev + 1
 	t.state = s
 	t.notifyLocked()
@@ -323,6 +335,79 @@ func (t *Tracker) progress(done, total int64) {
 	s := t.state
 	s.Done, s.Total = done, total
 	t.setLocked(s)
+}
+
+// Report 收下 agent 經協議報來的額度快照（Claude 的 rate_limit_event，D87、m3.md CQ），標上
+// Reported：不阻塞，在背景寫入同一張額度表；同一個桶只寫最新的一份（CQ08）。寫好後
+// ReadState.QuotaAt 換成它的時間，頁面據此重取彙總（CQ10）。寫入失敗時記日誌、留著這份，
+// 下一次 Report 時再寫（CQ09）。不必先 Start；Close 之後的丟掉，Close 等寫入中的那份
+// 寫完（至多 reportWait）。
+func (t *Tracker) Report(q Quota) {
+	q.Windows = slices.Clone(q.Windows)
+	q.Reported = true
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	if t.closed {
+		return
+	}
+	k := quotaKey{q.Agent, q.Bucket}
+	if old, ok := t.reported[k]; ok && old.At.After(q.At) {
+		return
+	}
+	if t.reported == nil {
+		t.reported = map[quotaKey]Quota{}
+	}
+	t.reported[k] = q
+	if !t.writing {
+		t.writing = true
+		t.wg.Add(1)
+		go t.writeReported()
+	}
+}
+
+// writeReported 寫出 Report 收下的快照，直到沒有新的。Close 取消讀取用的 ctx，但寫入中的
+// 這份照樣寫完（一行，很快；至多 reportWait），免得退出前最後報來的額度丟掉。寫不進去時把
+// 這幾份放回去（同一個桶已有更晚的就不放）並停下：不原地重試，等下一次 Report 再寫。
+func (t *Tracker) writeReported() {
+	defer t.wg.Done()
+	for {
+		t.mu.Lock()
+		if len(t.reported) == 0 {
+			t.writing = false
+			t.mu.Unlock()
+			return
+		}
+		quotas := slices.Collect(maps.Values(t.reported))
+		clear(t.reported)
+		t.mu.Unlock()
+		ctx, cancel := context.WithTimeout(context.WithoutCancel(t.ctx), reportWait)
+		err := t.o.Store.ApplyUsage(ctx, Batch{Quotas: quotas})
+		cancel()
+		t.mu.Lock()
+		if err != nil {
+			t.logger().Warn("usage: saving a reported quota failed", "err", err)
+			for _, q := range quotas {
+				k := quotaKey{q.Agent, q.Bucket}
+				if cur, ok := t.reported[k]; !ok || q.At.After(cur.At) {
+					t.reported[k] = q
+				}
+			}
+			t.writing = false
+			t.mu.Unlock()
+			return
+		}
+		latest := t.quotaAt
+		for _, q := range quotas {
+			if q.At.After(latest) {
+				latest = q.At
+			}
+		}
+		if latest.After(t.quotaAt) {
+			t.quotaAt = latest
+			t.setLocked(t.state)
+		}
+		t.mu.Unlock()
+	}
 }
 
 func (t *Tracker) logger() *slog.Logger {

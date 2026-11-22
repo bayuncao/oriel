@@ -6,9 +6,11 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
+	"time"
 	"unicode/utf8"
 
 	"github.com/bayuncao/oriel/internal/task"
+	"github.com/bayuncao/oriel/internal/usage"
 )
 
 // maxToolOutput 是一次工具輸出保留的文字（CL15）；輸出會寫進事件。
@@ -247,8 +249,10 @@ func (c *conn) result(line []byte) error {
 	c.streamed = map[string]bool{}
 	c.tools = map[string]*toolState{} // 一輪之外不處理工具，記著的只會越積越多
 	c.perms, c.permOf = map[task.PermissionID]*pendingPerm{}, map[string]task.PermissionID{}
+	called := false // 這一輪確實呼叫過模型
 	if u := m.Usage; u != nil && u.Input >= 0 && u.Output >= 0 && u.CacheRead >= 0 && u.CacheWrite >= 0 &&
 		u.Input+u.Output+u.CacheRead+u.CacheWrite > 0 {
+		called = true
 		c.out.push(task.Command{Kind: task.FactUsage, Usage: &task.Usage{InputTokens: u.Input, OutputTokens: u.Output,
 			CacheReadTokens: u.CacheRead, CacheWriteTokens: u.CacheWrite}})
 	}
@@ -267,7 +271,23 @@ func (c *conn) result(line []byte) error {
 		t = failed(fail(CodeTurnFailed, nil, "detail", detail))
 	}
 	c.out.push(turnEnded(t))
+	if t.Result == task.TurnOK && called {
+		c.confirmQuota()
+	}
 	return nil
+}
+
+// confirmQuota 在呼叫過模型而成功結束的一輪之後，把這個行程最近報來的額度以現在的時間再報一次
+// （CQ14）：Claude 只在窗口的取整百分比、重置時間、狀態或門檻變了才發 rate_limit_event，這一輪
+// 沒發就表示數字到現在都沒變，截至何時應是現在。只在讀取的 goroutine 上呼叫。
+func (c *conn) confirmQuota() {
+	if c.lastQuota == nil {
+		return
+	}
+	q := *c.lastQuota
+	q.Windows = slices.Clone(q.Windows)
+	q.At = time.Now().UTC()
+	c.quota(q)
 }
 
 // system 只讀 init：它報出這一輪實際用的模型（解析後的名稱），對上可選模型之一而與目前的
@@ -295,6 +315,55 @@ func (c *conn) system(line []byte) error {
 				ModelReported: &task.ModelReport{Setting: cloneSetting(c.model)}})
 			return nil
 		}
+	}
+	return nil
+}
+
+// quotaWindows 是 rate_limit_event 裡要記的窗口與它們的長度（分鐘）：只要 5 小時與 7 天
+// （D87）；seven_day_overage_included 與頂層說的是眼下限制著的那個窗口的欄位不讀（CQ04）。
+var quotaWindows = []struct {
+	key     string
+	minutes int
+}{{"five_hour", 300}, {"seven_day", 10080}}
+
+// rateLimit 把 rate_limit_event 的 unifiedWindows 記成 Claude 的額度快照（D87、m3.md CQ01–CQ07）。
+// 時間是收到的時間：事件不帶時間；成功的一輪結束時再以當時的時間報一次（confirmQuota）。沒有可記的窗口（API key、Bedrock、Vertex 沒有這些欄位）時
+// 不記；某個窗口讀不懂就跳過它（CQ06）。不產生 hub 的事實。
+func (c *conn) rateLimit(line []byte) error {
+	if c.quota == nil {
+		return nil
+	}
+	var m struct {
+		Info *struct {
+			Windows map[string]json.RawMessage `json:"unifiedWindows"`
+		} `json:"rate_limit_info"`
+	}
+	if err := json.Unmarshal(line, &m); err != nil {
+		return err
+	}
+	if m.Info == nil {
+		return nil
+	}
+	q := usage.Quota{Agent: claudeAgent, Bucket: string(claudeAgent), At: time.Now().UTC()}
+	for _, w := range quotaWindows {
+		raw, ok := m.Info.Windows[w.key]
+		if !ok {
+			continue
+		}
+		var v struct {
+			Utilization *float64 `json:"utilization"`
+			ResetsAt    *int64   `json:"resetsAt"`
+		}
+		if err := json.Unmarshal(raw, &v); err != nil || v.Utilization == nil || v.ResetsAt == nil || *v.ResetsAt <= 0 {
+			c.logger.Debug("claude: skipped a quota window OrielHub could not read", "window", w.key)
+			continue
+		}
+		q.Windows = append(q.Windows, usage.Limit{Minutes: w.minutes, UsedPercent: *v.Utilization * 100,
+			ResetsAt: time.Unix(*v.ResetsAt, 0).UTC()})
+	}
+	if len(q.Windows) > 0 {
+		c.lastQuota = &q
+		c.quota(q)
 	}
 	return nil
 }

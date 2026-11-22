@@ -23,7 +23,7 @@ func Definition() agent.Definition {
 	base := []string{"-p", "--input-format", "stream-json", "--output-format", "stream-json", "--verbose",
 		"--include-partial-messages", "--permission-prompt-tool", "stdio"}
 	return agent.Definition{
-		ID:       "claude",
+		ID:       claudeAgent,
 		Name:     "Claude Code",
 		Icon:     agent.IconURL(icon),
 		Protocol: task.ProtocolClaude,

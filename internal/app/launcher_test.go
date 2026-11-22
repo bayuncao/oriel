@@ -335,7 +335,7 @@ func TestLaunchableFollowsRuntimes(t *testing.T) {
 		}
 		return out
 	}
-	runtimes := newRuntimes(runner, "test", nil, acp.New(acp.Options{Runner: runner}))
+	runtimes := newRuntimes(runner, "test", nil, acp.New(acp.Options{Runner: runner}), nil)
 	all := []task.AgentID{"claude", "codex", "pi", "grok", "gemini", "opencode", "cursor", "copilot", "qwen"}
 	if got := launchable(runtimes); !slices.Equal(got, all) {
 		t.Fatalf("launchable %q, want %q", got, all)

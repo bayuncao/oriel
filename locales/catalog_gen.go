@@ -5186,16 +5186,16 @@ func (msgs Messages) UiUsageQuotaEmpty() string {
 	return Catalog.Format(msgs.locale, "ui_usage_quota_empty", nil)
 }
 
-// UiUsageQuotaClaude says "Claude Code's quota appears after OrielHub runs Claude Code."
+// UiUsageQuotaClaude says "Claude Code's quota appears after OrielHub runs Claude Code signed in with a Claude subscription."
 // in the language the app shows.
 //
-// Explains why Claude Code has no quota yet (D87).
+// Explains why Claude Code has no quota yet (D87, m3.md CQ12).
 func UiUsageQuotaClaude() string { return In(i18n.Locale()).UiUsageQuotaClaude() }
 
-// UiUsageQuotaClaude says "Claude Code's quota appears after OrielHub runs Claude Code."
+// UiUsageQuotaClaude says "Claude Code's quota appears after OrielHub runs Claude Code signed in with a Claude subscription."
 // in the language of msgs.
 //
-// Explains why Claude Code has no quota yet (D87).
+// Explains why Claude Code has no quota yet (D87, m3.md CQ12).
 func (msgs Messages) UiUsageQuotaClaude() string {
 	return Catalog.Format(msgs.locale, "ui_usage_quota_claude", nil)
 }
@@ -5216,6 +5216,24 @@ func UiUsageQuotaAsOf(time_ string, agent string) string {
 // name.
 func (msgs Messages) UiUsageQuotaAsOf(time_ string, agent string) string {
 	return Catalog.Format(msgs.locale, "ui_usage_quota_as_of", map[string]any{"time": time_, "agent": agent})
+}
+
+// UiUsageQuotaAsOfOrielhub says "As of {time}, from the latest {agent} call OrielHub ran; use outside OrielHub, including {agent} in a terminal, shows…"
+// in the language the app shows.
+//
+// Where a quota snapshot reported while OrielHub runs the agent comes from
+// (Claude Code, D87); time is relative, agent the agent's name.
+func UiUsageQuotaAsOfOrielhub(time_ string, agent string) string {
+	return In(i18n.Locale()).UiUsageQuotaAsOfOrielhub(time_, agent)
+}
+
+// UiUsageQuotaAsOfOrielhub says "As of {time}, from the latest {agent} call OrielHub ran; use outside OrielHub, including {agent} in a terminal, shows…"
+// in the language of msgs.
+//
+// Where a quota snapshot reported while OrielHub runs the agent comes from
+// (Claude Code, D87); time is relative, agent the agent's name.
+func (msgs Messages) UiUsageQuotaAsOfOrielhub(time_ string, agent string) string {
+	return Catalog.Format(msgs.locale, "ui_usage_quota_as_of_orielhub", map[string]any{"time": time_, "agent": agent})
 }
 
 // UiUsageQuotaPlan says "Plan: {plan}"

@@ -74,10 +74,10 @@ func (s *Store) ApplyUsage(ctx context.Context, b usage.Batch) error {
 			return fail(CodeFailed, err, "detail", err.Error())
 		}
 		stmts = append(stmts, sqlite.Statement{
-			SQL: `INSERT INTO usage_quotas(agent, bucket, name, plan, windows, at) VALUES(?,?,?,?,?,?)
+			SQL: `INSERT INTO usage_quotas(agent, bucket, name, plan, windows, at, reported) VALUES(?,?,?,?,?,?,?)
 ON CONFLICT(agent, bucket) DO UPDATE SET name = excluded.name, plan = excluded.plan,
-  windows = excluded.windows, at = excluded.at WHERE excluded.at >= usage_quotas.at`,
-			Args: []any{string(q.Agent), q.Bucket, q.Name, q.Plan, string(windows), formatOptionalAt(q.At)}})
+  windows = excluded.windows, at = excluded.at, reported = excluded.reported WHERE excluded.at >= usage_quotas.at`,
+			Args: []any{string(q.Agent), q.Bucket, q.Name, q.Plan, string(windows), formatOptionalAt(q.At), boolInt(q.Reported)}})
 	}
 	if f := b.File; f != nil {
 		state := f.State
@@ -161,7 +161,7 @@ func (s *Store) UsageQuotas(ctx context.Context) ([]usage.Quota, error) {
 		return nil, err
 	}
 	rows, err := s.r.Query(ctx,
-		"SELECT agent, bucket, name, plan, windows, at FROM usage_quotas ORDER BY agent, bucket")
+		"SELECT agent, bucket, name, plan, windows, at, reported FROM usage_quotas ORDER BY agent, bucket")
 	if err != nil {
 		return nil, mapErr(err)
 	}
@@ -172,7 +172,7 @@ func (s *Store) UsageQuotas(ctx context.Context) ([]usage.Quota, error) {
 			return nil, err
 		}
 		q := usage.Quota{Agent: task.AgentID(toStr(v[0])), Bucket: toStr(v[1]), Name: toStr(v[2]),
-			Plan: toStr(v[3]), At: at}
+			Plan: toStr(v[3]), At: at, Reported: toInt(v[6]) != 0}
 		if err := json.Unmarshal([]byte(toStr(v[4])), &q.Windows); err != nil {
 			return nil, fail(CodeFailed, err, "detail", err.Error())
 		}
