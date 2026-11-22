@@ -2,7 +2,10 @@ package acp
 
 import (
 	"context"
+	"io"
+	"log/slog"
 	"reflect"
+	"slices"
 	"testing"
 	"time"
 
@@ -139,4 +142,31 @@ func codeOf(err error) string {
 		return c.ErrorCode()
 	}
 	return ""
+}
+
+// C46、C49：route 按讀到的順序處理。握手回應之前的更新併進 Start 的報告；回應之後、綁定之前讀到的更新是 agent
+// 啟動之後的變化，綁定之後另報（不能併進去丟掉：CI 上 handshake 拿到回應前讀取迴圈就讀到了它）。直接按順序餵
+// route、再綁定，不靠排程重現那個先後。
+func TestModelUpdatedBeforeBind(t *testing.T) {
+	c := &conn{rpc: newRPCTrack(), out: newOutbox(), logger: slog.New(slog.DiscardHandler)}
+	update := func(cur string) []byte {
+		return []byte(`{"jsonrpc":"2.0","method":"session/update","params":{"sessionId":"s1","update":` +
+			`{"sessionUpdate":"config_option_update","configOptions":` + configOptions(cur) + `}}}`)
+	}
+	if _, err := (tap{w: io.Discard, t: c.rpc}).Write([]byte(`{"jsonrpc":"2.0","id":2,"method":"session/new","params":{}}`)); err != nil {
+		t.Fatal(err)
+	}
+	c.route(update("mini"), io.Discard) // 握手中
+	c.route([]byte(`{"jsonrpc":"2.0","id":2,"result":{"sessionId":"s1"}}`), io.Discard)
+	c.route(update("max"), io.Discard) // 回應之後、綁定之前
+	c.bind("s1", nil)
+	c.out.mu.Lock()
+	items := slices.Clone(c.out.items)
+	c.out.mu.Unlock()
+	if len(items) != 3 || items[0].Kind != task.FactModelReported || !items[0].ModelReported.Start ||
+		!reflect.DeepEqual(items[0].ModelReported.Setting, wantModel("mini")) || items[1].Kind != task.FactNativeBound ||
+		items[2].Kind != task.FactModelReported || items[2].ModelReported.Start ||
+		!reflect.DeepEqual(items[2].ModelReported.Setting, wantModel("max")) {
+		t.Fatalf("facts %+v", items)
+	}
 }

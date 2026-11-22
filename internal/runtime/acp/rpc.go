@@ -61,17 +61,19 @@ func (p tap) Write(b []byte) (int, error) {
 	return n, err
 }
 
-// reply 記下 agent 對 OrielHub 請求的回應（route 在交給 SDK 之前呼叫）。
-func (t *rpcTrack) reply(id json.RawMessage, line []byte) {
+// reply 記下 agent 對 OrielHub 請求的回應（route 在交給 SDK 之前呼叫），回傳它回應的方法；不是 OrielHub
+// 最近送出的請求時為空。
+func (t *rpcTrack) reply(id json.RawMessage, line []byte) string {
 	k := idKey(id)
 	t.mu.Lock()
 	defer t.mu.Unlock()
-	for _, sent := range t.sent {
+	for method, sent := range t.sent {
 		if sent == k {
 			t.replies[k] = append(json.RawMessage(nil), line...)
-			return
+			return method
 		}
 	}
+	return ""
 }
 
 // decodePrompt 解讀 route 記下的 session/prompt 回應；讀不懂時 ok 為假。

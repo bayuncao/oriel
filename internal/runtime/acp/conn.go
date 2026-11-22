@@ -68,6 +68,10 @@ type conn struct {
 	// （startConfig），回應沒帶設置時用它（C49）。
 	bound       bool
 	startConfig []sdk.SessionConfigOption
+	// replied 在 route 讀到握手的回應時置真（交給 SDK 之前）：此後、綁定之前的 config_option_update 是 agent
+	// 啟動之後的變化，記在 afterConfig，綁定時在 Start 的報告之後另報（C46）；不能當成握手中的併進去丟掉。
+	replied     bool
+	afterConfig []sdk.SessionConfigOption
 	turn        bool          // 有 Prompt 在等回應
 	sent        chan struct{} // 這一輪的 session/prompt 寫出後關閉
 	cancelling  bool
@@ -179,7 +183,15 @@ func (c *conn) route(line []byte, toSDK io.Writer) {
 		return
 	}
 	if head.ID != nil && head.Method == "" {
-		c.rpc.reply(head.ID, line) // 回應：先記下，SDK 斷線時也知道 agent 回了什麼
+		// 回應：先記下，SDK 斷線時也知道 agent 回了什麼。
+		switch c.rpc.reply(head.ID, line) {
+		case sdk.AgentMethodSessionNew, sdk.AgentMethodSessionLoad, sdk.AgentMethodSessionResume:
+			// 握手的回應在這裡、交給 SDK 之前就記下：之後讀到的更新都是 agent 啟動之後的（C46），
+			// 即使 handshake 還沒拿到回應、還沒綁定；載入的歷史也到此為止（C07）。
+			c.mu.Lock()
+			c.replied, c.loading = true, false
+			c.mu.Unlock()
+		}
 	}
 	if head.ID == nil && head.Method == sdk.ClientMethodSessionUpdate {
 		var n sdk.SessionNotification

@@ -167,19 +167,29 @@ func (c *conn) handshake(ctx context.Context, resume task.NativeSessionID) error
 	default:
 		return fail(CodeResumeUnsupported, nil)
 	}
-	// 模型設置在綁定之前報：hub 在連線登記時依序處理，Plan 看到連線時已知道 agent 接回後是什麼模型（D118）。
-	// 回應裡的設置比握手中的更新新（SDK 先處理完回應之前的通知才交回回應）；回應沒帶時用最後一則更新。
+	c.bind(sid, config)
+	return nil
+}
+
+// bind 報出握手的結果：模型設置在綁定之前報，hub 在連線登記時依序處理，Plan 看到連線時已知道 agent 接回後是什麼
+// 模型（D118）。回應裡的設置比握手中的更新新（SDK 先處理完回應之前的通知才交回回應）；回應沒帶時用握手中最後一則
+// 更新。回應之後、這裡之前讀到的更新（route 記下回應後）是 agent 之後的變化，在綁定之後另報（C46）。
+func (c *conn) bind(sid sdk.SessionId, config []sdk.SessionConfigOption) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	if config == nil {
 		config = c.startConfig
 	}
-	c.bound, c.startConfig = true, nil
+	after := c.afterConfig
+	c.bound, c.startConfig, c.afterConfig = true, nil, nil
 	c.out.push(task.Command{Kind: task.FactModelReported,
 		ModelReported: &task.ModelReport{Setting: modelOf(config), Start: true}})
 	c.out.push(task.Command{Kind: task.FactNativeBound,
 		Bound: &task.NativeBound{NativeID: task.NativeSessionID(sid)}})
-	return nil
+	if after != nil {
+		// 回應之後、綁定之前 agent 又換了：照之後的更新另報（C46）。
+		c.out.push(task.Command{Kind: task.FactModelReported, ModelReported: &task.ModelReport{Setting: modelOf(after)}})
+	}
 }
 
 // errDisconnected 表示 agent 沒有回應就斷線了（行程結束或 stdout 關閉）。

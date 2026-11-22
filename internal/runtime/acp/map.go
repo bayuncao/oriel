@@ -41,6 +41,9 @@ func (c *conn) update(n sdk.SessionNotification) {
 			entries = append(entries, task.PlanEntry{Text: e.Content, Status: planStatus(e.Status)})
 		}
 		c.out.push(task.Command{Kind: task.FactPlan, Plan: &task.PlanUpdate{Entries: entries}})
+	case u.ConfigOptionUpdate != nil && !c.bound && c.replied:
+		// 握手已回應、還沒綁定：agent 啟動之後的變化，綁定時另報（C46）。
+		c.afterConfig = u.ConfigOptionUpdate.ConfigOptions
 	case u.ConfigOptionUpdate != nil && !c.bound:
 		// 握手中的更新是 agent 啟動時的樣子，不是它之後換了（不然會被當成 V84 跟著它，丟掉使用者選的）：
 		// 併進 Start 的報告（C49）。
