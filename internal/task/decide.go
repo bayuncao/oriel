@@ -784,8 +784,15 @@ func resume(d *decision, c Command) error {
 	if !x.resumable() {
 		return reject(ReasonNotResumable)
 	}
-	d.emit(Event{Kind: SessionResumedKind, Session: c.Session})
-	d.startNext(c.Session) // 退出前排隊的 Prompt 在恢復後繼續
+	r := &SessionResumed{}
+	if x.Retry != nil {
+		// agent 沒起來時失敗的那一輪：它的 Prompt 從沒送到 agent，重新排在隊首，以新的 ID（L56）。
+		p := *x.Retry
+		p.ID = promptID(d.next())
+		r.Requeued = &p
+	}
+	d.emit(Event{Kind: SessionResumedKind, Session: c.Session, SessionResumed: r})
+	d.startNext(c.Session) // 重新排上的與退出前排隊的 Prompt 在恢復後繼續
 	return nil
 }
 

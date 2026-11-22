@@ -2102,6 +2102,10 @@
   "@ui_task_section_brief": {
     "description": "Task details: heading of the brief."
   },
+  "ui_task_section_rules": "Rules for this task",
+  "@ui_task_section_rules": {
+    "description": "Task details: heading of the rules saved for this task or one of its sessions (from “Always…” in an approval), read-only (m2.md V32)."
+  },
   "ui_task_section_details": "Details",
   "@ui_task_section_details": {
     "description": "Task details: heading of the fields."

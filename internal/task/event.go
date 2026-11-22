@@ -42,6 +42,7 @@ type Event struct {
 	// Session 生命週期。
 	SessionCreated     *SessionCreated `json:"sessionCreated,omitzero"`
 	NativeSessionBound *NativeBound    `json:"nativeSessionBound,omitzero"`
+	SessionResumed     *SessionResumed `json:"sessionResumed,omitzero"`
 	ProcessExited      *Exited         `json:"processExited,omitzero"`
 
 	// 模型（D118）。
@@ -193,6 +194,13 @@ type ReviewRequested struct {
 type SessionCreated struct {
 	Launch LaunchSnapshot `json:"launch"`
 	Role   Role           `json:"role"`
+}
+
+// SessionResumed 是 Resume 的結果（結構版本 2：版本 1 沒有載荷，upcaster 補成空的）。Requeued 是重新排在隊首的
+// Prompt：行程還沒綁定原生會話（agent 沒起來，或接回時起不來）就失敗的那一輪的 Prompt，它從沒送到 agent
+// （m2.md L56）；ID 是新的。
+type SessionResumed struct {
+	Requeued *Prompt `json:"requeued,omitzero"`
 }
 
 type TurnStarted struct {

@@ -7,8 +7,10 @@ import (
 	"go/token"
 	"reflect"
 	"slices"
+	"strconv"
 	"strings"
 	"testing"
+	"time"
 )
 
 // eventKinds 解析 event.go，回傳宣告的每個 EventKind 常數的名稱。
@@ -89,7 +91,7 @@ func TestEventRoundTrip(t *testing.T) {
 				t.Fatal(err)
 			}
 			var env map[string]json.RawMessage
-			if err := json.Unmarshal(b, &env); err != nil || string(env["v"]) != "1" {
+			if err := json.Unmarshal(b, &env); err != nil || string(env["v"]) != strconv.Itoa(version(e.Kind)) {
 				t.Fatalf("envelope %s", b)
 			}
 			for _, column := range []string{"seq", "kind", "at"} {
@@ -143,6 +145,35 @@ func TestDecodeRejectsBadRows(t *testing.T) {
 		if _, err := DecodeEvent(1, tc.kind, at0, []byte(tc.payload)); err == nil {
 			t.Errorf("%s: decoded", tc.name)
 		}
+	}
+}
+
+// TestSessionResumedV1：版本 1 的 SessionResumed 沒有 data，經 upcaster 讀成沒有 Requeued 的載荷（m2.md L56）。
+func TestSessionResumedV1(t *testing.T) {
+	e, err := DecodeEvent(7, SessionResumedKind, time.Unix(0, 0).UTC(), []byte(`{"v":1,"session":"s2"}`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if e.SessionResumed == nil || e.SessionResumed.Requeued != nil || e.Session != "s2" {
+		t.Fatalf("decoded %+v", e)
+	}
+}
+
+// TestSessionResumedRequeued：重新排上的 Prompt（含路徑附件）原樣編解碼。
+func TestSessionResumedRequeued(t *testing.T) {
+	e := Event{Seq: 8, At: time.Unix(0, 0).UTC(), Kind: SessionResumedKind, Session: "s2", SessionResumed: &SessionResumed{
+		Requeued: &Prompt{ID: "p8", Text: "Build it", Attachments: []Attachment{{Name: "main.go", MIME: "text/x-go", Path: "/repo/main.go"}}},
+	}}
+	b, err := EncodeEvent(e)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, err := DecodeEvent(e.Seq, e.Kind, e.At, b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(got, e) {
+		t.Fatalf("round trip\n got %+v\nwant %+v", got.SessionResumed.Requeued, e.SessionResumed.Requeued)
 	}
 }
 

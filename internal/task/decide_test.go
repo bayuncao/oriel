@@ -183,7 +183,7 @@ func conflictedEv(sid SessionID) Event {
 }
 
 func resumedEv(sid SessionID) Event {
-	return Event{Kind: SessionResumedKind, Session: sid}
+	return Event{Kind: SessionResumedKind, Session: sid, SessionResumed: &SessionResumed{}}
 }
 
 func nativeDeletedEv(sid SessionID, iid IntentID) Event {
@@ -202,6 +202,11 @@ func forkEv(sid SessionID, base string) Event {
 		Path: "/wt/t-1-" + string(sid), Branch: "orielhub/t-1-" + string(sid),
 		BaseBranch: base, BaseCommit: "abc",
 	}}
+}
+
+func failedEv(sid SessionID, tid TurnID) Event {
+	return Event{Kind: TurnFailedKind, Session: sid, TurnFailed: &TurnFailed{
+		Turn: tid, Problem: Problem{Code: "acp.auth_required", Params: map[string]string{"agent": "Gemini CLI"}}}}
 }
 
 func queuedEv(sid SessionID, pid PromptID, text string) Event {
@@ -1040,6 +1045,57 @@ func TestDecideSessions(t *testing.T) {
 				resumedEv("s2"), turnEv("s2", "t6", "p3"), statusEv(TaskTodo, TaskInProgress, CauseAuto),
 			},
 			status: TaskInProgress},
+		// L56：agent 沒起來（沒有原生會話）時失敗的那一輪，它的 Prompt 重新排在隊首（新的 ID），在排隊的之前。
+		{name: "resume requeues the failed first prompt",
+			given: seqs(created(IsolationNone), sessionEv("s2"), queuedEv("s2", "p3", "Build it"),
+				turnEv("s2", "t4", "p3"), queuedEv("s2", "p5", "Then test"), failedEv("s2", "t4"), exitedEv("s2")),
+			in:  gitInputs(),
+			cmd: sessionCmd(CmdResume, "s2", OriginDesktop, nil),
+			want: []Event{
+				{Kind: SessionResumedKind, Session: "s2", SessionResumed: &SessionResumed{Requeued: &Prompt{ID: "p8", Text: "Build it"}}},
+				turnEv("s2", "t9", "p8"), statusEv(TaskTodo, TaskInProgress, CauseAuto),
+			},
+			status: TaskInProgress},
+		// 接回時起不來（這個行程沒綁定原生會話就失敗）：那條 Prompt 也從沒送到，同樣重新排上。
+		{name: "resume after a failed restart requeues",
+			given: seqs(created(IsolationNone), sessionEv("s2"), queuedEv("s2", "p3", "Build it"), turnEv("s2", "t4", "p3"),
+				boundEv("s2", "n5"), completedEv("s2"), exitedEv("s2"), resumedEv("s2"),
+				queuedEv("s2", "p9", "Again"), turnEv("s2", "t10", "p9"), failedEv("s2", "t10"), exitedEv("s2")),
+			in:  gitInputs(),
+			cmd: sessionCmd(CmdResume, "s2", OriginDesktop, nil),
+			want: []Event{
+				{Kind: SessionResumedKind, Session: "s2", SessionResumed: &SessionResumed{Requeued: &Prompt{ID: "p13", Text: "Again"}}},
+				turnEv("s2", "t14", "p13"), statusEv(TaskTodo, TaskInProgress, CauseAuto),
+			},
+			status: TaskInProgress},
+		// 重新排上的那一輪又失敗（agent 仍沒登錄）：再重試時再排上一次，排隊的仍在它後面。
+		{name: "resume requeues again after the retry fails",
+			given: seqs(created(IsolationNone), sessionEv("s2"), queuedEv("s2", "p3", "Build it"), turnEv("s2", "t4", "p3"),
+				queuedEv("s2", "p5", "Then test"), failedEv("s2", "t4"), exitedEv("s2"),
+				Event{Kind: SessionResumedKind, Session: "s2", SessionResumed: &SessionResumed{Requeued: &Prompt{ID: "p8", Text: "Build it"}}},
+				turnEv("s2", "t9", "p8"), failedEv("s2", "t9"), exitedEv("s2")),
+			in:  gitInputs(),
+			cmd: sessionCmd(CmdResume, "s2", OriginDesktop, nil),
+			want: []Event{
+				{Kind: SessionResumedKind, Session: "s2", SessionResumed: &SessionResumed{Requeued: &Prompt{ID: "p12", Text: "Build it"}}},
+				turnEv("s2", "t13", "p12"), statusEv(TaskTodo, TaskInProgress, CauseAuto),
+			},
+			status: TaskInProgress},
+		// 之後又開始了一輪（綁定後才失敗）：先前記下的那條已清掉，不重新排上。
+		{name: "resume after a later bound turn does not requeue",
+			given: seqs(created(IsolationNone), sessionEv("s2"), queuedEv("s2", "p3", "Build it"), turnEv("s2", "t4", "p3"),
+				failedEv("s2", "t4"), queuedEv("s2", "p6", "Again"), turnEv("s2", "t7", "p6"), boundEv("s2", "n8"),
+				failedEv("s2", "t7"), exitedEv("s2")),
+			in:   gitInputs(),
+			cmd:  sessionCmd(CmdResume, "s2", OriginDesktop, nil),
+			want: []Event{resumedEv("s2")}},
+		// 原生會話已綁定：agent 起來過，Prompt 已送到，不重新排上。
+		{name: "resume bound does not requeue",
+			given: seqs(created(IsolationNone), sessionEv("s2"), queuedEv("s2", "p3", "Build it"),
+				turnEv("s2", "t4", "p3"), boundEv("s2", "n5"), failedEv("s2", "t4"), exitedEv("s2")),
+			in:   gitInputs(),
+			cmd:  sessionCmd(CmdResume, "s2", OriginDesktop, nil),
+			want: []Event{resumedEv("s2")}},
 		{name: "resume needs resume cap",
 			given:  seqs(created(IsolationNone), sessionLaunchEv("s2", launchNoResume()), boundEv("s2", "n3"), exitedEv("s2")),
 			in:     gitInputs(),

@@ -763,6 +763,7 @@
   "ui_tasks_drop": "松开，用这个文件夹新建任务",
   "ui_tasks_drop_hint": "只能拖一个文件夹",
   "ui_task_section_brief": "说明",
+  "ui_task_section_rules": "这个任务的规则",
   "ui_task_section_details": "详情",
   "ui_task_field_workspace": "工作区",
   "ui_task_field_folder": "文件夹",

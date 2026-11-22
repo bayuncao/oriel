@@ -104,7 +104,7 @@ func samples() []Event {
 		ev(ReviewEndedKind, "", nil),
 		ev(SessionCreatedKind, "s31", func(e *Event) { e.SessionCreated = &SessionCreated{Launch: newLaunch(), Role: RoleReviewer} }),
 		ev(NativeSessionBoundKind, "s3", func(e *Event) { e.NativeSessionBound = &NativeBound{NativeID: "n3"} }),
-		ev(SessionResumedKind, "s3", nil),
+		ev(SessionResumedKind, "s3", func(e *Event) { e.SessionResumed = &SessionResumed{} }),
 		ev(SessionClosedKind, "s3", nil),
 		ev(ProcessExitedKind, "s2", func(e *Event) {
 			e.ProcessExited = &Exited{Problem: Problem{Code: "proc.signaled", Params: map[string]string{"signal": "9"}}, StderrTail: "boom"}

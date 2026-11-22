@@ -94,7 +94,9 @@ func checkPayload(e *Event) (*slot, error) {
 
 // versions 是結構改過的 Kind 的目前版本；不在表中的是 1。改了某個 Kind
 // 的結構時遞增它的版本，並在 upcasters 登記從舊版本轉換的函式。
-var versions = map[EventKind]int{}
+var versions = map[EventKind]int{
+	SessionResumedKind: 2, // 加了載荷（Requeued，m2.md L56）
+}
 
 func version(k EventKind) int { return cmp.Or(versions[k], 1) }
 
@@ -105,7 +107,10 @@ type upcastKey struct {
 
 // upcasters 把 (kind, v) 的 data 轉成 v+1 的 data。登記的轉換同時寫進
 // docs/architecture/domain.md 的「已登記的 upcaster」。
-var upcasters = map[upcastKey]func(json.RawMessage) (json.RawMessage, error){}
+var upcasters = map[upcastKey]func(json.RawMessage) (json.RawMessage, error){
+	// 版本 1 的 SessionResumed 沒有載荷：補成沒有 Requeued 的空載荷。
+	{SessionResumedKind, 1}: func(json.RawMessage) (json.RawMessage, error) { return json.RawMessage(`{}`), nil },
+}
 
 func upcast(kind EventKind, v int, data json.RawMessage) (json.RawMessage, error) {
 	cur := version(kind)
@@ -183,7 +188,7 @@ var payloads = map[EventKind]*slot{
 
 	SessionCreatedKind:     field("sessionCreated", func(e *Event) **SessionCreated { return &e.SessionCreated }),
 	NativeSessionBoundKind: field("nativeSessionBound", func(e *Event) **NativeBound { return &e.NativeSessionBound }),
-	SessionResumedKind:     nil,
+	SessionResumedKind:     field("sessionResumed", func(e *Event) **SessionResumed { return &e.SessionResumed }),
 	SessionClosedKind:      nil,
 	ProcessExitedKind:      field("processExited", func(e *Event) **Exited { return &e.ProcessExited }),
 

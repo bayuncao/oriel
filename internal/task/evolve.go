@@ -143,7 +143,12 @@ var folds = map[EventKind]func(State, Event) State{
 		})
 	},
 	SessionResumedKind: func(s State, e Event) State {
-		return withSession(s, e.Session, func(x *Session) { x.Status, x.Exit = SessionIdle, nil })
+		return withSession(s, e.Session, func(x *Session) {
+			x.Status, x.Exit, x.Retry = SessionIdle, nil, nil
+			if p := e.SessionResumed.Requeued; p != nil {
+				x.Queue = append([]Prompt{*p}, x.Queue...)
+			}
+		})
 	},
 	SessionClosedKind: func(s State, e Event) State {
 		return withSession(s, e.Session, func(x *Session) { x.Status = SessionClosed })
@@ -188,6 +193,7 @@ var folds = map[EventKind]func(State, Event) State{
 			}
 			x.Queue = slices.DeleteFunc(slices.Clone(x.Queue), func(q Prompt) bool { return q.ID == t.Prompt })
 			x.Turn = &Turn{ID: t.Turn, Prompt: p}
+			x.Retry = nil
 			x.Status = SessionRunning
 		})
 	},
@@ -215,6 +221,10 @@ var folds = map[EventKind]func(State, Event) State{
 	},
 	TurnFailedKind: func(s State, e Event) State {
 		return withSession(s, e.Session, func(x *Session) {
+			if !x.Bound && x.Turn != nil {
+				// 這個行程沒綁定原生會話就失敗了（agent 沒起來，或接回時起不來）：這條 Prompt 從沒送到，Resume 時重新排上（L56）。
+				x.Retry = new(x.Turn.Prompt)
+			}
 			recordTurn(x, TurnError, new(e.TurnFailed.Problem), e.At)
 			endTurn(x)
 		})

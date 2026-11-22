@@ -9,21 +9,24 @@ import (
 // Session 是 Task 內部的實體：與一個 agent 的一段對話，
 // 由 Profile 的快照啟動。
 type Session struct {
-	ID             SessionID            `json:"id"`
-	Launch         LaunchSnapshot       `json:"launch"`
-	Role           Role                 `json:"role"`
-	Fork           *WorktreeState       `json:"fork"` // nil = 在 Task 的工作目錄中作業
-	NativeID       NativeSessionID      `json:"nativeId,omitzero"`
-	NativeGone     bool                 `json:"nativeGone"` // 原生檔案已刪除；無法 resume
-	Bound          bool                 `json:"bound"`      // 目前有進程綁定著原生會話：native_bound 置真、ProcessExited 置假；Plan 據此分辨「還沒啟動」與「崩潰了」
-	Conflicted     bool                 `json:"conflicted"` // 原生 session 在 OrielHub 之外被使用；唯讀
-	Status         SessionStatus        `json:"status"`
-	Exit           *Exited              `json:"exit"`                 // 最近一次行程結束的原因與 stderr 結尾；SessionResumed 清掉
-	Turn           *Turn                `json:"turn"`                 // 最多一個
-	LastTurn       *TurnRecord          `json:"lastTurn"`             // 最近結束的一輪；Turn 在跑時是上一輪的
-	Open           MessageID            `json:"open,omitzero"`        // 尚未結束的訊息：最後一段 Partial 為真
-	OpenChannel    ChannelKind          `json:"openChannel,omitzero"` // Open 那則訊息的頻道；頻道切換結束它
-	Queue          []Prompt             `json:"queue"`
+	ID          SessionID       `json:"id"`
+	Launch      LaunchSnapshot  `json:"launch"`
+	Role        Role            `json:"role"`
+	Fork        *WorktreeState  `json:"fork"` // nil = 在 Task 的工作目錄中作業
+	NativeID    NativeSessionID `json:"nativeId,omitzero"`
+	NativeGone  bool            `json:"nativeGone"` // 原生檔案已刪除；無法 resume
+	Bound       bool            `json:"bound"`      // 目前有進程綁定著原生會話：native_bound 置真、ProcessExited 置假；Plan 據此分辨「還沒啟動」與「崩潰了」
+	Conflicted  bool            `json:"conflicted"` // 原生 session 在 OrielHub 之外被使用；唯讀
+	Status      SessionStatus   `json:"status"`
+	Exit        *Exited         `json:"exit"`                 // 最近一次行程結束的原因與 stderr 結尾；SessionResumed 清掉
+	Turn        *Turn           `json:"turn"`                 // 最多一個
+	LastTurn    *TurnRecord     `json:"lastTurn"`             // 最近結束的一輪；Turn 在跑時是上一輪的
+	Open        MessageID       `json:"open,omitzero"`        // 尚未結束的訊息：最後一段 Partial 為真
+	OpenChannel ChannelKind     `json:"openChannel,omitzero"` // Open 那則訊息的頻道；頻道切換結束它
+	Queue       []Prompt        `json:"queue"`
+	// Retry 是行程還沒綁定原生會話（Bound 為假：agent 沒起來，或接回時起不來）就失敗的那一輪的 Prompt：它從沒
+	// 送到 agent，Resume 時重新排在隊首（m2.md L56）。之後再開始一輪或 Resume 時清掉。
+	Retry          *Prompt              `json:"retry,omitzero"`
 	Pending        map[PermissionID]Ask `json:"pending"` // 未決定的 ask，以及已決定但尚未送達的
 	CompletedTurns int                  `json:"completedTurns"`
 	// Model 是 agent 最近報告的模型設置（D118）：Start 時與 agent 自己改了時報告；nil = 沒報告（或還沒啟動過）。

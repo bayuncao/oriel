@@ -6352,6 +6352,22 @@ func (msgs Messages) UiTaskSectionBrief() string {
 	return Catalog.Format(msgs.locale, "ui_task_section_brief", nil)
 }
 
+// UiTaskSectionRules says "Rules for this task"
+// in the language the app shows.
+//
+// Task details: heading of the rules saved for this task or one of its
+// sessions (from “Always…” in an approval), read-only (m2.md V32).
+func UiTaskSectionRules() string { return In(i18n.Locale()).UiTaskSectionRules() }
+
+// UiTaskSectionRules says "Rules for this task"
+// in the language of msgs.
+//
+// Task details: heading of the rules saved for this task or one of its
+// sessions (from “Always…” in an approval), read-only (m2.md V32).
+func (msgs Messages) UiTaskSectionRules() string {
+	return Catalog.Format(msgs.locale, "ui_task_section_rules", nil)
+}
+
 // UiTaskSectionDetails says "Details"
 // in the language the app shows.
 //
