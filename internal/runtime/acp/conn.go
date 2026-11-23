@@ -83,7 +83,7 @@ type conn struct {
 
 // toolState 是一個工具呼叫目前的樣子；更新只帶改了的欄位。
 type toolState struct {
-	title  string
+	title  string // agent 給的原文；報告時用 shownTitle
 	kind   task.ToolKind
 	input  any
 	paths  []string
@@ -534,7 +534,7 @@ func (c *conn) requestPermission(ctx context.Context, req sdk.RequestPermissionR
 	p := &pendingPerm{options: req.Options, answer: make(chan sdk.RequestPermissionOutcome, 1)}
 	c.perms[id] = p
 	c.out.push(task.Command{Kind: task.FactAsked, Asked: &task.Asked{ID: id, Request: task.PermissionRequest{
-		Tool: string(st.kind), Kind: st.kind, Title: st.title, Command: command(st.kind, st.input),
+		Tool: string(st.kind), Kind: st.kind, Title: st.shownTitle(), Command: command(st.kind, st.input),
 		Paths: st.paths, Input: rawJSON(st.input)}}})
 	c.mu.Unlock()
 	select {

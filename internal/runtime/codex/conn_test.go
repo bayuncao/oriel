@@ -208,6 +208,12 @@ func TestTurnFailures(t *testing.T) {
 		{`"status":"failed","error":{"message":"limit","codexErrorInfo":"usageLimitExceeded"}`, CodeUsageLimit, nil},
 		{`"status":"failed","error":{"message":"too long","codexErrorInfo":"contextWindowExceeded"}`, CodeContextWindow, nil},
 		{`"status":"failed","error":{"message":"upstream 502","codexErrorInfo":{"httpConnectionFailed":{"httpStatusCode":502}}}`, CodeTurnFailed, map[string]string{"detail": "upstream 502"}},
+		// 上游 API 的錯誤回應原樣轉來：取 error.message，沒有就取頂層的 message；都沒有時原樣。
+		{`"status":"failed","error":{"message":"{\"type\":\"error\",\"status\":400,\"error\":{\"type\":\"invalid_request_error\",\"message\":\"The 'x' model is not supported.\",\"code\":\"model_not_found\"}}"}`, CodeTurnFailed, map[string]string{"detail": "The 'x' model is not supported."}},
+		{`"status":"failed","error":{"message":"{\"message\":\"rate limited\"}"}`, CodeTurnFailed, map[string]string{"detail": "rate limited"}},
+		{`"status":"failed","error":{"message":"{\"error\":\"unauthorized\",\"message\":\"Invalid API key\"}"}`, CodeTurnFailed, map[string]string{"detail": "Invalid API key"}},
+		{`"status":"failed","error":{"message":"{\"error\":{\"code\":500}}"}`, CodeTurnFailed, map[string]string{"detail": `{"error":{"code":500}}`}},
+		{`"status":"failed","error":{"message":"{not json"}`, CodeTurnFailed, map[string]string{"detail": "{not json"}},
 	}
 	for i, tc := range cases {
 		lines = append(lines, append(lTurn(4+i, i+1), lDone(i+1, tc.turn))...)

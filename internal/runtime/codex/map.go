@@ -359,7 +359,7 @@ func (c *conn) turnCompleted(params json.RawMessage) error {
 	default:
 		msg, info := m.Turn.Status, ""
 		if e := m.Turn.Error; e != nil {
-			msg, info = firstNonEmpty(e.Message, msg), errorInfo(e.Info)
+			msg, info = firstNonEmpty(apiMessage(e.Message), msg), errorInfo(e.Info)
 		}
 		switch info {
 		case "unauthorized":
@@ -374,6 +374,28 @@ func (c *conn) turnCompleted(params json.RawMessage) error {
 	}
 	c.out.push(turnEnded(t))
 	return nil
+}
+
+// apiMessage 是失敗原因裡給人看的那句話（CX19）：上游 API 的錯誤原樣轉來時 message 是整段回應的 JSON，
+// 取其中 error.message，沒有就取頂層的 message；不是 JSON 或兩處都沒有字串時原樣。
+func apiMessage(msg string) string {
+	var body struct {
+		Message any             `json:"message"`
+		Error   json.RawMessage `json:"error"` // 可能是物件，也可能是字串（如 "unauthorized"）
+	}
+	if !strings.HasPrefix(strings.TrimSpace(msg), "{") || json.Unmarshal([]byte(msg), &body) != nil {
+		return msg
+	}
+	var inner struct {
+		Message any `json:"message"`
+	}
+	_ = json.Unmarshal(body.Error, &inner) // 不是物件時沒有 error.message，取頂層的
+	for _, m := range []any{inner.Message, body.Message} {
+		if s, ok := m.(string); ok && strings.TrimSpace(s) != "" {
+			return s
+		}
+	}
+	return msg
 }
 
 // errorInfo 是 codexErrorInfo 的名稱：字串原樣，帶資料的變體取它唯一的鍵。

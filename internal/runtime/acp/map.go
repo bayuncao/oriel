@@ -120,7 +120,7 @@ func (c *conn) ensureTool(id sdk.ToolCallId, title *string, kind *sdk.ToolKind, 
 		c.tools[id] = st
 		defer func() {
 			c.out.push(task.Command{Kind: task.FactToolStarted, ToolStarted: &task.ToolCall{
-				ID: task.ToolCallID(id), Tool: string(st.kind), Kind: st.kind, Title: st.title,
+				ID: task.ToolCallID(id), Tool: string(st.kind), Kind: st.kind, Title: st.shownTitle(),
 				Input: rawJSON(st.input), Paths: st.paths}})
 		}()
 	}
@@ -139,6 +139,73 @@ func (c *conn) ensureTool(id sdk.ToolCallId, title *string, kind *sdk.ToolKind, 
 	return st
 }
 
+// shownTitle 是報告用的標題（C17a）：去掉 Markdown 行內代碼的反引號；但命令類的標題原文裡含著要執行的
+// 命令、去掉之後卻不含了（命令自己用了反引號，如 ls `pwd`）時用原文，不讓卡片、審批與通知寫出另一條命令。
+func (st *toolState) shownTitle() string {
+	plain := plainTitle(st.title)
+	if cmd := command(st.kind, st.input); cmd != "" && strings.Contains(st.title, cmd) && !strings.Contains(plain, cmd) {
+		return st.title
+	}
+	return plain
+}
+
+// plainTitle 去掉標題裡 Markdown 行內代碼的反引號：有的 agent 把標題寫成 "Read `/a/b.txt`"，界面上標題本來
+// 就是等寬字，各處都當純文字顯示。按 CommonMark：代碼外的 \` 是字面的反引號（去掉反斜線）；N 個反引號開頭，
+// 到下一串恰好 N 個為止，內容兩端都是空格（且不全是空格）時各去掉一個；找不到收尾的那串反引號原樣保留。
+func plainTitle(s string) string {
+	if !strings.Contains(s, "`") {
+		return s
+	}
+	var b strings.Builder
+	for i := 0; i < len(s); {
+		if s[i] == '\\' && i+1 < len(s) && s[i+1] == '`' {
+			b.WriteByte('`')
+			i += 2
+			continue
+		}
+		if s[i] != '`' {
+			b.WriteByte(s[i])
+			i++
+			continue
+		}
+		n := backtickRun(s, i)
+		end := -1
+		for j := i + n; j < len(s); {
+			if s[j] != '`' {
+				j++
+				continue
+			}
+			m := backtickRun(s, j)
+			if m == n {
+				end = j
+				break
+			}
+			j += m
+		}
+		if end < 0 {
+			b.WriteString(s[i : i+n])
+			i += n
+			continue
+		}
+		code := s[i+n : end]
+		if len(code) >= 2 && code[0] == ' ' && code[len(code)-1] == ' ' && strings.Trim(code, " ") != "" {
+			code = code[1 : len(code)-1]
+		}
+		b.WriteString(code)
+		i = end + n
+	}
+	return b.String()
+}
+
+// backtickRun 是 s[i:] 開頭連續反引號的個數。
+func backtickRun(s string, i int) int {
+	n := 0
+	for i+n < len(s) && s[i+n] == '`' {
+		n++
+	}
+	return n
+}
+
 // toolUpdated 報工具呼叫的狀態與輸出，連同目前的分類、標題與路徑（更新或權限請求可能才給出它們）；沒帶的沿用上次的（C16）。
 func (c *conn) toolUpdated(id sdk.ToolCallId, st *toolState, status *sdk.ToolCallStatus, content []sdk.ToolCallContent, raw any) {
 	if status != nil {
@@ -148,7 +215,7 @@ func (c *conn) toolUpdated(id sdk.ToolCallId, st *toolState, status *sdk.ToolCal
 		st.output = out
 	}
 	c.out.push(task.Command{Kind: task.FactToolUpdated, ToolUpdated: &task.ToolUpdate{
-		ID: task.ToolCallID(id), Status: st.status, Kind: st.kind, Title: st.title, Paths: st.paths,
+		ID: task.ToolCallID(id), Status: st.status, Kind: st.kind, Title: st.shownTitle(), Paths: st.paths,
 		Output: st.output}})
 }
 

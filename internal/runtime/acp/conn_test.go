@@ -166,9 +166,9 @@ func TestUpdates(t *testing.T) {
 		lUpdate(`{"sessionUpdate":"tool_call_update","toolCallId":"t1"}`),
 		lUpdate(`{"sessionUpdate":"tool_call_update","toolCallId":"t2","title":"Read","kind":"read","status":"completed"}`),
 		lUpdate(`{"sessionUpdate":"tool_call","toolCallId":"t3","title":"mode","kind":"switch_mode","status":"completed"}`),
-		// 分類、標題與路徑在更新裡才給出（Grok 的錄製即如此）：tool_updated 帶上目前的值。
-		lUpdate(`{"sessionUpdate":"tool_call","toolCallId":"t4","title":"read_file","status":"pending"}`),
-		lUpdate(`{"sessionUpdate":"tool_call_update","toolCallId":"t4","title":"Read b.go","kind":"read","status":"completed","locations":[{"path":"/x/b.go"}]}`),
+		// 分類、標題與路徑在更新裡才給出（Grok 的錄製即如此）：tool_updated 帶上目前的值；標題裡行內代碼的反引號去掉（C17a）。
+		lUpdate(`{"sessionUpdate":"tool_call","toolCallId":"t4","title":"\u0060read_file\u0060","status":"pending"}`),
+		lUpdate(`{"sessionUpdate":"tool_call_update","toolCallId":"t4","title":"Read \u0060b.go\u0060","kind":"read","status":"completed","locations":[{"path":"/x/b.go"}]}`),
 		lUpdate(`{"sessionUpdate":"plan","entries":[{"content":"a","priority":"high","status":"completed"},{"content":"b","priority":"low","status":"in_progress"},{"content":"c","priority":"low","status":"pending"}]}`),
 		lUpdate(`{"sessionUpdate":"available_commands_update","availableCommands":[{"name":"x","description":"y"}]}`),
 		lUpdate(`{"sessionUpdate":"current_mode_update","currentModeId":"m"}`),
@@ -790,5 +790,48 @@ func TestVendorNotificationsDropped(t *testing.T) {
 	o.prompt(t, task.Prompt{Text: "go"})
 	if c := o.rec.next(t, ends); c.Kind != task.FactTurnEnded || c.TurnEnded.Result != task.TurnOK {
 		t.Fatalf("got %+v", c)
+	}
+}
+
+// C17a：標題裡 Markdown 行內代碼的反引號去掉，按 CommonMark 的 code span 配對。
+func TestPlainTitle(t *testing.T) {
+	cases := []struct{ in, want string }{
+		{"Read b.go", "Read b.go"},
+		{"Read `/Users/a/b.txt`", "Read /Users/a/b.txt"},
+		{"`a` and `b`", "a and b"},
+		{"``a`b``", "a`b"},
+		{"`` `x` ``", "`x`"},
+		{"it`s", "it`s"},
+		{"`open ``", "`open ``"},
+		{"run ` `", "run  "},
+		{"Run \\`foo\\` now", "Run `foo` now"},
+		{"`a\\`", "a\\"},
+		{"", ""},
+	}
+	for _, tc := range cases {
+		if got := plainTitle(tc.in); got != tc.want {
+			t.Errorf("plainTitle(%q) = %q, want %q", tc.in, got, tc.want)
+		}
+	}
+}
+
+// C17a：命令類的標題含著要執行的命令、命令自己用了反引號時，標題照原文。
+func TestShownTitle(t *testing.T) {
+	cases := []struct {
+		title string
+		kind  task.ToolKind
+		input any
+		want  string
+	}{
+		{"Execute `sleep 20`", task.ToolExecute, map[string]any{"command": "sleep 20"}, "Execute sleep 20"},
+		{"ls `pwd`", task.ToolExecute, map[string]any{"command": "ls `pwd`"}, "ls `pwd`"},
+		{"Execute `make`", task.ToolExecute, nil, "Execute make"},
+		{"Read `a.go`", task.ToolRead, map[string]any{"command": "a.go"}, "Read a.go"},
+	}
+	for _, tc := range cases {
+		st := &toolState{title: tc.title, kind: tc.kind, input: tc.input}
+		if got := st.shownTitle(); got != tc.want {
+			t.Errorf("shownTitle(%q, %s) = %q, want %q", tc.title, tc.kind, got, tc.want)
+		}
 	}
 }
