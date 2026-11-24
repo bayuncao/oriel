@@ -8,7 +8,7 @@ type Code string
 // Params 回傳代碼的參數名（給錯誤表測試用）。
 func (c Code) Params() []string {
 	switch c {
-	case CodeStartFailed, CodeLanguageSaveFailed, CodeKeepAwakeSaveFailed, CodeThemeSaveFailed:
+	case CodeStartFailed, CodeLanguageSaveFailed, CodeKeepAwakeSaveFailed, CodeThemeSaveFailed, CodeAccountSaveFailed:
 		return []string{"detail"}
 	case CodeUnknownLanguage:
 		return []string{"tag"}
@@ -28,11 +28,13 @@ const (
 	CodeUnknownTheme Code = "app.unknown_theme"
 	// CodeThemeSaveFailed：記不住外觀（這次照樣生效，PF08）；detail
 	CodeThemeSaveFailed Code = "app.theme_save_failed"
+	// CodeAccountSaveFailed：記不住“無賬號使用”（這次照樣進應用，下次啟動再進登錄頁，NA05）；detail
+	CodeAccountSaveFailed Code = "app.account_save_failed"
 )
 
 // Codes 是本套件的所有代碼。
 func Codes() []Code {
-	return []Code{CodeStartFailed, CodeUnknownLanguage, CodeLanguageSaveFailed, CodeKeepAwakeSaveFailed, CodeUnknownTheme, CodeThemeSaveFailed}
+	return []Code{CodeStartFailed, CodeUnknownLanguage, CodeLanguageSaveFailed, CodeKeepAwakeSaveFailed, CodeUnknownTheme, CodeThemeSaveFailed, CodeAccountSaveFailed}
 }
 
 // codedError 讓 err 帶上使用者可見代碼。

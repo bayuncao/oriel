@@ -41,6 +41,14 @@ type ThemeSetting interface {
 	Set(choice string) error
 }
 
+// AccountSetting 是賬號的本機狀態（實作是 app.Account，D112）。
+type AccountSetting interface {
+	// WithoutAccount 回答是否選過“無賬號使用”。
+	WithoutAccount() bool
+	// ContinueWithout 記住“無賬號使用”；寫不進去時這次照樣算選過並回錯誤。
+	ContinueWithout() error
+}
+
 // Languages 是用戶選單語言切換的內容。
 type Languages struct {
 	// Choice 是目前的選擇，"" 是跟隨系統。
@@ -95,6 +103,8 @@ type DesktopParts struct {
 	KeepAwake KeepAwakeSetting
 	// Theme 是介面的外觀。
 	Theme ThemeSetting
+	// Account 是賬號的本機狀態。
+	Account AccountSetting
 	// Remote 為真時這個構建有遠程；正式版先沒有（D149）。
 	Remote bool
 	// UpdateSource 是這個構建取更新的地方（隱私頁，PV03）；本機構建是空的。
@@ -317,6 +327,30 @@ func (s *Desktop) Theme() (string, error) {
 		return "", wire(slog.Default(), "Theme", errNotReady)
 	}
 	return t.Choice(), nil
+}
+
+// WithoutAccount 回答是否選過“無賬號使用”：沒選過時打開應用先進登錄頁（m2.md NA01、NA03）。
+// 接上之前回 mygoipc.not_ready。
+func (s *Desktop) WithoutAccount() (bool, error) {
+	a := s.connected().Account
+	if a == nil {
+		return false, wire(slog.Default(), "WithoutAccount", errNotReady)
+	}
+	return a.WithoutAccount(), nil
+}
+
+// ContinueWithoutAccount 記住“無賬號使用”（NA02）。寫不進去時這次照樣算選過，
+// 日誌記一行原因並回 app.account_save_failed，下次啟動再進登錄頁（NA05）。
+func (s *Desktop) ContinueWithoutAccount() error {
+	a := s.connected().Account
+	if a == nil {
+		return wire(slog.Default(), "ContinueWithoutAccount", errNotReady)
+	}
+	if err := a.ContinueWithout(); err != nil {
+		slog.Warn("continue-without-account choice not saved; the sign-in page shows again next launch", "err", err)
+		return wire(slog.Default(), "ContinueWithoutAccount", err)
+	}
+	return nil
 }
 
 // SetTheme 讓 app 立刻改用外觀並記住它（PF03）：原生視窗、菜單欄面板與頁面的

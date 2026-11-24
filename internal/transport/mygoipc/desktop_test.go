@@ -462,6 +462,49 @@ func TestDesktopKeepAwake(t *testing.T) {
 	}
 }
 
+type accountSetting struct {
+	without bool
+	fail    error
+}
+
+func (a *accountSetting) WithoutAccount() bool { return a.without }
+func (a *accountSetting) ContinueWithout() error {
+	a.without = true
+	return a.fail
+}
+
+// NA01–NA05：接上之前不猜（not_ready）；頁面經 Desktop 讀與記“無賬號使用”；
+// 寫不進去時這次照樣算選過，原因帶著代碼回給頁面。
+func TestDesktopAccount(t *testing.T) {
+	s := &Desktop{}
+	var we *transport.Error
+	if _, err := s.WithoutAccount(); !errors.As(err, &we) || we.Code != string(CodeNotReady) {
+		t.Fatalf("WithoutAccount before connecting: %v", err)
+	}
+	if err := s.ContinueWithoutAccount(); !errors.As(err, &we) || we.Code != string(CodeNotReady) {
+		t.Fatalf("ContinueWithoutAccount before connecting: %v", err)
+	}
+	a := &accountSetting{}
+	ConnectDesktop(s, DesktopParts{Account: a})
+	if without, err := s.WithoutAccount(); err != nil || without {
+		t.Fatalf("WithoutAccount = %v, %v; want false", without, err)
+	}
+	if err := s.ContinueWithoutAccount(); err != nil {
+		t.Fatal(err)
+	}
+	if without, err := s.WithoutAccount(); err != nil || !without {
+		t.Fatalf("after continuing: %v, %v", without, err)
+	}
+	b := &accountSetting{fail: &transport.Error{Code: "app.account_save_failed", Params: map[string]string{"detail": "read-only"}}}
+	ConnectDesktop(s, DesktopParts{Account: b})
+	if err := s.ContinueWithoutAccount(); !errors.As(err, &we) || we.Code != "app.account_save_failed" || we.Params["detail"] != "read-only" {
+		t.Fatalf("ContinueWithoutAccount failure = %v", err)
+	}
+	if without, _ := s.WithoutAccount(); !without {
+		t.Fatal("a failed save did not count for this run")
+	}
+}
+
 // DV17、D149：接上之前不猜（not_ready），之後回這個構建有沒有遠程。
 func TestDesktopRemoteAvailable(t *testing.T) {
 	for _, want := range []bool{true, false} {

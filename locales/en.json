@@ -958,6 +958,11 @@
     "description": "The theme was applied but could not be saved in the data folder (PF08).",
     "placeholders": { "detail": { "type": "String" } }
   },
+  "app_account_save_failed": "Couldn’t remember that you continued without an account; the sign-in page shows again next time: {detail}",
+  "@app_account_save_failed": {
+    "description": "Continue without an account (D112, NA05) worked for this run but could not be saved in the data folder; detail is the system error.",
+    "placeholders": { "detail": { "type": "String" } }
+  },
   "app_keep_awake_save_failed": "Could not save the sleep setting: {detail}",
   "@app_keep_awake_save_failed": {
     "description": "The keep-awake switch (D80) could not be written to disk; detail is the system error.",
@@ -1691,13 +1696,13 @@
     "description": "Language switch option that follows the system's language; language is the one it shows now, named in itself.",
     "placeholders": { "language": { "type": "String" } }
   },
-  "ui_user_menu_sign_out": "Sign out",
-  "@ui_user_menu_sign_out": {
-    "description": "Account menu item that signs out."
+  "ui_user_menu_signed_out": "Not signed in",
+  "@ui_user_menu_signed_out": {
+    "description": "Name shown in the sidebar account button and menu header when no one is signed in (D112, NA06)."
   },
-  "ui_user_menu_signing_out": "Signing out",
-  "@ui_user_menu_signing_out": {
-    "description": "Sign out item while signing out is in progress."
+  "ui_user_menu_sign_in": "Sign in",
+  "@ui_user_menu_sign_in": {
+    "description": "Last account menu item when no one is signed in; opens the sign in page (NA08)."
   },
   "ui_login_no_account": "No account?",
   "@ui_login_no_account": {
@@ -1784,6 +1789,14 @@
   "ui_login_use_passkey": "Use a passkey instead",
   "@ui_login_use_passkey": {
     "description": "Button that switches the card back to the passkey step."
+  },
+  "ui_login_coming_soon": "Coming soon",
+  "@ui_login_coming_soon": {
+    "description": "Badge on the sign in card while accounts are not available yet; every way to sign in is disabled (D112, NA01)."
+  },
+  "ui_login_without_account": "Continue without an account",
+  "@ui_login_without_account": {
+    "description": "Button under the sign in card that opens the app without signing in (NA02)."
   },
   "ui_usage_refresh": "Refresh",
   "@ui_usage_refresh": {

@@ -230,6 +230,8 @@ func main() {
 		// 讀不了時跟隨系統，原因同樣等日誌打開再記。
 		theme, themeErr := app.OpenTheme(dataDir)
 		theme.Apply()
+		// 選過“無賬號使用”沒有（D112，m2.md NA）；讀不了時當沒選過，再進一次登錄頁，原因同樣等日誌打開再記。
+		account, accountErr := app.OpenAccount(dataDir)
 		notes = app.NewReleaseNotes(dataDir)
 		// Agent 運行時防止電腦睡眠的開關（D80）也記在資料目錄裡；讀不了時是開的，原因同樣等日誌打開再記。
 		awake, awakeErr := app.OpenKeepAwake(dataDir, app.SystemKeepAwake)
@@ -243,7 +245,7 @@ func main() {
 		repo, mirror := app.UpdateSource()
 		// 在後端與第一個視窗之前接上：頁面不必等後端就能用 Desktop。
 		mygoipc.ConnectDesktop(desktopSvc, mygoipc.DesktopParts{
-			Show: showMain, Lang: lang, Updates: updates, Notes: notes, KeepAwake: awake, Theme: theme, Remote: app.RemoteAvailable(),
+			Show: showMain, Lang: lang, Updates: updates, Notes: notes, KeepAwake: awake, Theme: theme, Account: account, Remote: app.RemoteAvailable(),
 			UpdateSource: mygoipc.UpdateSource{Repo: repo, Mirror: mirror},
 			Folders:      map[mygoipc.PrivacyFolder]string{mygoipc.FolderData: dataDir, mygoipc.FolderLogs: logDir},
 			Worktrees:    app.WorktreeRoot(dataDir)})
@@ -264,6 +266,9 @@ func main() {
 		}
 		if themeErr != nil {
 			slog.Warn("theme choice unreadable; following the system", "err", themeErr)
+		}
+		if accountErr != nil {
+			slog.Warn("continue-without-account choice unreadable; showing the sign-in page", "err", accountErr)
 		}
 		// 日誌打開之後才開始：拉取失敗要記進日誌檔。
 		notes.Start()

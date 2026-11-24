@@ -2342,6 +2342,24 @@ func (msgs Messages) AppThemeSaveFailed(detail string) string {
 	return Catalog.Format(msgs.locale, "app_theme_save_failed", map[string]any{"detail": detail})
 }
 
+// AppAccountSaveFailed says "Couldn’t remember that you continued without an account; the sign-in page shows again next time: {detail}"
+// in the language the app shows.
+//
+// Continue without an account (D112, NA05) worked for this run but could
+// not be saved in the data folder; detail is the system error.
+func AppAccountSaveFailed(detail string) string {
+	return In(i18n.Locale()).AppAccountSaveFailed(detail)
+}
+
+// AppAccountSaveFailed says "Couldn’t remember that you continued without an account; the sign-in page shows again next time: {detail}"
+// in the language of msgs.
+//
+// Continue without an account (D112, NA05) worked for this run but could
+// not be saved in the data folder; detail is the system error.
+func (msgs Messages) AppAccountSaveFailed(detail string) string {
+	return Catalog.Format(msgs.locale, "app_account_save_failed", map[string]any{"detail": detail})
+}
+
 // AppKeepAwakeSaveFailed says "Could not save the sleep setting: {detail}"
 // in the language the app shows.
 //
@@ -4912,32 +4930,36 @@ func (msgs Messages) UiUserMenuLanguageSystem(language string) string {
 	return Catalog.Format(msgs.locale, "ui_user_menu_language_system", map[string]any{"language": language})
 }
 
-// UiUserMenuSignOut says "Sign out"
+// UiUserMenuSignedOut says "Not signed in"
 // in the language the app shows.
 //
-// Account menu item that signs out.
-func UiUserMenuSignOut() string { return In(i18n.Locale()).UiUserMenuSignOut() }
+// Name shown in the sidebar account button and menu header when no one is
+// signed in (D112, NA06).
+func UiUserMenuSignedOut() string { return In(i18n.Locale()).UiUserMenuSignedOut() }
 
-// UiUserMenuSignOut says "Sign out"
+// UiUserMenuSignedOut says "Not signed in"
 // in the language of msgs.
 //
-// Account menu item that signs out.
-func (msgs Messages) UiUserMenuSignOut() string {
-	return Catalog.Format(msgs.locale, "ui_user_menu_sign_out", nil)
+// Name shown in the sidebar account button and menu header when no one is
+// signed in (D112, NA06).
+func (msgs Messages) UiUserMenuSignedOut() string {
+	return Catalog.Format(msgs.locale, "ui_user_menu_signed_out", nil)
 }
 
-// UiUserMenuSigningOut says "Signing out"
+// UiUserMenuSignIn says "Sign in"
 // in the language the app shows.
 //
-// Sign out item while signing out is in progress.
-func UiUserMenuSigningOut() string { return In(i18n.Locale()).UiUserMenuSigningOut() }
+// Last account menu item when no one is signed in; opens the sign in page
+// (NA08).
+func UiUserMenuSignIn() string { return In(i18n.Locale()).UiUserMenuSignIn() }
 
-// UiUserMenuSigningOut says "Signing out"
+// UiUserMenuSignIn says "Sign in"
 // in the language of msgs.
 //
-// Sign out item while signing out is in progress.
-func (msgs Messages) UiUserMenuSigningOut() string {
-	return Catalog.Format(msgs.locale, "ui_user_menu_signing_out", nil)
+// Last account menu item when no one is signed in; opens the sign in page
+// (NA08).
+func (msgs Messages) UiUserMenuSignIn() string {
+	return Catalog.Format(msgs.locale, "ui_user_menu_sign_in", nil)
 }
 
 // UiLoginNoAccount says "No account?"
@@ -5240,6 +5262,38 @@ func UiLoginUsePasskey() string { return In(i18n.Locale()).UiLoginUsePasskey() }
 // Button that switches the card back to the passkey step.
 func (msgs Messages) UiLoginUsePasskey() string {
 	return Catalog.Format(msgs.locale, "ui_login_use_passkey", nil)
+}
+
+// UiLoginComingSoon says "Coming soon"
+// in the language the app shows.
+//
+// Badge on the sign in card while accounts are not available yet; every way
+// to sign in is disabled (D112, NA01).
+func UiLoginComingSoon() string { return In(i18n.Locale()).UiLoginComingSoon() }
+
+// UiLoginComingSoon says "Coming soon"
+// in the language of msgs.
+//
+// Badge on the sign in card while accounts are not available yet; every way
+// to sign in is disabled (D112, NA01).
+func (msgs Messages) UiLoginComingSoon() string {
+	return Catalog.Format(msgs.locale, "ui_login_coming_soon", nil)
+}
+
+// UiLoginWithoutAccount says "Continue without an account"
+// in the language the app shows.
+//
+// Button under the sign in card that opens the app without signing in
+// (NA02).
+func UiLoginWithoutAccount() string { return In(i18n.Locale()).UiLoginWithoutAccount() }
+
+// UiLoginWithoutAccount says "Continue without an account"
+// in the language of msgs.
+//
+// Button under the sign in card that opens the app without signing in
+// (NA02).
+func (msgs Messages) UiLoginWithoutAccount() string {
+	return Catalog.Format(msgs.locale, "ui_login_without_account", nil)
 }
 
 // UiUsageRefresh says "Refresh"
