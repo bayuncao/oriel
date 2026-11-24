@@ -396,10 +396,12 @@ func TestProtocolLines(t *testing.T) {
 }
 
 // CL21：一輪之外的內容不報（如接回會話時重放的歷史）：native_bound 仍是第一條事實，之後也沒有 output。
+// 歷史排在 initialize 的回應之前：讀取依序處理，啟動返回時它已處理完，不會跟之後的 prompt 搶先後。
 func TestNothingOutsideTurn(t *testing.T) {
-	c, got := mustStart(t, append(started,
+	c, got := mustStart(t,
+		lInit,
 		lAssistant("old", `[{"type":"text","text":"history"},{"type":"tool_use","id":"h1","name":"Read","input":{"file_path":"/old"}}]`),
-		lUser, lOK)...)
+		lInitOK, lUser, lOK)
 	if f := got.next(t, func(f task.Command) bool { return f.Kind != task.FactModelReported }); f.Kind != task.FactNativeBound {
 		t.Fatalf("first fact after the model is %s, want native_bound", f.Kind)
 	}
