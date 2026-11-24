@@ -190,7 +190,8 @@ func TestAskAllowedByUser(t *testing.T) {
 	if e := w.next(task.PermissionDecidedKind); e.PermissionDecided.Decision.Source != task.DecidedByUser {
 		t.Fatalf("decision %+v", e.PermissionDecided)
 	}
-	w.next(task.PermissionAnsweredKind)
+	// agent 收到答復就結束這一輪；回合結束可能先於 hub 記下 PermissionAnswered（那時記為
+	// PermissionCancelled，見 cancelAsks），所以只等回合結束：它證明 agent 拿到了答復。
 	w.next(task.TurnCompletedKind)
 }
 
@@ -220,7 +221,8 @@ func TestAskMatchedByRule(t *testing.T) {
 	if e.PermissionDecided.Decision.Source != task.DecidedByRule {
 		t.Fatalf("decision %+v", e.PermissionDecided)
 	}
-	w.next(task.PermissionAnsweredKind)
+	// agent 收到答復就結束這一輪；回合結束可能先於 hub 記下 PermissionAnswered（那時記為
+	// PermissionCancelled，見 cancelAsks），所以只等回合結束：它證明 agent 拿到了答復。
 	w.next(task.TurnCompletedKind)
 }
 
@@ -238,7 +240,8 @@ func TestAskTimesOut(t *testing.T) {
 		e.PermissionDecided.Decision.Verdict != task.Deny {
 		t.Fatalf("decision %+v", e.PermissionDecided)
 	}
-	w.next(task.PermissionAnsweredKind)
+	// agent 收到答復就結束這一輪；回合結束可能先於 hub 記下 PermissionAnswered（那時記為
+	// PermissionCancelled，見 cancelAsks），所以只等回合結束：它證明 agent 拿到了答復。
 	w.next(task.TurnFailedKind)
 }
 

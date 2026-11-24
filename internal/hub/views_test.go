@@ -46,7 +46,6 @@ func TestProjectionPendingAsks(t *testing.T) {
 		Kind: task.CmdDecidePermission, Session: sid,
 		DecidePermission: &task.DecidePermission{
 			Permission: e.PermissionAsked.ID, Verdict: task.Allow}})
-	w.next(task.PermissionAnsweredKind)
 	waitFor(t, func() bool {
 		v, _ := env.store.ViewsOf(context.Background(), id)
 		return v.Task.PendingAsks == 0
@@ -631,7 +630,7 @@ func TestWorkspaceRuleAcrossTasks(t *testing.T) {
 				Match: task.MatchPrefix, Pattern: "rm"}}}); err != nil {
 		t.Fatal(err)
 	}
-	w1.next(task.PermissionAnsweredKind)
+	w1.next(task.RuleAddedKind) // 規則與決定同一次 Decide 寫入
 	w1.cancel()
 	// 同目錄 → 同一個 Workspace → 規則命中，不用使用者命令。
 	id2 := env.create(t, dir, "ask b1 rm -rf /", testLaunch())
