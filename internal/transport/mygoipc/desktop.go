@@ -33,6 +33,14 @@ type KeepAwakeSetting interface {
 	Set(on bool) error
 }
 
+// ThemeSetting 是介面的外觀（實作是 app.Theme，D158）。
+type ThemeSetting interface {
+	// Choice 回傳目前的選擇："" 跟隨系統，"light" 或 "dark"。
+	Choice() string
+	// Set 讓 app 立刻改用它並記住；寫不進去時這次照樣生效並回錯誤。
+	Set(choice string) error
+}
+
 // Languages 是用戶選單語言切換的內容。
 type Languages struct {
 	// Choice 是目前的選擇，"" 是跟隨系統。
@@ -66,6 +74,8 @@ type Desktop struct {
 	openTask func(OpenTaskEvent)
 	// openExternal 以系統預設的應用打開連結；nil 是 mygo.Shell.OpenExternal。測試的接縫，建構時設定。
 	openExternal func(link string) error
+	// openPath 在訪達裡打開目錄；nil 是 mygo.Shell.OpenPath。測試的接縫，建構時設定。
+	openPath func(path string) error
 }
 
 // maxRecentSearches 是搜尋面板記住的最近搜尋條數（D67）。
@@ -83,8 +93,16 @@ type DesktopParts struct {
 	Notes *updater.Notes
 	// KeepAwake 是 Agent 運行時防止電腦睡眠的開關。
 	KeepAwake KeepAwakeSetting
+	// Theme 是介面的外觀。
+	Theme ThemeSetting
 	// Remote 為真時這個構建有遠程；正式版先沒有（D149）。
 	Remote bool
+	// UpdateSource 是這個構建取更新的地方（隱私頁，PV03）；本機構建是空的。
+	UpdateSource UpdateSource
+	// Folders 是隱私頁的資料與日誌目錄（PV05）；接上時一定有。
+	Folders map[PrivacyFolder]string
+	// Worktrees 是資料目錄裡任務的工作樹，資料目錄的大小不算它（PV05）。
+	Worktrees string
 }
 
 // ConnectDesktop 給 Desktop 接上 p（D61：包級函式，不是頁面可呼叫的方法）。
@@ -288,6 +306,29 @@ func (s *Desktop) SetLanguage(tag string) error {
 	}
 	if err := lang.Set(tag); err != nil {
 		return wire(slog.Default(), "SetLanguage", err)
+	}
+	return nil
+}
+
+// Theme 回答介面的外觀："" 跟隨系統，"light" 或 "dark"（PF02）。接上之前回 mygoipc.not_ready。
+func (s *Desktop) Theme() (string, error) {
+	t := s.connected().Theme
+	if t == nil {
+		return "", wire(slog.Default(), "Theme", errNotReady)
+	}
+	return t.Choice(), nil
+}
+
+// SetTheme 讓 app 立刻改用外觀並記住它（PF03）：原生視窗、菜單欄面板與頁面的
+// prefers-color-scheme 一起換。不認得的值回 app.unknown_theme；寫不進去回
+// app.theme_save_failed，這次照樣生效（PF08）。
+func (s *Desktop) SetTheme(choice string) error {
+	t := s.connected().Theme
+	if t == nil {
+		return wire(slog.Default(), "SetTheme", errNotReady)
+	}
+	if err := t.Set(choice); err != nil {
+		return wire(slog.Default(), "SetTheme", err)
 	}
 	return nil
 }

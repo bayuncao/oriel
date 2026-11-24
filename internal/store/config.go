@@ -122,34 +122,61 @@ const settingsKey = "hub"
 // 因此沒有存過或缺少的欄位都是預設值。
 func (s *Store) Settings(ctx context.Context) (hub.Settings, error) {
 	out := hub.DefaultSettings()
-	if err := s.check(); err != nil {
-		return out, err
-	}
-	rows, err := s.r.Query(ctx,
-		"SELECT value_json FROM settings WHERE key=?", settingsKey)
-	if err != nil {
-		return out, mapErr(err)
-	}
-	if len(rows.Values) == 0 {
-		return out, nil
-	}
-	if err := json.Unmarshal([]byte(toStr(rows.Values[0][0])), &out); err != nil {
-		return out, fail(CodeFailed, err, "detail", err.Error())
-	}
-	return out, nil
+	_, err := s.getSetting(ctx, settingsKey, &out)
+	return out, err
 }
 
 // PutSettings 寫入設定。
 func (s *Store) PutSettings(ctx context.Context, x hub.Settings) error {
+	return s.putSetting(ctx, settingsKey, x)
+}
+
+// modelsKey 是設定表裡各 agent 的模型（hub.Config.Models，D158）。
+const modelsKey = "models"
+
+// Models 回傳各 agent 最近報告的模型與預設模型；沒存過時是空的。
+func (s *Store) Models(ctx context.Context) ([]hub.AgentModels, error) {
+	var out []hub.AgentModels
+	if _, err := s.getSetting(ctx, modelsKey, &out); err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// PutModels 換掉各 agent 的模型。
+func (s *Store) PutModels(ctx context.Context, all []hub.AgentModels) error {
+	return s.putSetting(ctx, modelsKey, all)
+}
+
+// getSetting 把設定表裡 key 的 JSON 解到 v 上（v 原有的值是沒存過的欄位的預設值）；
+// 沒存過時 v 不變、found 為假。
+func (s *Store) getSetting(ctx context.Context, key string, v any) (found bool, err error) {
+	if err := s.check(); err != nil {
+		return false, err
+	}
+	rows, err := s.r.Query(ctx, "SELECT value_json FROM settings WHERE key=?", key)
+	if err != nil {
+		return false, mapErr(err)
+	}
+	if len(rows.Values) == 0 {
+		return false, nil
+	}
+	if err := json.Unmarshal([]byte(toStr(rows.Values[0][0])), v); err != nil {
+		return false, fail(CodeFailed, err, "detail", err.Error())
+	}
+	return true, nil
+}
+
+// putSetting 把 v 以 JSON 寫進設定表的 key。
+func (s *Store) putSetting(ctx context.Context, key string, v any) error {
 	if err := s.check(); err != nil {
 		return err
 	}
-	b, err := json.Marshal(x)
+	b, err := json.Marshal(v)
 	if err != nil {
 		return fail(CodeFailed, err, "detail", err.Error())
 	}
-	_, err = s.w.Execute(ctx,
-		"INSERT OR REPLACE INTO settings(key, value_json) VALUES(?,?)", settingsKey, string(b))
+	_, err = s.w.Execute(ctx, "INSERT OR REPLACE INTO settings(key, value_json) VALUES(?,?)", key, string(b))
 	return mapErr(err)
 }
 

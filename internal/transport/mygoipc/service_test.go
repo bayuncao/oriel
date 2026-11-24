@@ -13,6 +13,7 @@ import (
 	"github.com/egoist/mygo"
 
 	"github.com/bayuncao/oriel/internal/hub"
+	"github.com/bayuncao/oriel/internal/integration"
 	"github.com/bayuncao/oriel/internal/proc"
 	"github.com/bayuncao/oriel/internal/task"
 	"github.com/bayuncao/oriel/internal/transport"
@@ -179,6 +180,7 @@ func TestGenerateTypeScript(t *testing.T) {
 		mygo.BindAs("Usage", &Usage{})
 		mygo.BindAs("Providers", &Providers{})
 		mygo.BindAs("Keys", &Keys{})
+		mygo.BindAs("Integrations", &Integrations{})
 	})
 	ts, err := mygo.GenerateTypeScript()
 	if err != nil {
@@ -188,7 +190,8 @@ func TestGenerateTypeScript(t *testing.T) {
 		"openTask", "Update", "Delta", "chooseFolder", "RegistryList",
 		"NotifySettings", "watchUpdates", "checkForUpdates", "restartToUpdate",
 		"fetchedAt", `version:`, `sessions:`, "Usage", "summary", "ReadState", "periods",
-		"Providers", "ProviderRow", "wholePage", "Keys", "StoredKey", "addedAt", "baseUrl", "KeyIcon"} {
+		"Providers", "ProviderRow", "wholePage", "Keys", "StoredKey", "addedAt", "baseUrl", "KeyIcon",
+		"Integrations", `export type IntegrationStatus = "unknown" | "unavailable" | "available" | "connected";`} {
 		if !strings.Contains(string(ts), want) {
 			t.Fatalf("missing %q in generated client", want)
 		}
@@ -255,6 +258,14 @@ func TestNotReady(t *testing.T) {
 		!errors.As(err, &weKA2) || weKA2.Code != string(CodeNotReady) {
 		t.Fatalf("%v", err)
 	}
+	// Desktop 接上之前不能讀寫外觀：不猜（PF02）。
+	var weTh, weTh2 *transport.Error
+	if _, err := (&Desktop{}).Theme(); err == nil || !errors.As(err, &weTh) || weTh.Code != string(CodeNotReady) {
+		t.Fatalf("Theme: %v", err)
+	}
+	if err := (&Desktop{}).SetTheme("dark"); err == nil || !errors.As(err, &weTh2) || weTh2.Code != string(CodeNotReady) {
+		t.Fatalf("SetTheme: %v", err)
+	}
 	// 沒接上自動更新時，更新的方法回 not_ready（重啟什麼都不做）。
 	var we4, we5 *transport.Error
 	if _, err := (&Desktop{}).CheckForUpdates(ctxb()); err == nil ||
@@ -278,13 +289,17 @@ func TestNotReady(t *testing.T) {
 		}
 	}
 	for name, call := range map[string]func() error{
-		"Refresh":    func() error { _, err := (&Providers{}).Refresh(ctxb()); return err },
-		"Watch":      func() error { return (&Providers{}).Watch(ctxb(), nil) },
-		"List":       func() error { _, err := (&Keys{}).List(ctxb()); return err },
-		"Icons":      func() error { _, err := (&Keys{}).Icons(); return err },
-		"Add":        func() error { _, err := (&Keys{}).Add(ctxb(), "Work", "anthropic", "k", ""); return err },
-		"SetBaseURL": func() error { _, err := (&Keys{}).SetBaseURL(ctxb(), "id", ""); return err },
-		"Remove":     func() error { _, err := (&Keys{}).Remove(ctxb(), "id"); return err },
+		"Refresh":                 func() error { _, err := (&Providers{}).Refresh(ctxb()); return err },
+		"Watch":                   func() error { return (&Providers{}).Watch(ctxb(), nil) },
+		"List":                    func() error { _, err := (&Keys{}).List(ctxb()); return err },
+		"Icons":                   func() error { _, err := (&Keys{}).Icons(); return err },
+		"Add":                     func() error { _, err := (&Keys{}).Add(ctxb(), "Work", "anthropic", "k", ""); return err },
+		"SetBaseURL":              func() error { _, err := (&Keys{}).SetBaseURL(ctxb(), "id", ""); return err },
+		"Remove":                  func() error { _, err := (&Keys{}).Remove(ctxb(), "id"); return err },
+		"Integrations.Refresh":    func() error { _, err := (&Integrations{}).Refresh(ctxb()); return err },
+		"Integrations.Connect":    func() error { _, err := (&Integrations{}).Connect(ctxb(), integration.GitHub); return err },
+		"Integrations.Disconnect": func() error { _, err := (&Integrations{}).Disconnect(ctxb(), integration.GitHub); return err },
+		"Integrations.Watch":      func() error { return (&Integrations{}).Watch(ctxb(), nil) },
 	} {
 		var we *transport.Error
 		if err := call(); err == nil || !errors.As(err, &we) || we.Code != string(CodeNotReady) {
@@ -338,16 +353,17 @@ func TestRemoteDisabled(t *testing.T) {
 func TestBoundMethodsArePageAPI(t *testing.T) {
 	want := map[reflect.Type][]string{
 		reflect.TypeFor[*Hub](): {"Attention", "Command", "Confirmations",
-			"CreateTask", "DeleteLabel", "DeleteRule", "DeleteTask", "Files", "Labels", "PutLabel", "PutSettings", "PutWorkspace", "Recap",
-			"Rules", "Search", "Settings", "Snapshot", "StartAgent", "Subscribe",
+			"CreateTask", "DeleteLabel", "DeleteRule", "DeleteTask", "Files", "Labels", "Models", "PutLabel", "PutSettings", "PutWorkspace", "Recap",
+			"Rules", "Search", "SetDefaultModel", "Settings", "Snapshot", "StartAgent", "Subscribe",
 			"Tasks", "WatchTasks", "Workspaces"},
 		reflect.TypeFor[*Agents](): {"List", "Refresh", "Registry"},
 		reflect.TypeFor[*Desktop](): {"Attachable", "CheckForUpdates", "ChooseFiles", "ChooseFolder", "Folder", "KeepAwake", "Languages",
-			"OpenLink", "Quit", "RecentSearches", "ReleaseNotesShown", "RemoteAvailable", "RestartToUpdate", "SetKeepAwake", "SetLanguage", "SetRecentSearches", "ShowMain", "ShowTask",
+			"OpenLink", "Privacy", "Quit", "RecentSearches", "ReleaseNotesShown", "RemoteAvailable", "RestartToUpdate", "RevealFolder", "SetKeepAwake", "SetLanguage", "SetRecentSearches", "SetTheme", "ShowMain", "ShowTask", "Theme",
 			"WatchReleaseNotes", "WatchUpdates"},
-		reflect.TypeFor[*Usage]():     {"Refresh", "Summary", "Watch"},
-		reflect.TypeFor[*Providers](): {"Refresh", "Watch"},
-		reflect.TypeFor[*Keys]():      {"Add", "Icons", "List", "Remove", "SetBaseURL"},
+		reflect.TypeFor[*Usage]():        {"Refresh", "Summary", "Watch"},
+		reflect.TypeFor[*Providers]():    {"Refresh", "Watch"},
+		reflect.TypeFor[*Keys]():         {"Add", "Icons", "List", "Remove", "SetBaseURL"},
+		reflect.TypeFor[*Integrations](): {"Connect", "Disconnect", "Refresh", "Watch"},
 		reflect.TypeFor[*Remote](): {"CancelOffer", "Offer", "Rename", "Reset", "Retry", "Revoke", "SetOn", "SetRelay",
 			"Status", "Watch", "WatchDevices"},
 	}
@@ -364,5 +380,32 @@ func TestBoundMethodsArePageAPI(t *testing.T) {
 		if !slices.Equal(got, names) {
 			t.Fatalf("%v exported methods = %v, want %v", typ, got, names)
 		}
+	}
+}
+
+// IG06、IG09：集成的錯誤經 Wire 帶代碼與參數到頁面。gh 不在 PATH 裡（空目錄），連接回 gh_missing；
+// 不認得的 ID 回 unknown{id}。
+func TestIntegrationsWire(t *testing.T) {
+	runner := &proc.Runner{}
+	t.Cleanup(runner.Close)
+	dir := t.TempDir()
+	svc, err := integration.New(ctxb(), integration.Options{Runner: runner, Store: &integration.MemStore{}, Root: dir,
+		Env: func(context.Context) (proc.Env, error) { return proc.Env{"PATH=" + dir, "HOME=" + dir}, nil }})
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(svc.Close)
+	s := &Integrations{}
+	ConnectIntegrations(s, svc, nil)
+	var we *transport.Error
+	if _, err := s.Connect(ctxb(), integration.GitHub); !errors.As(err, &we) || we.Code != string(integration.CodeGhMissing) {
+		t.Fatalf("Connect: %v", err)
+	}
+	if _, err := s.Disconnect(ctxb(), "gitlab"); !errors.As(err, &we) || we.Code != string(integration.CodeUnknown) || we.Params["id"] != "gitlab" {
+		t.Fatalf("Disconnect: %v", err)
+	}
+	cat, err := s.Refresh(ctxb())
+	if err != nil || len(cat.Items) != 1 || cat.Items[0].Status != integration.StatusUnavailable {
+		t.Fatalf("Refresh: %+v %v", cat, err)
 	}
 }

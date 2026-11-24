@@ -25,6 +25,13 @@ var feeds = map[string]updater.FeedOptions{
 	"OrielHub Staging": {Repo: "Kynos-AI/OrielHub-Releases-Staging"},
 }
 
+// UpdateSource 回傳這個構建取更新的 GitHub 倉庫與備用源（隱私頁，settings.md PV03）；
+// 這個名稱沒有渠道時都是空的。
+func UpdateSource() (repo, mirror string) {
+	o := feeds[mygo.App.Name()]
+	return o.Repo, o.Mirror
+}
+
 // channelFeed 是這個構建的更新來源，更新與更新說明共用（記住成功的源，
 // US04）；這個名稱沒有渠道時為 nil。
 var channelFeed = sync.OnceValue(func() *updater.Feed {

@@ -23,6 +23,7 @@ var desktopSvc = &mygoipc.Desktop{}
 var usageSvc = &mygoipc.Usage{}
 var providersSvc = &mygoipc.Providers{}
 var keysSvc = &mygoipc.Keys{}
+var integrationsSvc = &mygoipc.Integrations{}
 var remoteSvc = &mygoipc.Remote{}
 
 // win 是主窗口，只在主線程上讀寫：以下回調都在主線程上執行（mygo 的 handler
@@ -154,6 +155,7 @@ func main() {
 	mygo.BindAs("Usage", usageSvc)
 	mygo.BindAs("Providers", providersSvc)
 	mygo.BindAs("Keys", keysSvc)
+	mygo.BindAs("Integrations", integrationsSvc)
 	// 每個渠道都綁 Remote，src/mygo.ts 才不隨渠道而變，前端在正式版照樣編譯（DV19）。正式版先沒有
 	// 遠程（D149）：停用它，頁面呼叫它立即失敗，不會當作“還在啟動”一直重試（DV18）。
 	mygo.BindAs("Remote", remoteSvc)
@@ -215,14 +217,13 @@ func main() {
 		if os.Getenv("MYGO_LOCALE") == "" {
 			mygo.App.SetLocale(lang.Choice())
 		}
+		// 外觀（D158）也記在資料目錄裡；開窗之前交給 MyGo，一打開就是記住的那種（PF04）。
+		// 讀不了時跟隨系統，原因同樣等日誌打開再記。
+		theme, themeErr := app.OpenTheme(dataDir)
+		theme.Apply()
 		notes = app.NewReleaseNotes(dataDir)
 		// Agent 運行時防止電腦睡眠的開關（D80）也記在資料目錄裡；讀不了時是開的，原因同樣等日誌打開再記。
 		awake, awakeErr := app.OpenKeepAwake(dataDir, app.SystemKeepAwake)
-		// 在後端與第一個視窗之前接上：頁面不必等後端就能用 Desktop。
-		mygoipc.ConnectDesktop(desktopSvc, mygoipc.DesktopParts{
-			Show: showMain, Lang: lang, Updates: updates, Notes: notes, KeepAwake: awake, Remote: app.RemoteAvailable()})
-		// 換語言後聲明的原因跟著換；OnLocaleChanged 在主線程上，KeepAwake 等主線程，所以另開 goroutine。
-		mygo.App.OnLocaleChanged(func(string) { go awake.Relabel() })
 		logDir, err := mygo.App.Path(mygo.PathLogs)
 		if err != nil {
 			warnLanguage(langErr) // 沒有日誌檔：寫到 stderr，mygo dev 看得到
@@ -230,6 +231,15 @@ func main() {
 			mygo.App.Quit()
 			return
 		}
+		repo, mirror := app.UpdateSource()
+		// 在後端與第一個視窗之前接上：頁面不必等後端就能用 Desktop。
+		mygoipc.ConnectDesktop(desktopSvc, mygoipc.DesktopParts{
+			Show: showMain, Lang: lang, Updates: updates, Notes: notes, KeepAwake: awake, Theme: theme, Remote: app.RemoteAvailable(),
+			UpdateSource: mygoipc.UpdateSource{Repo: repo, Mirror: mirror},
+			Folders:      map[mygoipc.PrivacyFolder]string{mygoipc.FolderData: dataDir, mygoipc.FolderLogs: logDir},
+			Worktrees:    app.WorktreeRoot(dataDir)})
+		// 換語言後聲明的原因跟著換；OnLocaleChanged 在主線程上，KeepAwake 等主線程，所以另開 goroutine。
+		mygo.App.OnLocaleChanged(func(string) { go awake.Relabel() })
 		// 日誌檔打不開時照舊寫到 stderr（mygo dev 看得到）並記下原因；logger 不留 nil，
 		// 後面只在有 logger 時才記的警告（如通知）才不會跟著消失。
 		logger := slog.Default()
@@ -242,6 +252,9 @@ func main() {
 		warnLanguage(langErr)
 		if awakeErr != nil {
 			slog.Warn("keep-awake choice unreadable; keeping awake while agents run", "err", awakeErr)
+		}
+		if themeErr != nil {
+			slog.Warn("theme choice unreadable; following the system", "err", themeErr)
 		}
 		// 日誌打開之後才開始：拉取失敗要記進日誌檔。
 		notes.Start()
@@ -265,6 +278,7 @@ func main() {
 		mygoipc.ConnectUsage(usageSvc, a.Usage(), logger)
 		mygoipc.ConnectProviders(providersSvc, a.Providers(), logger)
 		mygoipc.ConnectKeys(keysSvc, a.Keys(), logger)
+		mygoipc.ConnectIntegrations(integrationsSvc, a.Integrations(), logger)
 		if rc := a.Remote(); rc != nil {
 			mygoipc.ConnectRemote(remoteSvc, rc, logger)
 		}

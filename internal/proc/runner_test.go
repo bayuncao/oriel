@@ -111,7 +111,7 @@ func TestRunnerTermBeforeKill(t *testing.T) {
 	root := tempRoot(t)
 	f := fifo(t, root)
 	sh := filepath.Join(root, "graceful")
-	script(t, sh, `trap 'echo term >&3; exit 0' TERM; exec 3>"`+f+`"; sleep 60 & echo ready >&3; wait`)
+	script(t, sh, `trap 'echo term >&3; exit 0' TERM; exec 3>"`+f+`"; echo ready >&3; `+idle)
 	r := Runner{Grace: time.Hour}
 	ctx, cancel := context.WithCancel(context.Background())
 	done := make(chan Result, 1)
@@ -211,6 +211,15 @@ func TestSnapshotCanceled(t *testing.T) {
 }
 
 const eof = "<EOF>"
+
+// idle 是要靠 TERM trap 收尾的腳本的空轉：不論 SIGTERM 何時到，trap
+// 都在當下的前台命令結束後執行（POSIX），所以至多晚一秒。這類腳本
+// 不能用 `sleep 60 & …; wait`：兩件事同時發生時 trap 要等 60 秒——
+// SIGTERM 早於 wait 開始（wait 只在等待中收到訊號才提前返回），而且
+// 背景的 sleep 在 fork 之後、exec 之前收到它（被 shell 的處理函式吞掉，
+// sleep 活滿 60 秒，wait 就等它）。沒有 TERM trap 的腳本照用無妨：
+// shell 收到 SIGTERM 就結束，留下的 sleep 由 reapGroup 收掉。
+const idle = `while :; do sleep 1; done`
 
 // fifo 建立具名管道。
 func fifo(t *testing.T, dir string) string {

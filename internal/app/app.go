@@ -16,6 +16,7 @@ import (
 
 	"github.com/bayuncao/oriel/internal/agent"
 	"github.com/bayuncao/oriel/internal/hub"
+	"github.com/bayuncao/oriel/internal/integration"
 	"github.com/bayuncao/oriel/internal/proc"
 	"github.com/bayuncao/oriel/internal/provider"
 	"github.com/bayuncao/oriel/internal/runtime/acp"
@@ -54,7 +55,7 @@ type Options struct {
 	Remote bool
 }
 
-// App 是組合根：store、runner、discovery、workspace、hub、本機用量、廠商狀態、鑰匙與遠程。
+// App 是組合根：store、runner、discovery、workspace、hub、本機用量、廠商狀態、鑰匙、集成與遠程。
 type App struct {
 	hub    *hub.Hub
 	remote *remote.Control
@@ -62,6 +63,7 @@ type App struct {
 	usage  *usage.Tracker
 	status *provider.Monitor
 	keys   *provider.Keys
+	integ  *integration.Service
 	db     *store.Store
 	runner *proc.Runner
 	disc   *agent.Discovery
@@ -115,7 +117,7 @@ func New(ctx context.Context, o Options) (*App, error) {
 		Git:          git,
 		Env:          disc.Env,
 		Secret:       o.Secret,
-		WorktreeRoot: filepath.Join(o.DataDir, "worktrees"),
+		WorktreeRoot: WorktreeRoot(o.DataDir),
 		Logger:       o.Logger,
 	})
 	toClose = append(toClose, h.Close)
@@ -132,6 +134,13 @@ func New(ctx context.Context, o Options) (*App, error) {
 		keychain = &provider.MemKeychain{Err: errors.ErrUnsupported}
 	}
 	keys := provider.NewKeys(provider.KeyOptions{Keychain: keychain, Store: db, Logger: o.Logger})
+	// 集成（D108）：用與 agent 相同的環境快照找 gh；啟動時檢測一次（IG15）。
+	integ, err := integration.New(ctx, integration.Options{Runner: runner, Env: disc.Env, Store: db, Root: o.Root})
+	if err != nil {
+		status.Close()
+		return fail(err)
+	}
+	integ.Start()
 	agents := &Agents{disc: disc, defs: defs, http: client,
 		regDir: filepath.Join(o.DataDir, "registry"), url: o.RegistryURL,
 		root: o.Root, log: log}
@@ -148,7 +157,7 @@ func New(ctx context.Context, o Options) (*App, error) {
 	}
 	return &App{
 		hub: h, remote: rc, db: db, runner: runner, disc: disc, usage: tracker, status: status, keys: keys,
-		agents: agents,
+		integ: integ, agents: agents,
 	}, nil
 }
 
@@ -165,7 +174,7 @@ func (s remoteSecrets) Get(name string) ([]byte, bool, error) {
 
 func (s remoteSecrets) Set(name string, value []byte) error { return s.k.Set(name, value) }
 
-// Close 關閉一切（冪等）：遠程 → 廠商狀態 → 本機用量 → hub → discovery → runner → store。
+// Close 關閉一切（冪等）：遠程 → 集成 → 廠商狀態 → 本機用量 → hub → discovery → runner → store。
 func (a *App) Close() {
 	if !a.closed.CompareAndSwap(false, true) {
 		return
@@ -173,6 +182,7 @@ func (a *App) Close() {
 	if a.remote != nil {
 		a.remote.Close()
 	}
+	a.integ.Close()
 	a.status.Close()
 	// hub 先關：它結束 Claude 的行程時報來的最後一份額度，usage 還收得下（D156）。
 	a.hub.Close()
@@ -186,6 +196,9 @@ func (a *App) Hub() *hub.Hub                { return a.hub }
 func (a *App) Usage() *usage.Tracker        { return a.usage }
 func (a *App) Providers() *provider.Monitor { return a.status }
 func (a *App) Keys() *provider.Keys         { return a.keys }
+
+// Integrations 是設定 › 集成的後端（D108）。
+func (a *App) Integrations() *integration.Service { return a.integ }
 
 // Remote 是遠程的控制器；Options.Remote 為假時是 nil。
 func (a *App) Remote() *remote.Control              { return a.remote }
@@ -230,3 +243,6 @@ func proxyOf(env proc.Env) func(*url.URL) (*url.URL, error) {
 		return cfg.ProxyFunc()(u)
 	}
 }
+
+// WorktreeRoot 是資料目錄 dataDir 裡放任務工作樹的目錄。
+func WorktreeRoot(dataDir string) string { return filepath.Join(dataDir, "worktrees") }

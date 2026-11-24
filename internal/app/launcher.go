@@ -4,6 +4,7 @@ import (
 	"context"
 	"log/slog"
 	"os"
+	"slices"
 	"sync"
 	"time"
 
@@ -46,6 +47,14 @@ func newLauncher(disc *agent.Discovery, defs []agent.Definition,
 	probe func(context.Context, proc.Command) (task.Capabilities, error), log *slog.Logger) *launcher {
 	return &launcher{disc: disc, defs: defs, probe: probe, log: log,
 		caps: map[capsKey]task.Capabilities{}, inflight: map[capsKey]*probeCall{}}
+}
+
+// CheckAgent 在 agent 在目錄裡時回 nil，否則回 agent.unknown_agent（P09；hub 設預設模型時用，MD11）。
+func (l *launcher) CheckAgent(id task.AgentID) error {
+	if slices.ContainsFunc(l.defs, func(d agent.Definition) bool { return d.ID == id }) {
+		return nil
+	}
+	return agent.ErrUnknownAgent
 }
 
 // Launch 先以 Verify 重新確認 agent（P03），再用預設 Profile 解析（P01、P02）。

@@ -193,3 +193,36 @@ func TestPlanModel(t *testing.T) {
 			want: []Effect{{Key: "send_prompt:t9", Kind: EffSendPrompt, Session: "s2", SendPrompt: &Prompt{ID: "p8", Text: "go"}}}},
 	})
 }
+
+// defaultLaunch 是預設模型為 v 的 Launch（settings.md MD05）。
+func defaultLaunch(v string) LaunchSnapshot {
+	l := newLaunch()
+	l.Model = v
+	return l
+}
+
+// TestDecideDefaultModel 是 MD05–MD08、MD10、MD12：新會話第一次啟動的 Start 報告時換成預設模型。
+func TestDecideDefaultModel(t *testing.T) {
+	gone := Problem{Code: CodeDefaultModelUnavailable}
+	fresh := func(v string, more ...Event) []Event {
+		return and(seqs(created(IsolationNone), sessionLaunchEv("s2", defaultLaunch(v))), more...)
+	}
+	runDecide(t, []decideCase{
+		{name: "MD05 default offered and not current", given: fresh("deep"), in: gitInputs(),
+			cmd:  reportCmd(true, sampleModel("fast")),
+			want: []Event{modelEv("s2", true, sampleModel("fast")), chosenEv("s2", "deep")}, check: wanted("deep", "fast")},
+		{name: "MD06 default already current", given: fresh("fast"), in: gitInputs(),
+			cmd: reportCmd(true, sampleModel("fast")), want: []Event{modelEv("s2", true, sampleModel("fast"))}, check: wanted("", "fast")},
+		{name: "MD07 default not offered", given: fresh("huge"), in: gitInputs(),
+			cmd:  reportCmd(true, sampleModel("fast")),
+			want: []Event{modelEv("s2", true, sampleModel("fast")), switchFailedEv("s2", "huge", gone)}, check: wanted("", "fast")},
+		{name: "MD08 agent reports no model", given: fresh("deep"), in: gitInputs(), cmd: reportCmd(true, nil)},
+		{name: "no default", given: seqs(created(IsolationNone), sessionEv("s2")), in: gitInputs(),
+			cmd: reportCmd(true, sampleModel("fast")), want: []Event{modelEv("s2", true, sampleModel("fast"))}, check: wanted("", "fast")},
+		{name: "MD10 later reports are not starts", given: fresh("deep", modelEv("s2", true, sampleModel("fast")), chosenEv("s2", "deep"),
+			modelEv("s2", false, sampleModel("deep")), boundEv("s2", "n2"), chosenEv("s2", "fast"), modelEv("s2", false, sampleModel("fast"))), in: gitInputs(),
+			cmd: reportCmd(false, sampleModel("deep")), want: []Event{modelEv("s2", false, sampleModel("deep"))}, check: wanted("", "deep")},
+		{name: "MD12 resume keeps the agent's model", given: fresh("deep", boundEv("s2", "n2"), exitedEv("s2"), resumedEv("s2")), in: gitInputs(),
+			cmd: reportCmd(true, sampleModel("fast")), want: []Event{modelEv("s2", true, sampleModel("fast"))}, check: wanted("", "fast")},
+	})
+}

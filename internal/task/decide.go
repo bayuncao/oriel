@@ -1024,7 +1024,25 @@ func modelReported(d *decision, c Command) error {
 		d.emit(Event{Kind: ModelSwitchFailedKind, Session: c.Session,
 			ModelSwitchFailed: &ModelProblem{Value: x.ModelWanted, Problem: Problem{Code: ReasonModelUnavailable.Code()}}})
 	}
+	d.defaultModel(c.Session, *p)
 	return nil
+}
+
+// defaultModel 在新會話開始時換成預設模型（D158，settings.md MD05–MD08、MD12）：只看第一次啟動的 Start 報告
+// （還沒有原生會話；Resume 的不算）。已經是它、或 agent 不報告模型時不做；在列表裡就選它（ModelChosen，Plan
+// 換好之後才送出第一條 Prompt）；不在列表裡照 agent 自己的，記 ModelSwitchFailed 說明。
+func (d *decision) defaultModel(sid SessionID, r ModelReport) {
+	x := d.s.Sessions[sid]
+	want := x.Launch.Model
+	if !r.Start || x.NativeID != "" || want == "" || x.ModelWanted != "" || x.Model == nil || x.Model.Current == want {
+		return
+	}
+	if x.Model.offers(want) {
+		d.emit(Event{Kind: ModelChosenKind, Session: sid, ModelChosen: &SetModel{Value: want}})
+		return
+	}
+	d.emit(Event{Kind: ModelSwitchFailedKind, Session: sid,
+		ModelSwitchFailed: &ModelProblem{Value: want, Problem: Problem{Code: CodeDefaultModelUnavailable}}})
 }
 
 func sessionConflicted(d *decision, c Command) error {

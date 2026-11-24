@@ -11,6 +11,7 @@ import (
 	"github.com/bayuncao/oriel/internal/agent"
 	"github.com/bayuncao/oriel/internal/app"
 	"github.com/bayuncao/oriel/internal/hub"
+	"github.com/bayuncao/oriel/internal/integration"
 	"github.com/bayuncao/oriel/internal/proc"
 	"github.com/bayuncao/oriel/internal/provider"
 	"github.com/bayuncao/oriel/internal/relay"
@@ -59,6 +60,7 @@ func errorCodes() []errorCode {
 		out = append(out, errorCode{r.Code(), nil})
 	}
 	out = append(out, errorCode{task.CodeMergeConflict, []string{"files"}})
+	out = append(out, errorCode{task.CodeDefaultModelUnavailable, nil})
 	for _, c := range transport.Codes() {
 		out = append(out, errorCode{string(c), nil})
 	}
@@ -84,6 +86,9 @@ func errorCodes() []errorCode {
 		out = append(out, errorCode{string(c), c.Params()})
 	}
 	for _, c := range usage.Codes() {
+		out = append(out, errorCode{string(c), c.Params()})
+	}
+	for _, c := range integration.Codes() {
 		out = append(out, errorCode{string(c), c.Params()})
 	}
 	for _, c := range provider.Codes() {

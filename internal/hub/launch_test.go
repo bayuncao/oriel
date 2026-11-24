@@ -6,6 +6,7 @@ import (
 	"context"
 	"os"
 	"path/filepath"
+	"slices"
 	"sync"
 	"testing"
 
@@ -39,6 +40,13 @@ func (l discoveryLauncher) Launch(ctx context.Context, id task.AgentID) (task.La
 	return task.LaunchSnapshot{}, agent.ErrUnknownAgent
 }
 
+func (l discoveryLauncher) CheckAgent(id task.AgentID) error {
+	if slices.ContainsFunc(l.defs, func(d agent.Definition) bool { return d.ID == id }) {
+		return nil
+	}
+	return agent.ErrUnknownAgent
+}
+
 // newDiscoveryLauncher：測試二進位以 orielhub-test-agent 之名放在 bin 裡
 // （Definition 的廠商目錄，不靠 PATH，登入 shell 改了 PATH 也找得到）。
 func newDiscoveryLauncher(t *testing.T) discoveryLauncher {
@@ -51,8 +59,12 @@ func newDiscoveryLauncher(t *testing.T) discoveryLauncher {
 		return agent.Definition{ID: task.AgentID(id), Name: name, Protocol: proto,
 			Detect: agent.DetectSpec{Command: cmd, Dirs: []string{bin}}}
 	}
+	// models 報告模型設置（settings.md MD05、MD07）。
+	models := def("models", "Model Agent", "test-line", "orielhub-test-agent")
+	models.Launch.Env = []task.EnvVar{{Name: "ORIELHUB_TEST_MODELS", Value: "fast,deep"}}
 	defs := []agent.Definition{
 		def("test", "Test Agent", "test-line", "orielhub-test-agent"),
+		models,
 		def("noruntime", "No Runtime", "nope", "orielhub-test-agent"),
 		def("gone", "Gone", "test-line", "not-installed-anywhere"),
 	}
@@ -148,6 +160,8 @@ func (l *countingLauncher) Launch(ctx context.Context, id task.AgentID) (task.La
 	}
 	return l.inner.Launch(ctx, id)
 }
+
+func (l *countingLauncher) CheckAgent(id task.AgentID) error { return l.inner.CheckAgent(id) }
 
 func (l *countingLauncher) calls() int {
 	l.mu.Lock()

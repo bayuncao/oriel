@@ -50,6 +50,10 @@ const (
 // 參數 files 是衝突檔案，以換行分隔。
 const CodeMergeConflict = "task.merge_conflict"
 
+// CodeDefaultModelUnavailable 是新會話開始時預設模型不在 agent 報告的列表裡的 Problem 代碼
+// （ModelSwitchFailed，settings.md MD07）；沒有參數：模型在 ModelProblem.Value。
+const CodeDefaultModelUnavailable = "task.default_model_unavailable"
+
 // Problem 是事件與執行期事實中記錄的失敗原因：穩定的代碼加上參數，
 // 前端依代碼翻譯（docs/architecture/README.md 規則 9）。代碼屬於產生
 // 失敗的套件（如 proc.signaled），由 hub 從錯誤的 ErrorCode 與

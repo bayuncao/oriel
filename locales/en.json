@@ -430,6 +430,10 @@
   "@task_in_flight": {
     "description": "Cancelling an intent whose effect is not suspended."
   },
+  "task_default_model_unavailable": "The default model isn’t available this time",
+  "@task_default_model_unavailable": {
+    "description": "A new session started and its default model was not among the models the agent offered (MD07)."
+  },
   "task_merge_conflict": "Merge conflict in: {files}",
   "@task_merge_conflict": {
     "description": "A merge stopped on conflicts; files are newline-separated.",
@@ -733,6 +737,10 @@
   "@mygoipc_unsupported_link": {
     "description": "A link in the conversation uses a scheme other than http, https or mailto (m2.md V10)."
   },
+  "mygoipc_unknown_folder": "Only the data and log folders can be opened",
+  "@mygoipc_unknown_folder": {
+    "description": "A page asked to open a folder other than the data or log folder (PV05)."
+  },
   "mygoipc_remote_unavailable": "This build has no remote control",
   "@mygoipc_remote_unavailable": {
     "description": "A page called the Remote service in a build without remote control, such as production (D149, remote.md DV18)."
@@ -940,6 +948,16 @@
     "description": "The interface language choice could not be written to disk; detail is the system error.",
     "placeholders": { "detail": { "type": "String" } }
   },
+  "app_unknown_theme": "“{theme}” isn’t a theme; choose light, dark or system",
+  "@app_unknown_theme": {
+    "description": "A page asked for a theme that is not light, dark or follow the system (PF03).",
+    "placeholders": { "theme": { "type": "String" } }
+  },
+  "app_theme_save_failed": "Couldn’t remember the theme; it goes back after a restart: {detail}",
+  "@app_theme_save_failed": {
+    "description": "The theme was applied but could not be saved in the data folder (PF08).",
+    "placeholders": { "detail": { "type": "String" } }
+  },
   "app_keep_awake_save_failed": "Could not save the sleep setting: {detail}",
   "@app_keep_awake_save_failed": {
     "description": "The keep-awake switch (D80) could not be written to disk; detail is the system error.",
@@ -967,6 +985,42 @@
   "usage_closed": "Usage reading has stopped",
   "@usage_closed": {
     "description": "The usage reader was closed while the app quits."
+  },
+  "integration_gh_missing": "GitHub CLI (gh) isn’t installed",
+  "@integration_gh_missing": {
+    "description": "No gh in the login shell's PATH or the user's tool folders (IG01)."
+  },
+  "integration_gh_logged_out": "gh isn’t signed in to github.com",
+  "@integration_gh_logged_out": {
+    "description": "gh has no active github.com account, or its token no longer works (IG02)."
+  },
+  "integration_gh_scope_missing": "gh’s sign-in lacks the {scope} scope",
+  "@integration_gh_scope_missing": {
+    "description": "The gh token lacks a scope the integration needs; scope is its name, such as repo (IG03).",
+    "placeholders": { "scope": { "type": "String" } }
+  },
+  "integration_gh_unreachable": "gh couldn’t confirm the sign-in with GitHub: {detail}",
+  "@integration_gh_unreachable": {
+    "description": "gh could not check its token with GitHub: timed out, no network or proxy, or the token no longer works; detail is what gh said, in English (IG16).",
+    "placeholders": { "detail": { "type": "String" } }
+  },
+  "ui_integration_fix_unreachable": "Check the network or proxy and check again. If the sign-in has expired, run this in Terminal:",
+  "@ui_integration_fix_unreachable": {
+    "description": "How to fix: gh could not confirm the sign-in with GitHub; a gh command follows this line (IG16)."
+  },
+  "integration_gh_failed": "Couldn’t check gh: {detail}",
+  "@integration_gh_failed": {
+    "description": "gh timed out, exited with an error, or printed something that isn't JSON; detail is the last line it wrote, in English (IG10, IG11).",
+    "placeholders": { "detail": { "type": "String" } }
+  },
+  "integration_unknown": "There’s no integration {id}",
+  "@integration_unknown": {
+    "description": "A page asked for an integration the app doesn't have (IG09).",
+    "placeholders": { "id": { "type": "String" } }
+  },
+  "integration_closed": "Integrations have stopped",
+  "@integration_closed": {
+    "description": "The integration service was closed while the app quits."
   },
   "provider_fetch_failed": "Couldn’t read the {provider} status page: {detail}",
   "@provider_fetch_failed": {
@@ -2787,6 +2841,286 @@
   "@ui_settings_rules": {
     "description": "Settings tab: approval rules."
   },
+  "ui_settings_preferences": "Preferences",
+  "@ui_settings_preferences": {
+    "description": "Settings tab: theme and language (D158, PF01)."
+  },
+  "ui_preferences_title": "Appearance and language",
+  "@ui_preferences_title": {
+    "description": "Heading of the Preferences card (PF02)."
+  },
+  "ui_preferences_text": "The same theme and language as in the account menu; changes apply at once.",
+  "@ui_preferences_text": {
+    "description": "Line under the Preferences heading (PF02, PF06)."
+  },
+  "ui_preferences_theme": "Theme",
+  "@ui_preferences_theme": {
+    "description": "Preferences row: light, dark or follow the system (PF02)."
+  },
+  "ui_preferences_theme_note": "System follows macOS when it switches between light and dark",
+  "@ui_preferences_theme_note": {
+    "description": "Note under the Theme row (PF05)."
+  },
+  "ui_preferences_language": "Language",
+  "@ui_preferences_language": {
+    "description": "Preferences row: the interface language (PF02)."
+  },
+  "ui_preferences_language_note": "For menus, buttons and messages",
+  "@ui_preferences_language_note": {
+    "description": "Note under the Language row (PF07)."
+  },
+  "ui_preferences_load_failed": "Couldn’t load preferences",
+  "@ui_preferences_load_failed": {
+    "description": "Preferences could not read the theme or the languages (PF02)."
+  },
+  "ui_settings_privacy": "Privacy",
+  "@ui_settings_privacy": {
+    "description": "Settings tab: what OrielHub does with data (D158, PV01)."
+  },
+  "ui_privacy_nothing_title": "OrielHub doesn’t collect data",
+  "@ui_privacy_nothing_title": {
+    "description": "Privacy card heading (PV02)."
+  },
+  "ui_privacy_nothing_text": "No usage data is collected or uploaded. Tasks, conversations and usage stay on this Mac.",
+  "@ui_privacy_nothing_text": {
+    "description": "Privacy card text (PV02)."
+  },
+  "ui_privacy_requests_title": "Requests OrielHub makes",
+  "@ui_privacy_requests_title": {
+    "description": "Privacy card heading: the requests OrielHub itself sends (PV03)."
+  },
+  "ui_privacy_requests_text": "Agents go online on their own; their requests don’t pass through OrielHub.",
+  "@ui_privacy_requests_text": {
+    "description": "Line under the requests heading (PV03)."
+  },
+  "ui_privacy_updates": "Update checks",
+  "@ui_privacy_updates": {
+    "description": "Privacy row: checking for updates (PV03)."
+  },
+  "ui_privacy_updates_note": "Checks for new versions at launch and once a day: {source}",
+  "@ui_privacy_updates_note": {
+    "description": "Privacy note: where updates come from; source lists the places (PV03).",
+    "placeholders": { "source": { "type": "String" } }
+  },
+  "ui_privacy_updates_off": "This build doesn’t check for updates",
+  "@ui_privacy_updates_off": {
+    "description": "Privacy note for a local build (PV03)."
+  },
+  "ui_privacy_status": "Provider status",
+  "@ui_privacy_status": {
+    "description": "Privacy row: reading providers' public status pages (PV03)."
+  },
+  "ui_privacy_status_note": "Reads the public status pages of {count} providers only while Overview is open",
+  "@ui_privacy_status_note": {
+    "description": "Privacy note: count is the number of providers (PV03).",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_privacy_status_list": "Addresses",
+  "@ui_privacy_status_list": {
+    "description": "Disclosure that lists the status page addresses (PV03)."
+  },
+  "ui_privacy_registry": "ACP Registry",
+  "@ui_privacy_registry": {
+    "description": "Privacy row: fetching the ACP Registry; a product name (PV03)."
+  },
+  "ui_privacy_registry_note": "Fetches {url} when you open the Registry page",
+  "@ui_privacy_registry_note": {
+    "description": "Privacy note: url is the registry address (PV03).",
+    "placeholders": { "url": { "type": "String" } }
+  },
+  "ui_privacy_remote": "Remote",
+  "@ui_privacy_remote": {
+    "description": "Privacy row: the remote relay (PV03)."
+  },
+  "ui_privacy_remote_note": "While remote is on, connects to the relay you set; content is end-to-end encrypted",
+  "@ui_privacy_remote_note": {
+    "description": "Privacy note for remote (PV03)."
+  },
+  "ui_privacy_remote_off": "This version has no remote",
+  "@ui_privacy_remote_off": {
+    "description": "Privacy note when the build has no remote (PV03, D149)."
+  },
+  "ui_privacy_records_title": "Local records it reads",
+  "@ui_privacy_records_title": {
+    "description": "Privacy card heading: the agents' local usage records (PV04)."
+  },
+  "ui_privacy_records_text": "OrielHub only reads the agents’ usage records on this Mac and never changes them.",
+  "@ui_privacy_records_text": {
+    "description": "Line under the records heading (PV04)."
+  },
+  "ui_privacy_records_open": "View in Usage",
+  "@ui_privacy_records_open": {
+    "description": "Button that opens the usage page (PV04)."
+  },
+  "ui_privacy_roots_earlier": "+{count} earlier",
+  "@ui_privacy_roots_earlier": {
+    "description": "Folded row above an agent's long list of searched locations: how many are folded above (PV04d).",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_privacy_roots_more": "+{count} more",
+  "@ui_privacy_roots_more": {
+    "description": "Folded row under an agent's long list of searched locations: how many are folded below (PV04d).",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_privacy_roots_fewer": "Show fewer",
+  "@ui_privacy_roots_fewer": {
+    "description": "Folds an agent's long list of searched locations again (PV04d)."
+  },
+  "ui_privacy_local_title": "Data on this Mac",
+  "@ui_privacy_local_title": {
+    "description": "Privacy card heading: local folders and recent searches (PV05, PV06)."
+  },
+  "ui_privacy_folder_data": "Data",
+  "@ui_privacy_folder_data": {
+    "description": "Privacy row: the data folder (PV05)."
+  },
+  "ui_privacy_folder_logs": "Logs",
+  "@ui_privacy_folder_logs": {
+    "description": "Privacy row: the log folder (PV05)."
+  },
+  "ui_privacy_folder_note": "{path} · {size}",
+  "@ui_privacy_folder_note": {
+    "description": "Privacy note: the folder path and its size (PV05).",
+    "placeholders": { "path": { "type": "String" }, "size": { "type": "String" } }
+  },
+  "ui_privacy_folder_note_excludes": "{path} · {size}, not counting task worktrees",
+  "@ui_privacy_folder_note_excludes": {
+    "description": "Privacy note for the data folder: its path and size, which leaves out the task worktrees kept inside it (PV05).",
+    "placeholders": { "path": { "type": "String" }, "size": { "type": "String" } }
+  },
+  "ui_privacy_reveal": "Show in Finder",
+  "@ui_privacy_reveal": {
+    "description": "Button that opens the folder in Finder (PV05)."
+  },
+  "ui_privacy_recent": "Recent searches",
+  "@ui_privacy_recent": {
+    "description": "Privacy row: the search panel's recent searches (PV06)."
+  },
+  "ui_privacy_recent_note": "{count, plural, =0 {None} one {# kept in memory until you quit} other {# kept in memory until you quit}}",
+  "@ui_privacy_recent_note": {
+    "description": "Privacy note: how many recent searches there are (PV06).",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_privacy_recent_clear": "Clear",
+  "@ui_privacy_recent_clear": {
+    "description": "Button that clears the recent searches (PV06)."
+  },
+  "ui_privacy_load_failed": "Couldn’t load privacy details",
+  "@ui_privacy_load_failed": {
+    "description": "A privacy card could not get its content (PV07)."
+  },
+  "ui_settings_models": "Models",
+  "@ui_settings_models": {
+    "description": "Settings tab: each agent's default model (D158, MD20)."
+  },
+  "ui_models_title": "Default model for each agent",
+  "@ui_models_title": {
+    "description": "Heading of the Models page (MD21)."
+  },
+  "ui_models_text": "New sessions switch to the model chosen here as they start; sessions already running stay as they are.",
+  "@ui_models_text": {
+    "description": "Line under the Models heading (MD05, MD09)."
+  },
+  "ui_models_follow": "Follow the agent’s own setting",
+  "@ui_models_follow": {
+    "description": "First choice in a model menu: no default (MD22)."
+  },
+  "ui_models_reported": "Models as reported by a session {ago}",
+  "@ui_models_reported": {
+    "description": "Note under an agent: when its model list was reported; ago is relative, e.g. 3 minutes ago (MD22).",
+    "placeholders": { "ago": { "type": "String" } }
+  },
+  "ui_models_never": "You’ll know its models after it runs once",
+  "@ui_models_never": {
+    "description": "Note under an agent that never ran (MD23)."
+  },
+  "ui_models_stale": "{model} isn’t in the latest list",
+  "@ui_models_stale": {
+    "description": "Note when the default is not among the last reported models (MD25).",
+    "placeholders": { "model": { "type": "String" } }
+  },
+  "ui_models_select": "Default model for {agent}",
+  "@ui_models_select": {
+    "description": "Screen reader label of a model menu (MD27).",
+    "placeholders": { "agent": { "type": "String" } }
+  },
+  "ui_models_none": "No agents are installed",
+  "@ui_models_none": {
+    "description": "Models page with no installed agents (MD21)."
+  },
+  "ui_models_load_failed": "Couldn’t load models",
+  "@ui_models_load_failed": {
+    "description": "The Models page could not get its content (MD24)."
+  },
+  "ui_conv_default_model_unavailable": "The default model {name} isn’t available this time; using {current}",
+  "@ui_conv_default_model_unavailable": {
+    "description": "Conversation notice: the default model was not offered when the session started (MD26).",
+    "placeholders": { "name": { "type": "String" }, "current": { "type": "String" } }
+  },
+  "ui_settings_integrations": "Integrations",
+  "@ui_settings_integrations": {
+    "description": "Settings tab: connecting outside services such as GitHub (D108)."
+  },
+  "ui_integrations_text": "Let OrielHub use tools you’re already signed in to on this Mac. It only checks them here and keeps no tokens.",
+  "@ui_integrations_text": {
+    "description": "Line under the Integrations heading (IG21)."
+  },
+  "ui_integrations_group_code": "Code",
+  "@ui_integrations_group_code": {
+    "description": "Integrations group heading: code hosting and collaboration (IG21)."
+  },
+  "ui_integration_github_description": "Lets OrielHub read CI results and review comments on the pull requests your tasks open",
+  "@ui_integration_github_description": {
+    "description": "What the GitHub integration is for (IG21, D82)."
+  },
+  "ui_integration_checking": "Checking…",
+  "@ui_integration_checking": {
+    "description": "Integration state before the first check finishes."
+  },
+  "ui_integration_available": "Ready to connect · {account}",
+  "@ui_integration_available": {
+    "description": "The integration works; account is the GitHub user gh is signed in as (IG04).",
+    "placeholders": { "account": { "type": "String" } }
+  },
+  "ui_integration_connected": "Connected · {account}",
+  "@ui_integration_connected": {
+    "description": "The integration is connected; account is the GitHub user (IG23).",
+    "placeholders": { "account": { "type": "String" } }
+  },
+  "ui_integration_connect": "Connect",
+  "@ui_integration_connect": {
+    "description": "Button that connects an integration (IG23)."
+  },
+  "ui_integration_disconnect": "Disconnect",
+  "@ui_integration_disconnect": {
+    "description": "Button that stops using an integration; gh stays signed in (IG24)."
+  },
+  "ui_integration_connect_aria": "Connect {name}",
+  "@ui_integration_connect_aria": {
+    "description": "Screen reader label of the Connect button (IG27).",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_integration_disconnect_aria": "Disconnect {name}",
+  "@ui_integration_disconnect_aria": {
+    "description": "Screen reader label of the Disconnect button (IG27).",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_integrations_check_again": "Check again",
+  "@ui_integrations_check_again": {
+    "description": "Button that checks every integration again (IG25)."
+  },
+  "ui_integrations_load_failed": "Couldn’t load integrations",
+  "@ui_integrations_load_failed": {
+    "description": "Integrations page could not get the list (IG26)."
+  },
+  "ui_integration_fix_install": "Install GitHub CLI, then check again.",
+  "@ui_integration_fix_install": {
+    "description": "How to fix: gh is not installed (IG22)."
+  },
+  "ui_integration_fix_run": "Run this in Terminal, then check again:",
+  "@ui_integration_fix_run": {
+    "description": "How to fix: a gh command to run, shown after this line (IG22)."
+  },
   "ui_settings_remote": "Remote",
   "@ui_settings_remote": {
     "description": "Settings tab: remote control from the iPhone app (D145)."
@@ -2974,6 +3308,10 @@
   "ui_settings_notify_types": "Notification types",
   "@ui_settings_notify_types": {
     "description": "Heading above the card of notification switches in Settings › Notifications."
+  },
+  "ui_settings_hint": "About this",
+  "@ui_settings_hint": {
+    "description": "Screen reader name of the small info button after a settings heading; its tooltip explains the heading (settings.md SL06, SL07)."
   },
   "ui_settings_save_failed": "Couldn't save",
   "@ui_settings_save_failed": {

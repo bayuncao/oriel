@@ -976,6 +976,22 @@ func (msgs Messages) TaskInFlight() string {
 	return Catalog.Format(msgs.locale, "task_in_flight", nil)
 }
 
+// TaskDefaultModelUnavailable says "The default model isn’t available this time"
+// in the language the app shows.
+//
+// A new session started and its default model was not among the models the
+// agent offered (MD07).
+func TaskDefaultModelUnavailable() string { return In(i18n.Locale()).TaskDefaultModelUnavailable() }
+
+// TaskDefaultModelUnavailable says "The default model isn’t available this time"
+// in the language of msgs.
+//
+// A new session started and its default model was not among the models the
+// agent offered (MD07).
+func (msgs Messages) TaskDefaultModelUnavailable() string {
+	return Catalog.Format(msgs.locale, "task_default_model_unavailable", nil)
+}
+
 // TaskMergeConflict says "Merge conflict in: {files}"
 // in the language the app shows.
 //
@@ -1816,6 +1832,20 @@ func (msgs Messages) MygoipcUnsupportedLink() string {
 	return Catalog.Format(msgs.locale, "mygoipc_unsupported_link", nil)
 }
 
+// MygoipcUnknownFolder says "Only the data and log folders can be opened"
+// in the language the app shows.
+//
+// A page asked to open a folder other than the data or log folder (PV05).
+func MygoipcUnknownFolder() string { return In(i18n.Locale()).MygoipcUnknownFolder() }
+
+// MygoipcUnknownFolder says "Only the data and log folders can be opened"
+// in the language of msgs.
+//
+// A page asked to open a folder other than the data or log folder (PV05).
+func (msgs Messages) MygoipcUnknownFolder() string {
+	return Catalog.Format(msgs.locale, "mygoipc_unknown_folder", nil)
+}
+
 // MygoipcRemoteUnavailable says "This build has no remote control"
 // in the language the app shows.
 //
@@ -2282,6 +2312,36 @@ func (msgs Messages) AppLanguageSaveFailed(detail string) string {
 	return Catalog.Format(msgs.locale, "app_language_save_failed", map[string]any{"detail": detail})
 }
 
+// AppUnknownTheme says "“{theme}” isn’t a theme; choose light, dark or system"
+// in the language the app shows.
+//
+// A page asked for a theme that is not light, dark or follow the system
+// (PF03).
+func AppUnknownTheme(theme string) string { return In(i18n.Locale()).AppUnknownTheme(theme) }
+
+// AppUnknownTheme says "“{theme}” isn’t a theme; choose light, dark or system"
+// in the language of msgs.
+//
+// A page asked for a theme that is not light, dark or follow the system
+// (PF03).
+func (msgs Messages) AppUnknownTheme(theme string) string {
+	return Catalog.Format(msgs.locale, "app_unknown_theme", map[string]any{"theme": theme})
+}
+
+// AppThemeSaveFailed says "Couldn’t remember the theme; it goes back after a restart: {detail}"
+// in the language the app shows.
+//
+// The theme was applied but could not be saved in the data folder (PF08).
+func AppThemeSaveFailed(detail string) string { return In(i18n.Locale()).AppThemeSaveFailed(detail) }
+
+// AppThemeSaveFailed says "Couldn’t remember the theme; it goes back after a restart: {detail}"
+// in the language of msgs.
+//
+// The theme was applied but could not be saved in the data folder (PF08).
+func (msgs Messages) AppThemeSaveFailed(detail string) string {
+	return Catalog.Format(msgs.locale, "app_theme_save_failed", map[string]any{"detail": detail})
+}
+
 // AppKeepAwakeSaveFailed says "Could not save the sleep setting: {detail}"
 // in the language the app shows.
 //
@@ -2382,6 +2442,130 @@ func UsageClosed() string { return In(i18n.Locale()).UsageClosed() }
 // The usage reader was closed while the app quits.
 func (msgs Messages) UsageClosed() string {
 	return Catalog.Format(msgs.locale, "usage_closed", nil)
+}
+
+// IntegrationGhMissing says "GitHub CLI (gh) isn’t installed"
+// in the language the app shows.
+//
+// No gh in the login shell's PATH or the user's tool folders (IG01).
+func IntegrationGhMissing() string { return In(i18n.Locale()).IntegrationGhMissing() }
+
+// IntegrationGhMissing says "GitHub CLI (gh) isn’t installed"
+// in the language of msgs.
+//
+// No gh in the login shell's PATH or the user's tool folders (IG01).
+func (msgs Messages) IntegrationGhMissing() string {
+	return Catalog.Format(msgs.locale, "integration_gh_missing", nil)
+}
+
+// IntegrationGhLoggedOut says "gh isn’t signed in to github.com"
+// in the language the app shows.
+//
+// gh has no active github.com account, or its token no longer works (IG02).
+func IntegrationGhLoggedOut() string { return In(i18n.Locale()).IntegrationGhLoggedOut() }
+
+// IntegrationGhLoggedOut says "gh isn’t signed in to github.com"
+// in the language of msgs.
+//
+// gh has no active github.com account, or its token no longer works (IG02).
+func (msgs Messages) IntegrationGhLoggedOut() string {
+	return Catalog.Format(msgs.locale, "integration_gh_logged_out", nil)
+}
+
+// IntegrationGhScopeMissing says "gh’s sign-in lacks the {scope} scope"
+// in the language the app shows.
+//
+// The gh token lacks a scope the integration needs; scope is its name, such
+// as repo (IG03).
+func IntegrationGhScopeMissing(scope string) string {
+	return In(i18n.Locale()).IntegrationGhScopeMissing(scope)
+}
+
+// IntegrationGhScopeMissing says "gh’s sign-in lacks the {scope} scope"
+// in the language of msgs.
+//
+// The gh token lacks a scope the integration needs; scope is its name, such
+// as repo (IG03).
+func (msgs Messages) IntegrationGhScopeMissing(scope string) string {
+	return Catalog.Format(msgs.locale, "integration_gh_scope_missing", map[string]any{"scope": scope})
+}
+
+// IntegrationGhUnreachable says "gh couldn’t confirm the sign-in with GitHub: {detail}"
+// in the language the app shows.
+//
+// gh could not check its token with GitHub: timed out, no network or proxy,
+// or the token no longer works; detail is what gh said, in English (IG16).
+func IntegrationGhUnreachable(detail string) string {
+	return In(i18n.Locale()).IntegrationGhUnreachable(detail)
+}
+
+// IntegrationGhUnreachable says "gh couldn’t confirm the sign-in with GitHub: {detail}"
+// in the language of msgs.
+//
+// gh could not check its token with GitHub: timed out, no network or proxy,
+// or the token no longer works; detail is what gh said, in English (IG16).
+func (msgs Messages) IntegrationGhUnreachable(detail string) string {
+	return Catalog.Format(msgs.locale, "integration_gh_unreachable", map[string]any{"detail": detail})
+}
+
+// UiIntegrationFixUnreachable says "Check the network or proxy and check again. If the sign-in has expired, run this in Terminal:"
+// in the language the app shows.
+//
+// How to fix: gh could not confirm the sign-in with GitHub; a gh command
+// follows this line (IG16).
+func UiIntegrationFixUnreachable() string { return In(i18n.Locale()).UiIntegrationFixUnreachable() }
+
+// UiIntegrationFixUnreachable says "Check the network or proxy and check again. If the sign-in has expired, run this in Terminal:"
+// in the language of msgs.
+//
+// How to fix: gh could not confirm the sign-in with GitHub; a gh command
+// follows this line (IG16).
+func (msgs Messages) UiIntegrationFixUnreachable() string {
+	return Catalog.Format(msgs.locale, "ui_integration_fix_unreachable", nil)
+}
+
+// IntegrationGhFailed says "Couldn’t check gh: {detail}"
+// in the language the app shows.
+//
+// gh timed out, exited with an error, or printed something that isn't JSON;
+// detail is the last line it wrote, in English (IG10, IG11).
+func IntegrationGhFailed(detail string) string { return In(i18n.Locale()).IntegrationGhFailed(detail) }
+
+// IntegrationGhFailed says "Couldn’t check gh: {detail}"
+// in the language of msgs.
+//
+// gh timed out, exited with an error, or printed something that isn't JSON;
+// detail is the last line it wrote, in English (IG10, IG11).
+func (msgs Messages) IntegrationGhFailed(detail string) string {
+	return Catalog.Format(msgs.locale, "integration_gh_failed", map[string]any{"detail": detail})
+}
+
+// IntegrationUnknown says "There’s no integration {id}"
+// in the language the app shows.
+//
+// A page asked for an integration the app doesn't have (IG09).
+func IntegrationUnknown(id string) string { return In(i18n.Locale()).IntegrationUnknown(id) }
+
+// IntegrationUnknown says "There’s no integration {id}"
+// in the language of msgs.
+//
+// A page asked for an integration the app doesn't have (IG09).
+func (msgs Messages) IntegrationUnknown(id string) string {
+	return Catalog.Format(msgs.locale, "integration_unknown", map[string]any{"id": id})
+}
+
+// IntegrationClosed says "Integrations have stopped"
+// in the language the app shows.
+//
+// The integration service was closed while the app quits.
+func IntegrationClosed() string { return In(i18n.Locale()).IntegrationClosed() }
+
+// IntegrationClosed says "Integrations have stopped"
+// in the language of msgs.
+//
+// The integration service was closed while the app quits.
+func (msgs Messages) IntegrationClosed() string {
+	return Catalog.Format(msgs.locale, "integration_closed", nil)
 }
 
 // ProviderFetchFailed says "Couldn’t read the {provider} status page: {detail}"
@@ -8688,6 +8872,960 @@ func (msgs Messages) UiSettingsRules() string {
 	return Catalog.Format(msgs.locale, "ui_settings_rules", nil)
 }
 
+// UiSettingsPreferences says "Preferences"
+// in the language the app shows.
+//
+// Settings tab: theme and language (D158, PF01).
+func UiSettingsPreferences() string { return In(i18n.Locale()).UiSettingsPreferences() }
+
+// UiSettingsPreferences says "Preferences"
+// in the language of msgs.
+//
+// Settings tab: theme and language (D158, PF01).
+func (msgs Messages) UiSettingsPreferences() string {
+	return Catalog.Format(msgs.locale, "ui_settings_preferences", nil)
+}
+
+// UiPreferencesTitle says "Appearance and language"
+// in the language the app shows.
+//
+// Heading of the Preferences card (PF02).
+func UiPreferencesTitle() string { return In(i18n.Locale()).UiPreferencesTitle() }
+
+// UiPreferencesTitle says "Appearance and language"
+// in the language of msgs.
+//
+// Heading of the Preferences card (PF02).
+func (msgs Messages) UiPreferencesTitle() string {
+	return Catalog.Format(msgs.locale, "ui_preferences_title", nil)
+}
+
+// UiPreferencesText says "The same theme and language as in the account menu; changes apply at once."
+// in the language the app shows.
+//
+// Line under the Preferences heading (PF02, PF06).
+func UiPreferencesText() string { return In(i18n.Locale()).UiPreferencesText() }
+
+// UiPreferencesText says "The same theme and language as in the account menu; changes apply at once."
+// in the language of msgs.
+//
+// Line under the Preferences heading (PF02, PF06).
+func (msgs Messages) UiPreferencesText() string {
+	return Catalog.Format(msgs.locale, "ui_preferences_text", nil)
+}
+
+// UiPreferencesTheme says "Theme"
+// in the language the app shows.
+//
+// Preferences row: light, dark or follow the system (PF02).
+func UiPreferencesTheme() string { return In(i18n.Locale()).UiPreferencesTheme() }
+
+// UiPreferencesTheme says "Theme"
+// in the language of msgs.
+//
+// Preferences row: light, dark or follow the system (PF02).
+func (msgs Messages) UiPreferencesTheme() string {
+	return Catalog.Format(msgs.locale, "ui_preferences_theme", nil)
+}
+
+// UiPreferencesThemeNote says "System follows macOS when it switches between light and dark"
+// in the language the app shows.
+//
+// Note under the Theme row (PF05).
+func UiPreferencesThemeNote() string { return In(i18n.Locale()).UiPreferencesThemeNote() }
+
+// UiPreferencesThemeNote says "System follows macOS when it switches between light and dark"
+// in the language of msgs.
+//
+// Note under the Theme row (PF05).
+func (msgs Messages) UiPreferencesThemeNote() string {
+	return Catalog.Format(msgs.locale, "ui_preferences_theme_note", nil)
+}
+
+// UiPreferencesLanguage says "Language"
+// in the language the app shows.
+//
+// Preferences row: the interface language (PF02).
+func UiPreferencesLanguage() string { return In(i18n.Locale()).UiPreferencesLanguage() }
+
+// UiPreferencesLanguage says "Language"
+// in the language of msgs.
+//
+// Preferences row: the interface language (PF02).
+func (msgs Messages) UiPreferencesLanguage() string {
+	return Catalog.Format(msgs.locale, "ui_preferences_language", nil)
+}
+
+// UiPreferencesLanguageNote says "For menus, buttons and messages"
+// in the language the app shows.
+//
+// Note under the Language row (PF07).
+func UiPreferencesLanguageNote() string { return In(i18n.Locale()).UiPreferencesLanguageNote() }
+
+// UiPreferencesLanguageNote says "For menus, buttons and messages"
+// in the language of msgs.
+//
+// Note under the Language row (PF07).
+func (msgs Messages) UiPreferencesLanguageNote() string {
+	return Catalog.Format(msgs.locale, "ui_preferences_language_note", nil)
+}
+
+// UiPreferencesLoadFailed says "Couldn’t load preferences"
+// in the language the app shows.
+//
+// Preferences could not read the theme or the languages (PF02).
+func UiPreferencesLoadFailed() string { return In(i18n.Locale()).UiPreferencesLoadFailed() }
+
+// UiPreferencesLoadFailed says "Couldn’t load preferences"
+// in the language of msgs.
+//
+// Preferences could not read the theme or the languages (PF02).
+func (msgs Messages) UiPreferencesLoadFailed() string {
+	return Catalog.Format(msgs.locale, "ui_preferences_load_failed", nil)
+}
+
+// UiSettingsPrivacy says "Privacy"
+// in the language the app shows.
+//
+// Settings tab: what OrielHub does with data (D158, PV01).
+func UiSettingsPrivacy() string { return In(i18n.Locale()).UiSettingsPrivacy() }
+
+// UiSettingsPrivacy says "Privacy"
+// in the language of msgs.
+//
+// Settings tab: what OrielHub does with data (D158, PV01).
+func (msgs Messages) UiSettingsPrivacy() string {
+	return Catalog.Format(msgs.locale, "ui_settings_privacy", nil)
+}
+
+// UiPrivacyNothingTitle says "OrielHub doesn’t collect data"
+// in the language the app shows.
+//
+// Privacy card heading (PV02).
+func UiPrivacyNothingTitle() string { return In(i18n.Locale()).UiPrivacyNothingTitle() }
+
+// UiPrivacyNothingTitle says "OrielHub doesn’t collect data"
+// in the language of msgs.
+//
+// Privacy card heading (PV02).
+func (msgs Messages) UiPrivacyNothingTitle() string {
+	return Catalog.Format(msgs.locale, "ui_privacy_nothing_title", nil)
+}
+
+// UiPrivacyNothingText says "No usage data is collected or uploaded. Tasks, conversations and usage stay on this Mac."
+// in the language the app shows.
+//
+// Privacy card text (PV02).
+func UiPrivacyNothingText() string { return In(i18n.Locale()).UiPrivacyNothingText() }
+
+// UiPrivacyNothingText says "No usage data is collected or uploaded. Tasks, conversations and usage stay on this Mac."
+// in the language of msgs.
+//
+// Privacy card text (PV02).
+func (msgs Messages) UiPrivacyNothingText() string {
+	return Catalog.Format(msgs.locale, "ui_privacy_nothing_text", nil)
+}
+
+// UiPrivacyRequestsTitle says "Requests OrielHub makes"
+// in the language the app shows.
+//
+// Privacy card heading: the requests OrielHub itself sends (PV03).
+func UiPrivacyRequestsTitle() string { return In(i18n.Locale()).UiPrivacyRequestsTitle() }
+
+// UiPrivacyRequestsTitle says "Requests OrielHub makes"
+// in the language of msgs.
+//
+// Privacy card heading: the requests OrielHub itself sends (PV03).
+func (msgs Messages) UiPrivacyRequestsTitle() string {
+	return Catalog.Format(msgs.locale, "ui_privacy_requests_title", nil)
+}
+
+// UiPrivacyRequestsText says "Agents go online on their own; their requests don’t pass through OrielHub."
+// in the language the app shows.
+//
+// Line under the requests heading (PV03).
+func UiPrivacyRequestsText() string { return In(i18n.Locale()).UiPrivacyRequestsText() }
+
+// UiPrivacyRequestsText says "Agents go online on their own; their requests don’t pass through OrielHub."
+// in the language of msgs.
+//
+// Line under the requests heading (PV03).
+func (msgs Messages) UiPrivacyRequestsText() string {
+	return Catalog.Format(msgs.locale, "ui_privacy_requests_text", nil)
+}
+
+// UiPrivacyUpdates says "Update checks"
+// in the language the app shows.
+//
+// Privacy row: checking for updates (PV03).
+func UiPrivacyUpdates() string { return In(i18n.Locale()).UiPrivacyUpdates() }
+
+// UiPrivacyUpdates says "Update checks"
+// in the language of msgs.
+//
+// Privacy row: checking for updates (PV03).
+func (msgs Messages) UiPrivacyUpdates() string {
+	return Catalog.Format(msgs.locale, "ui_privacy_updates", nil)
+}
+
+// UiPrivacyUpdatesNote says "Checks for new versions at launch and once a day: {source}"
+// in the language the app shows.
+//
+// Privacy note: where updates come from; source lists the places (PV03).
+func UiPrivacyUpdatesNote(source string) string {
+	return In(i18n.Locale()).UiPrivacyUpdatesNote(source)
+}
+
+// UiPrivacyUpdatesNote says "Checks for new versions at launch and once a day: {source}"
+// in the language of msgs.
+//
+// Privacy note: where updates come from; source lists the places (PV03).
+func (msgs Messages) UiPrivacyUpdatesNote(source string) string {
+	return Catalog.Format(msgs.locale, "ui_privacy_updates_note", map[string]any{"source": source})
+}
+
+// UiPrivacyUpdatesOff says "This build doesn’t check for updates"
+// in the language the app shows.
+//
+// Privacy note for a local build (PV03).
+func UiPrivacyUpdatesOff() string { return In(i18n.Locale()).UiPrivacyUpdatesOff() }
+
+// UiPrivacyUpdatesOff says "This build doesn’t check for updates"
+// in the language of msgs.
+//
+// Privacy note for a local build (PV03).
+func (msgs Messages) UiPrivacyUpdatesOff() string {
+	return Catalog.Format(msgs.locale, "ui_privacy_updates_off", nil)
+}
+
+// UiPrivacyStatus says "Provider status"
+// in the language the app shows.
+//
+// Privacy row: reading providers' public status pages (PV03).
+func UiPrivacyStatus() string { return In(i18n.Locale()).UiPrivacyStatus() }
+
+// UiPrivacyStatus says "Provider status"
+// in the language of msgs.
+//
+// Privacy row: reading providers' public status pages (PV03).
+func (msgs Messages) UiPrivacyStatus() string {
+	return Catalog.Format(msgs.locale, "ui_privacy_status", nil)
+}
+
+// UiPrivacyStatusNote says "Reads the public status pages of {count} providers only while Overview is open"
+// in the language the app shows.
+//
+// Privacy note: count is the number of providers (PV03).
+func UiPrivacyStatusNote(count int) string { return In(i18n.Locale()).UiPrivacyStatusNote(count) }
+
+// UiPrivacyStatusNote says "Reads the public status pages of {count} providers only while Overview is open"
+// in the language of msgs.
+//
+// Privacy note: count is the number of providers (PV03).
+func (msgs Messages) UiPrivacyStatusNote(count int) string {
+	return Catalog.Format(msgs.locale, "ui_privacy_status_note", map[string]any{"count": count})
+}
+
+// UiPrivacyStatusList says "Addresses"
+// in the language the app shows.
+//
+// Disclosure that lists the status page addresses (PV03).
+func UiPrivacyStatusList() string { return In(i18n.Locale()).UiPrivacyStatusList() }
+
+// UiPrivacyStatusList says "Addresses"
+// in the language of msgs.
+//
+// Disclosure that lists the status page addresses (PV03).
+func (msgs Messages) UiPrivacyStatusList() string {
+	return Catalog.Format(msgs.locale, "ui_privacy_status_list", nil)
+}
+
+// UiPrivacyRegistry says "ACP Registry"
+// in the language the app shows.
+//
+// Privacy row: fetching the ACP Registry; a product name (PV03).
+func UiPrivacyRegistry() string { return In(i18n.Locale()).UiPrivacyRegistry() }
+
+// UiPrivacyRegistry says "ACP Registry"
+// in the language of msgs.
+//
+// Privacy row: fetching the ACP Registry; a product name (PV03).
+func (msgs Messages) UiPrivacyRegistry() string {
+	return Catalog.Format(msgs.locale, "ui_privacy_registry", nil)
+}
+
+// UiPrivacyRegistryNote says "Fetches {url} when you open the Registry page"
+// in the language the app shows.
+//
+// Privacy note: url is the registry address (PV03).
+func UiPrivacyRegistryNote(url string) string { return In(i18n.Locale()).UiPrivacyRegistryNote(url) }
+
+// UiPrivacyRegistryNote says "Fetches {url} when you open the Registry page"
+// in the language of msgs.
+//
+// Privacy note: url is the registry address (PV03).
+func (msgs Messages) UiPrivacyRegistryNote(url string) string {
+	return Catalog.Format(msgs.locale, "ui_privacy_registry_note", map[string]any{"url": url})
+}
+
+// UiPrivacyRemote says "Remote"
+// in the language the app shows.
+//
+// Privacy row: the remote relay (PV03).
+func UiPrivacyRemote() string { return In(i18n.Locale()).UiPrivacyRemote() }
+
+// UiPrivacyRemote says "Remote"
+// in the language of msgs.
+//
+// Privacy row: the remote relay (PV03).
+func (msgs Messages) UiPrivacyRemote() string {
+	return Catalog.Format(msgs.locale, "ui_privacy_remote", nil)
+}
+
+// UiPrivacyRemoteNote says "While remote is on, connects to the relay you set; content is end-to-end encrypted"
+// in the language the app shows.
+//
+// Privacy note for remote (PV03).
+func UiPrivacyRemoteNote() string { return In(i18n.Locale()).UiPrivacyRemoteNote() }
+
+// UiPrivacyRemoteNote says "While remote is on, connects to the relay you set; content is end-to-end encrypted"
+// in the language of msgs.
+//
+// Privacy note for remote (PV03).
+func (msgs Messages) UiPrivacyRemoteNote() string {
+	return Catalog.Format(msgs.locale, "ui_privacy_remote_note", nil)
+}
+
+// UiPrivacyRemoteOff says "This version has no remote"
+// in the language the app shows.
+//
+// Privacy note when the build has no remote (PV03, D149).
+func UiPrivacyRemoteOff() string { return In(i18n.Locale()).UiPrivacyRemoteOff() }
+
+// UiPrivacyRemoteOff says "This version has no remote"
+// in the language of msgs.
+//
+// Privacy note when the build has no remote (PV03, D149).
+func (msgs Messages) UiPrivacyRemoteOff() string {
+	return Catalog.Format(msgs.locale, "ui_privacy_remote_off", nil)
+}
+
+// UiPrivacyRecordsTitle says "Local records it reads"
+// in the language the app shows.
+//
+// Privacy card heading: the agents' local usage records (PV04).
+func UiPrivacyRecordsTitle() string { return In(i18n.Locale()).UiPrivacyRecordsTitle() }
+
+// UiPrivacyRecordsTitle says "Local records it reads"
+// in the language of msgs.
+//
+// Privacy card heading: the agents' local usage records (PV04).
+func (msgs Messages) UiPrivacyRecordsTitle() string {
+	return Catalog.Format(msgs.locale, "ui_privacy_records_title", nil)
+}
+
+// UiPrivacyRecordsText says "OrielHub only reads the agents’ usage records on this Mac and never changes them."
+// in the language the app shows.
+//
+// Line under the records heading (PV04).
+func UiPrivacyRecordsText() string { return In(i18n.Locale()).UiPrivacyRecordsText() }
+
+// UiPrivacyRecordsText says "OrielHub only reads the agents’ usage records on this Mac and never changes them."
+// in the language of msgs.
+//
+// Line under the records heading (PV04).
+func (msgs Messages) UiPrivacyRecordsText() string {
+	return Catalog.Format(msgs.locale, "ui_privacy_records_text", nil)
+}
+
+// UiPrivacyRecordsOpen says "View in Usage"
+// in the language the app shows.
+//
+// Button that opens the usage page (PV04).
+func UiPrivacyRecordsOpen() string { return In(i18n.Locale()).UiPrivacyRecordsOpen() }
+
+// UiPrivacyRecordsOpen says "View in Usage"
+// in the language of msgs.
+//
+// Button that opens the usage page (PV04).
+func (msgs Messages) UiPrivacyRecordsOpen() string {
+	return Catalog.Format(msgs.locale, "ui_privacy_records_open", nil)
+}
+
+// UiPrivacyRootsEarlier says "+{count} earlier"
+// in the language the app shows.
+//
+// Folded row above an agent's long list of searched locations: how many are
+// folded above (PV04d).
+func UiPrivacyRootsEarlier(count int) string { return In(i18n.Locale()).UiPrivacyRootsEarlier(count) }
+
+// UiPrivacyRootsEarlier says "+{count} earlier"
+// in the language of msgs.
+//
+// Folded row above an agent's long list of searched locations: how many are
+// folded above (PV04d).
+func (msgs Messages) UiPrivacyRootsEarlier(count int) string {
+	return Catalog.Format(msgs.locale, "ui_privacy_roots_earlier", map[string]any{"count": count})
+}
+
+// UiPrivacyRootsMore says "+{count} more"
+// in the language the app shows.
+//
+// Folded row under an agent's long list of searched locations: how many are
+// folded below (PV04d).
+func UiPrivacyRootsMore(count int) string { return In(i18n.Locale()).UiPrivacyRootsMore(count) }
+
+// UiPrivacyRootsMore says "+{count} more"
+// in the language of msgs.
+//
+// Folded row under an agent's long list of searched locations: how many are
+// folded below (PV04d).
+func (msgs Messages) UiPrivacyRootsMore(count int) string {
+	return Catalog.Format(msgs.locale, "ui_privacy_roots_more", map[string]any{"count": count})
+}
+
+// UiPrivacyRootsFewer says "Show fewer"
+// in the language the app shows.
+//
+// Folds an agent's long list of searched locations again (PV04d).
+func UiPrivacyRootsFewer() string { return In(i18n.Locale()).UiPrivacyRootsFewer() }
+
+// UiPrivacyRootsFewer says "Show fewer"
+// in the language of msgs.
+//
+// Folds an agent's long list of searched locations again (PV04d).
+func (msgs Messages) UiPrivacyRootsFewer() string {
+	return Catalog.Format(msgs.locale, "ui_privacy_roots_fewer", nil)
+}
+
+// UiPrivacyLocalTitle says "Data on this Mac"
+// in the language the app shows.
+//
+// Privacy card heading: local folders and recent searches (PV05, PV06).
+func UiPrivacyLocalTitle() string { return In(i18n.Locale()).UiPrivacyLocalTitle() }
+
+// UiPrivacyLocalTitle says "Data on this Mac"
+// in the language of msgs.
+//
+// Privacy card heading: local folders and recent searches (PV05, PV06).
+func (msgs Messages) UiPrivacyLocalTitle() string {
+	return Catalog.Format(msgs.locale, "ui_privacy_local_title", nil)
+}
+
+// UiPrivacyFolderData says "Data"
+// in the language the app shows.
+//
+// Privacy row: the data folder (PV05).
+func UiPrivacyFolderData() string { return In(i18n.Locale()).UiPrivacyFolderData() }
+
+// UiPrivacyFolderData says "Data"
+// in the language of msgs.
+//
+// Privacy row: the data folder (PV05).
+func (msgs Messages) UiPrivacyFolderData() string {
+	return Catalog.Format(msgs.locale, "ui_privacy_folder_data", nil)
+}
+
+// UiPrivacyFolderLogs says "Logs"
+// in the language the app shows.
+//
+// Privacy row: the log folder (PV05).
+func UiPrivacyFolderLogs() string { return In(i18n.Locale()).UiPrivacyFolderLogs() }
+
+// UiPrivacyFolderLogs says "Logs"
+// in the language of msgs.
+//
+// Privacy row: the log folder (PV05).
+func (msgs Messages) UiPrivacyFolderLogs() string {
+	return Catalog.Format(msgs.locale, "ui_privacy_folder_logs", nil)
+}
+
+// UiPrivacyFolderNote says "{path} · {size}"
+// in the language the app shows.
+//
+// Privacy note: the folder path and its size (PV05).
+func UiPrivacyFolderNote(path string, size string) string {
+	return In(i18n.Locale()).UiPrivacyFolderNote(path, size)
+}
+
+// UiPrivacyFolderNote says "{path} · {size}"
+// in the language of msgs.
+//
+// Privacy note: the folder path and its size (PV05).
+func (msgs Messages) UiPrivacyFolderNote(path string, size string) string {
+	return Catalog.Format(msgs.locale, "ui_privacy_folder_note", map[string]any{"path": path, "size": size})
+}
+
+// UiPrivacyFolderNoteExcludes says "{path} · {size}, not counting task worktrees"
+// in the language the app shows.
+//
+// Privacy note for the data folder: its path and size, which leaves out the
+// task worktrees kept inside it (PV05).
+func UiPrivacyFolderNoteExcludes(path string, size string) string {
+	return In(i18n.Locale()).UiPrivacyFolderNoteExcludes(path, size)
+}
+
+// UiPrivacyFolderNoteExcludes says "{path} · {size}, not counting task worktrees"
+// in the language of msgs.
+//
+// Privacy note for the data folder: its path and size, which leaves out the
+// task worktrees kept inside it (PV05).
+func (msgs Messages) UiPrivacyFolderNoteExcludes(path string, size string) string {
+	return Catalog.Format(msgs.locale, "ui_privacy_folder_note_excludes", map[string]any{"path": path, "size": size})
+}
+
+// UiPrivacyReveal says "Show in Finder"
+// in the language the app shows.
+//
+// Button that opens the folder in Finder (PV05).
+func UiPrivacyReveal() string { return In(i18n.Locale()).UiPrivacyReveal() }
+
+// UiPrivacyReveal says "Show in Finder"
+// in the language of msgs.
+//
+// Button that opens the folder in Finder (PV05).
+func (msgs Messages) UiPrivacyReveal() string {
+	return Catalog.Format(msgs.locale, "ui_privacy_reveal", nil)
+}
+
+// UiPrivacyRecent says "Recent searches"
+// in the language the app shows.
+//
+// Privacy row: the search panel's recent searches (PV06).
+func UiPrivacyRecent() string { return In(i18n.Locale()).UiPrivacyRecent() }
+
+// UiPrivacyRecent says "Recent searches"
+// in the language of msgs.
+//
+// Privacy row: the search panel's recent searches (PV06).
+func (msgs Messages) UiPrivacyRecent() string {
+	return Catalog.Format(msgs.locale, "ui_privacy_recent", nil)
+}
+
+// UiPrivacyRecentNote says "{count, plural, =0 {None} one {# kept in memory until you quit} other {# kept in memory until you quit}}"
+// in the language the app shows.
+//
+// Privacy note: how many recent searches there are (PV06).
+func UiPrivacyRecentNote(count int) string { return In(i18n.Locale()).UiPrivacyRecentNote(count) }
+
+// UiPrivacyRecentNote says "{count, plural, =0 {None} one {# kept in memory until you quit} other {# kept in memory until you quit}}"
+// in the language of msgs.
+//
+// Privacy note: how many recent searches there are (PV06).
+func (msgs Messages) UiPrivacyRecentNote(count int) string {
+	return Catalog.Format(msgs.locale, "ui_privacy_recent_note", map[string]any{"count": count})
+}
+
+// UiPrivacyRecentClear says "Clear"
+// in the language the app shows.
+//
+// Button that clears the recent searches (PV06).
+func UiPrivacyRecentClear() string { return In(i18n.Locale()).UiPrivacyRecentClear() }
+
+// UiPrivacyRecentClear says "Clear"
+// in the language of msgs.
+//
+// Button that clears the recent searches (PV06).
+func (msgs Messages) UiPrivacyRecentClear() string {
+	return Catalog.Format(msgs.locale, "ui_privacy_recent_clear", nil)
+}
+
+// UiPrivacyLoadFailed says "Couldn’t load privacy details"
+// in the language the app shows.
+//
+// A privacy card could not get its content (PV07).
+func UiPrivacyLoadFailed() string { return In(i18n.Locale()).UiPrivacyLoadFailed() }
+
+// UiPrivacyLoadFailed says "Couldn’t load privacy details"
+// in the language of msgs.
+//
+// A privacy card could not get its content (PV07).
+func (msgs Messages) UiPrivacyLoadFailed() string {
+	return Catalog.Format(msgs.locale, "ui_privacy_load_failed", nil)
+}
+
+// UiSettingsModels says "Models"
+// in the language the app shows.
+//
+// Settings tab: each agent's default model (D158, MD20).
+func UiSettingsModels() string { return In(i18n.Locale()).UiSettingsModels() }
+
+// UiSettingsModels says "Models"
+// in the language of msgs.
+//
+// Settings tab: each agent's default model (D158, MD20).
+func (msgs Messages) UiSettingsModels() string {
+	return Catalog.Format(msgs.locale, "ui_settings_models", nil)
+}
+
+// UiModelsTitle says "Default model for each agent"
+// in the language the app shows.
+//
+// Heading of the Models page (MD21).
+func UiModelsTitle() string { return In(i18n.Locale()).UiModelsTitle() }
+
+// UiModelsTitle says "Default model for each agent"
+// in the language of msgs.
+//
+// Heading of the Models page (MD21).
+func (msgs Messages) UiModelsTitle() string {
+	return Catalog.Format(msgs.locale, "ui_models_title", nil)
+}
+
+// UiModelsText says "New sessions switch to the model chosen here as they start; sessions already running stay as they are."
+// in the language the app shows.
+//
+// Line under the Models heading (MD05, MD09).
+func UiModelsText() string { return In(i18n.Locale()).UiModelsText() }
+
+// UiModelsText says "New sessions switch to the model chosen here as they start; sessions already running stay as they are."
+// in the language of msgs.
+//
+// Line under the Models heading (MD05, MD09).
+func (msgs Messages) UiModelsText() string {
+	return Catalog.Format(msgs.locale, "ui_models_text", nil)
+}
+
+// UiModelsFollow says "Follow the agent’s own setting"
+// in the language the app shows.
+//
+// First choice in a model menu: no default (MD22).
+func UiModelsFollow() string { return In(i18n.Locale()).UiModelsFollow() }
+
+// UiModelsFollow says "Follow the agent’s own setting"
+// in the language of msgs.
+//
+// First choice in a model menu: no default (MD22).
+func (msgs Messages) UiModelsFollow() string {
+	return Catalog.Format(msgs.locale, "ui_models_follow", nil)
+}
+
+// UiModelsReported says "Models as reported by a session {ago}"
+// in the language the app shows.
+//
+// Note under an agent: when its model list was reported; ago is relative,
+// e.g. 3 minutes ago (MD22).
+func UiModelsReported(ago string) string { return In(i18n.Locale()).UiModelsReported(ago) }
+
+// UiModelsReported says "Models as reported by a session {ago}"
+// in the language of msgs.
+//
+// Note under an agent: when its model list was reported; ago is relative,
+// e.g. 3 minutes ago (MD22).
+func (msgs Messages) UiModelsReported(ago string) string {
+	return Catalog.Format(msgs.locale, "ui_models_reported", map[string]any{"ago": ago})
+}
+
+// UiModelsNever says "You’ll know its models after it runs once"
+// in the language the app shows.
+//
+// Note under an agent that never ran (MD23).
+func UiModelsNever() string { return In(i18n.Locale()).UiModelsNever() }
+
+// UiModelsNever says "You’ll know its models after it runs once"
+// in the language of msgs.
+//
+// Note under an agent that never ran (MD23).
+func (msgs Messages) UiModelsNever() string {
+	return Catalog.Format(msgs.locale, "ui_models_never", nil)
+}
+
+// UiModelsStale says "{model} isn’t in the latest list"
+// in the language the app shows.
+//
+// Note when the default is not among the last reported models (MD25).
+func UiModelsStale(model string) string { return In(i18n.Locale()).UiModelsStale(model) }
+
+// UiModelsStale says "{model} isn’t in the latest list"
+// in the language of msgs.
+//
+// Note when the default is not among the last reported models (MD25).
+func (msgs Messages) UiModelsStale(model string) string {
+	return Catalog.Format(msgs.locale, "ui_models_stale", map[string]any{"model": model})
+}
+
+// UiModelsSelect says "Default model for {agent}"
+// in the language the app shows.
+//
+// Screen reader label of a model menu (MD27).
+func UiModelsSelect(agent string) string { return In(i18n.Locale()).UiModelsSelect(agent) }
+
+// UiModelsSelect says "Default model for {agent}"
+// in the language of msgs.
+//
+// Screen reader label of a model menu (MD27).
+func (msgs Messages) UiModelsSelect(agent string) string {
+	return Catalog.Format(msgs.locale, "ui_models_select", map[string]any{"agent": agent})
+}
+
+// UiModelsNone says "No agents are installed"
+// in the language the app shows.
+//
+// Models page with no installed agents (MD21).
+func UiModelsNone() string { return In(i18n.Locale()).UiModelsNone() }
+
+// UiModelsNone says "No agents are installed"
+// in the language of msgs.
+//
+// Models page with no installed agents (MD21).
+func (msgs Messages) UiModelsNone() string {
+	return Catalog.Format(msgs.locale, "ui_models_none", nil)
+}
+
+// UiModelsLoadFailed says "Couldn’t load models"
+// in the language the app shows.
+//
+// The Models page could not get its content (MD24).
+func UiModelsLoadFailed() string { return In(i18n.Locale()).UiModelsLoadFailed() }
+
+// UiModelsLoadFailed says "Couldn’t load models"
+// in the language of msgs.
+//
+// The Models page could not get its content (MD24).
+func (msgs Messages) UiModelsLoadFailed() string {
+	return Catalog.Format(msgs.locale, "ui_models_load_failed", nil)
+}
+
+// UiConvDefaultModelUnavailable says "The default model {name} isn’t available this time; using {current}"
+// in the language the app shows.
+//
+// Conversation notice: the default model was not offered when the session
+// started (MD26).
+func UiConvDefaultModelUnavailable(name string, current string) string {
+	return In(i18n.Locale()).UiConvDefaultModelUnavailable(name, current)
+}
+
+// UiConvDefaultModelUnavailable says "The default model {name} isn’t available this time; using {current}"
+// in the language of msgs.
+//
+// Conversation notice: the default model was not offered when the session
+// started (MD26).
+func (msgs Messages) UiConvDefaultModelUnavailable(name string, current string) string {
+	return Catalog.Format(msgs.locale, "ui_conv_default_model_unavailable", map[string]any{"name": name, "current": current})
+}
+
+// UiSettingsIntegrations says "Integrations"
+// in the language the app shows.
+//
+// Settings tab: connecting outside services such as GitHub (D108).
+func UiSettingsIntegrations() string { return In(i18n.Locale()).UiSettingsIntegrations() }
+
+// UiSettingsIntegrations says "Integrations"
+// in the language of msgs.
+//
+// Settings tab: connecting outside services such as GitHub (D108).
+func (msgs Messages) UiSettingsIntegrations() string {
+	return Catalog.Format(msgs.locale, "ui_settings_integrations", nil)
+}
+
+// UiIntegrationsText says "Let OrielHub use tools you’re already signed in to on this Mac. It only checks them here and keeps no tokens."
+// in the language the app shows.
+//
+// Line under the Integrations heading (IG21).
+func UiIntegrationsText() string { return In(i18n.Locale()).UiIntegrationsText() }
+
+// UiIntegrationsText says "Let OrielHub use tools you’re already signed in to on this Mac. It only checks them here and keeps no tokens."
+// in the language of msgs.
+//
+// Line under the Integrations heading (IG21).
+func (msgs Messages) UiIntegrationsText() string {
+	return Catalog.Format(msgs.locale, "ui_integrations_text", nil)
+}
+
+// UiIntegrationsGroupCode says "Code"
+// in the language the app shows.
+//
+// Integrations group heading: code hosting and collaboration (IG21).
+func UiIntegrationsGroupCode() string { return In(i18n.Locale()).UiIntegrationsGroupCode() }
+
+// UiIntegrationsGroupCode says "Code"
+// in the language of msgs.
+//
+// Integrations group heading: code hosting and collaboration (IG21).
+func (msgs Messages) UiIntegrationsGroupCode() string {
+	return Catalog.Format(msgs.locale, "ui_integrations_group_code", nil)
+}
+
+// UiIntegrationGithubDescription says "Lets OrielHub read CI results and review comments on the pull requests your tasks open"
+// in the language the app shows.
+//
+// What the GitHub integration is for (IG21, D82).
+func UiIntegrationGithubDescription() string {
+	return In(i18n.Locale()).UiIntegrationGithubDescription()
+}
+
+// UiIntegrationGithubDescription says "Lets OrielHub read CI results and review comments on the pull requests your tasks open"
+// in the language of msgs.
+//
+// What the GitHub integration is for (IG21, D82).
+func (msgs Messages) UiIntegrationGithubDescription() string {
+	return Catalog.Format(msgs.locale, "ui_integration_github_description", nil)
+}
+
+// UiIntegrationChecking says "Checking…"
+// in the language the app shows.
+//
+// Integration state before the first check finishes.
+func UiIntegrationChecking() string { return In(i18n.Locale()).UiIntegrationChecking() }
+
+// UiIntegrationChecking says "Checking…"
+// in the language of msgs.
+//
+// Integration state before the first check finishes.
+func (msgs Messages) UiIntegrationChecking() string {
+	return Catalog.Format(msgs.locale, "ui_integration_checking", nil)
+}
+
+// UiIntegrationAvailable says "Ready to connect · {account}"
+// in the language the app shows.
+//
+// The integration works; account is the GitHub user gh is signed in as
+// (IG04).
+func UiIntegrationAvailable(account string) string {
+	return In(i18n.Locale()).UiIntegrationAvailable(account)
+}
+
+// UiIntegrationAvailable says "Ready to connect · {account}"
+// in the language of msgs.
+//
+// The integration works; account is the GitHub user gh is signed in as
+// (IG04).
+func (msgs Messages) UiIntegrationAvailable(account string) string {
+	return Catalog.Format(msgs.locale, "ui_integration_available", map[string]any{"account": account})
+}
+
+// UiIntegrationConnected says "Connected · {account}"
+// in the language the app shows.
+//
+// The integration is connected; account is the GitHub user (IG23).
+func UiIntegrationConnected(account string) string {
+	return In(i18n.Locale()).UiIntegrationConnected(account)
+}
+
+// UiIntegrationConnected says "Connected · {account}"
+// in the language of msgs.
+//
+// The integration is connected; account is the GitHub user (IG23).
+func (msgs Messages) UiIntegrationConnected(account string) string {
+	return Catalog.Format(msgs.locale, "ui_integration_connected", map[string]any{"account": account})
+}
+
+// UiIntegrationConnect says "Connect"
+// in the language the app shows.
+//
+// Button that connects an integration (IG23).
+func UiIntegrationConnect() string { return In(i18n.Locale()).UiIntegrationConnect() }
+
+// UiIntegrationConnect says "Connect"
+// in the language of msgs.
+//
+// Button that connects an integration (IG23).
+func (msgs Messages) UiIntegrationConnect() string {
+	return Catalog.Format(msgs.locale, "ui_integration_connect", nil)
+}
+
+// UiIntegrationDisconnect says "Disconnect"
+// in the language the app shows.
+//
+// Button that stops using an integration; gh stays signed in (IG24).
+func UiIntegrationDisconnect() string { return In(i18n.Locale()).UiIntegrationDisconnect() }
+
+// UiIntegrationDisconnect says "Disconnect"
+// in the language of msgs.
+//
+// Button that stops using an integration; gh stays signed in (IG24).
+func (msgs Messages) UiIntegrationDisconnect() string {
+	return Catalog.Format(msgs.locale, "ui_integration_disconnect", nil)
+}
+
+// UiIntegrationConnectAria says "Connect {name}"
+// in the language the app shows.
+//
+// Screen reader label of the Connect button (IG27).
+func UiIntegrationConnectAria(name string) string {
+	return In(i18n.Locale()).UiIntegrationConnectAria(name)
+}
+
+// UiIntegrationConnectAria says "Connect {name}"
+// in the language of msgs.
+//
+// Screen reader label of the Connect button (IG27).
+func (msgs Messages) UiIntegrationConnectAria(name string) string {
+	return Catalog.Format(msgs.locale, "ui_integration_connect_aria", map[string]any{"name": name})
+}
+
+// UiIntegrationDisconnectAria says "Disconnect {name}"
+// in the language the app shows.
+//
+// Screen reader label of the Disconnect button (IG27).
+func UiIntegrationDisconnectAria(name string) string {
+	return In(i18n.Locale()).UiIntegrationDisconnectAria(name)
+}
+
+// UiIntegrationDisconnectAria says "Disconnect {name}"
+// in the language of msgs.
+//
+// Screen reader label of the Disconnect button (IG27).
+func (msgs Messages) UiIntegrationDisconnectAria(name string) string {
+	return Catalog.Format(msgs.locale, "ui_integration_disconnect_aria", map[string]any{"name": name})
+}
+
+// UiIntegrationsCheckAgain says "Check again"
+// in the language the app shows.
+//
+// Button that checks every integration again (IG25).
+func UiIntegrationsCheckAgain() string { return In(i18n.Locale()).UiIntegrationsCheckAgain() }
+
+// UiIntegrationsCheckAgain says "Check again"
+// in the language of msgs.
+//
+// Button that checks every integration again (IG25).
+func (msgs Messages) UiIntegrationsCheckAgain() string {
+	return Catalog.Format(msgs.locale, "ui_integrations_check_again", nil)
+}
+
+// UiIntegrationsLoadFailed says "Couldn’t load integrations"
+// in the language the app shows.
+//
+// Integrations page could not get the list (IG26).
+func UiIntegrationsLoadFailed() string { return In(i18n.Locale()).UiIntegrationsLoadFailed() }
+
+// UiIntegrationsLoadFailed says "Couldn’t load integrations"
+// in the language of msgs.
+//
+// Integrations page could not get the list (IG26).
+func (msgs Messages) UiIntegrationsLoadFailed() string {
+	return Catalog.Format(msgs.locale, "ui_integrations_load_failed", nil)
+}
+
+// UiIntegrationFixInstall says "Install GitHub CLI, then check again."
+// in the language the app shows.
+//
+// How to fix: gh is not installed (IG22).
+func UiIntegrationFixInstall() string { return In(i18n.Locale()).UiIntegrationFixInstall() }
+
+// UiIntegrationFixInstall says "Install GitHub CLI, then check again."
+// in the language of msgs.
+//
+// How to fix: gh is not installed (IG22).
+func (msgs Messages) UiIntegrationFixInstall() string {
+	return Catalog.Format(msgs.locale, "ui_integration_fix_install", nil)
+}
+
+// UiIntegrationFixRun says "Run this in Terminal, then check again:"
+// in the language the app shows.
+//
+// How to fix: a gh command to run, shown after this line (IG22).
+func UiIntegrationFixRun() string { return In(i18n.Locale()).UiIntegrationFixRun() }
+
+// UiIntegrationFixRun says "Run this in Terminal, then check again:"
+// in the language of msgs.
+//
+// How to fix: a gh command to run, shown after this line (IG22).
+func (msgs Messages) UiIntegrationFixRun() string {
+	return Catalog.Format(msgs.locale, "ui_integration_fix_run", nil)
+}
+
 // UiSettingsRemote says "Remote"
 // in the language the app shows.
 //
@@ -9338,6 +10476,22 @@ func UiSettingsNotifyTypes() string { return In(i18n.Locale()).UiSettingsNotifyT
 // Notifications.
 func (msgs Messages) UiSettingsNotifyTypes() string {
 	return Catalog.Format(msgs.locale, "ui_settings_notify_types", nil)
+}
+
+// UiSettingsHint says "About this"
+// in the language the app shows.
+//
+// Screen reader name of the small info button after a settings heading; its
+// tooltip explains the heading (settings.md SL06, SL07).
+func UiSettingsHint() string { return In(i18n.Locale()).UiSettingsHint() }
+
+// UiSettingsHint says "About this"
+// in the language of msgs.
+//
+// Screen reader name of the small info button after a settings heading; its
+// tooltip explains the heading (settings.md SL06, SL07).
+func (msgs Messages) UiSettingsHint() string {
+	return Catalog.Format(msgs.locale, "ui_settings_hint", nil)
 }
 
 // UiSettingsSaveFailed says "Couldn't save"

@@ -154,13 +154,15 @@ func TestAgentStop(t *testing.T) {
 	f := fifo(t, root)
 	sh := filepath.Join(root, "graceful")
 	// 讀 stdin 的子行程忽略 SIGTERM，只在 stdin 關閉時結束；領頭收到
-	// SIGTERM 後等它，所以兩件事都會記下來，與先後無關。
+	// SIGTERM 後等它，所以兩件事都會記下來，與先後無關。領頭在 fork
+	// 之前就忽略 SIGTERM，子行程從 fork 那一刻起就忽略，沒有空窗。
 	script(t, sh, `exec 3>"`+f+`"
 exec 4<&0 # 背景工作的 stdin 預設是 /dev/null，明確轉向才讀得到管道
-(trap '' TERM; while read l <&4; do :; done; echo stdin-closed >&3) &
+trap '' TERM
+(while read l <&4; do :; done; echo stdin-closed >&3) &
 reader=$!
 trap 'echo term >&3; wait $reader; exit 0' TERM
-sleep 60 & echo ready >&3; wait`)
+echo ready >&3; `+idle)
 	r := Runner{Grace: time.Hour}
 	defer r.Close()
 	p := startAgent(t, &r, Command{Path: sh})

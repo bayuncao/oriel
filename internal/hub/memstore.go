@@ -27,6 +27,7 @@ type MemStore struct {
 	settings   Settings
 	labels     map[task.LabelID]Label
 	devices    map[task.DeviceID]Device
+	models     []AgentModels
 	// viewsVersion 是已存投影的版本（Log.ViewsVersion）。
 	viewsVersion int
 }
@@ -405,6 +406,19 @@ func (s *MemStore) PutSettings(_ context.Context, x Settings) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.settings = x
+	return nil
+}
+
+func (s *MemStore) Models(_ context.Context) ([]AgentModels, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return slices.Clone(s.models), nil
+}
+
+func (s *MemStore) PutModels(_ context.Context, all []AgentModels) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.models = slices.Clone(all)
 	return nil
 }
 

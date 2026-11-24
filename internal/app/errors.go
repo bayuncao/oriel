@@ -8,10 +8,12 @@ type Code string
 // Params 回傳代碼的參數名（給錯誤表測試用）。
 func (c Code) Params() []string {
 	switch c {
-	case CodeStartFailed, CodeLanguageSaveFailed, CodeKeepAwakeSaveFailed:
+	case CodeStartFailed, CodeLanguageSaveFailed, CodeKeepAwakeSaveFailed, CodeThemeSaveFailed:
 		return []string{"detail"}
 	case CodeUnknownLanguage:
 		return []string{"tag"}
+	case CodeUnknownTheme:
+		return []string{"theme"}
 	}
 	return nil
 }
@@ -22,11 +24,15 @@ const (
 	CodeLanguageSaveFailed Code = "app.language_save_failed" // detail：記不住語言選擇
 	// CodeKeepAwakeSaveFailed：記不住“Agent 運行時防止電腦睡眠”的開關（D80）；detail
 	CodeKeepAwakeSaveFailed Code = "app.keep_awake_save_failed"
+	// CodeUnknownTheme：外觀不是 light、dark 或 ""（跟隨系統）；theme
+	CodeUnknownTheme Code = "app.unknown_theme"
+	// CodeThemeSaveFailed：記不住外觀（這次照樣生效，PF08）；detail
+	CodeThemeSaveFailed Code = "app.theme_save_failed"
 )
 
 // Codes 是本套件的所有代碼。
 func Codes() []Code {
-	return []Code{CodeStartFailed, CodeUnknownLanguage, CodeLanguageSaveFailed, CodeKeepAwakeSaveFailed}
+	return []Code{CodeStartFailed, CodeUnknownLanguage, CodeLanguageSaveFailed, CodeKeepAwakeSaveFailed, CodeUnknownTheme, CodeThemeSaveFailed}
 }
 
 // codedError 讓 err 帶上使用者可見代碼。

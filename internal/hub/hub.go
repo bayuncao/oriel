@@ -52,6 +52,7 @@ type cfgCache struct {
 	settings   Settings
 	labels     map[task.LabelID]Label
 	devices    map[task.DeviceID]Device
+	models     map[task.AgentID]AgentModels
 }
 
 type Hub struct {
@@ -90,6 +91,8 @@ type Hub struct {
 
 	cfg      cfgCache
 	cfgWrite sync.Mutex // 序列化設定寫入（含新 Workspace 登記與 LastUsedAt）
+	// reports 是 actor 交來、還沒寫進設定的模型報告（models.go）。
+	reports modelReports
 }
 
 func New(o Options) *Hub {
@@ -112,6 +115,8 @@ func New(o Options) *Hub {
 	h.cfg.workspaces = map[task.WorkspaceID]Workspace{}
 	h.cfg.labels = map[task.LabelID]Label{}
 	h.cfg.devices = map[task.DeviceID]Device{}
+	h.cfg.models = map[task.AgentID]AgentModels{}
+	h.reports.init()
 	h.deviceWatchers = map[*deviceWatcher]struct{}{}
 	h.notes = make(chan Notification, 64)
 	h.watchers = map[*taskWatcher]struct{}{}
@@ -128,6 +133,8 @@ func New(o Options) *Hub {
 		h.logger = o.Logger
 	}
 	h.ctx, h.cancel = context.WithCancel(context.Background())
+	h.reports.wg.Add(1)
+	go h.reportLoop()
 	if h.notifier != nil {
 		h.notifyWg.Add(1)
 		go h.notifyLoop()
@@ -224,6 +231,9 @@ func (h *Hub) Close() {
 		a.halt()
 	}
 	h.actorWg.Wait()
+	// Actor 都停了，不會再有報告：寫完手上的再返回。
+	close(h.reports.stop)
+	h.reports.wg.Wait()
 	h.notifyWg.Wait()
 }
 
@@ -368,6 +378,10 @@ func (h *Hub) resolveLaunch(ctx context.Context, agent task.AgentID) (task.Launc
 	}
 	if h.runtimes[l.Protocol] == nil {
 		return task.LaunchSnapshot{}, fail(CodeAgentUnsupported, nil, "agent", l.AgentName)
+	}
+	// 預設模型（MD05）：Profile 沒指定時用設定頁設的；會話開始時換成它（task 的 modelReported）。
+	if l.Model == "" {
+		l.Model = h.defaultModel(agent)
 	}
 	return l, nil
 }
@@ -578,6 +592,10 @@ func (h *Hub) loadCache(ctx context.Context) error {
 	if err != nil {
 		return fail(CodeStoreFailed, err, "detail", err.Error())
 	}
+	models, err := h.config.Models(ctx)
+	if err != nil {
+		return fail(CodeStoreFailed, err, "detail", err.Error())
+	}
 	h.cfg.mu.Lock()
 	defer h.cfg.mu.Unlock()
 	for _, w := range ws {
@@ -588,6 +606,9 @@ func (h *Hub) loadCache(ctx context.Context) error {
 	}
 	for _, d := range devices {
 		h.cfg.devices[d.ID] = d
+	}
+	for _, m := range models {
+		h.cfg.models[m.Agent] = m
 	}
 	h.cfg.rules = rules
 	h.cfg.settings = st

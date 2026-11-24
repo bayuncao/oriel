@@ -107,6 +107,9 @@ type Config interface {
 	PutDevice(ctx context.Context, d Device) error
 	DeleteDevice(ctx context.Context, id task.DeviceID) error
 	ClearDevices(ctx context.Context) error
+	// 各 agent 的模型（D158）：最近報告的列表與預設模型；PutModels 換掉全部。
+	Models(ctx context.Context) ([]AgentModels, error)
+	PutModels(ctx context.Context, all []AgentModels) error
 }
 
 // Runtime 啟動 agent 連線；每個 task.Protocol 一個轉接器。
@@ -131,6 +134,9 @@ type StartOptions struct {
 // 由 app 實作。
 type Launcher interface {
 	Launch(ctx context.Context, agent task.AgentID) (task.LaunchSnapshot, error)
+	// CheckAgent 在 agent 在目錄裡時回 nil（不檢查是否安裝），否則回 agent.unknown_agent
+	// （hub 不導入 agent，錯誤由它給）；設預設模型時用（MD11）。
+	CheckAgent(agent task.AgentID) error
 }
 
 // ExitError 是 Start 在 agent 行程已經結束時回的錯誤（D102）：hub 把它

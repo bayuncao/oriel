@@ -1,5 +1,5 @@
 // Package mygoipc 是頁面與後端之間的 IPC 服務層：
-// 各 bound service（Hub、Agents、Desktop、Keys、Providers、Usage、Remote）把後端的方法
+// 各 bound service（Hub、Agents、Desktop、Keys、Providers、Usage、Integrations、Remote）把後端的方法
 // 包成頁面可用的形狀，錯誤一律經 transport.Wire。
 package mygoipc
 
@@ -229,6 +229,31 @@ func (s *Hub) Files(ctx context.Context) ([]hub.FileView, error) {
 		return nil, wire(log, "Files", err)
 	}
 	return v, nil
+}
+
+// Models 回傳各 agent 最近報告的模型與預設模型（設定 › 模型，settings.md MD01–MD03）。
+func (s *Hub) Models(ctx context.Context) ([]hub.AgentModels, error) {
+	h, log, e := s.get()
+	if e != nil {
+		return nil, e
+	}
+	out, err := h.Models(ctx, hub.LocalOwner)
+	if err != nil {
+		return nil, wire(log, "Models", err)
+	}
+	return out, nil
+}
+
+// SetDefaultModel 設 agent 的預設模型；"" 是跟隨 agent 自己的設定（MD03、MD04、MD24）。
+func (s *Hub) SetDefaultModel(ctx context.Context, agent task.AgentID, model string) error {
+	h, log, e := s.get()
+	if e != nil {
+		return e
+	}
+	if err := h.SetDefaultModel(ctx, hub.LocalOwner, agent, model); err != nil {
+		return wire(log, "SetDefaultModel", err)
+	}
+	return nil
 }
 
 // Recap 是首頁“離開期間”的資料（D115）：since 之後結束的回合，最早 7 天前。

@@ -375,6 +375,7 @@ func (a *actor) command(c task.Command, in task.Inputs, reply chan<- cmdResult, 
 		}
 	}
 	a.liveFromEvents(old, events)
+	a.recordModels(events)
 	a.notify(events)
 	a.watchStalls(events)
 	a.h.offerTaskView(batch.Views.Task)
