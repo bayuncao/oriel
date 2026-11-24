@@ -29,8 +29,7 @@ func TestStartSession(t *testing.T) {
 	f := fixture(t, append(started, lPrompt(3, "hi"), lChunk("hello"), lResult(3, `{"stopReason":"end_turn"}`))...)
 	raw := filepath.Join(t.TempDir(), "raw.ndjson")
 	dir, _ := filepath.EvalSymlinks(t.TempDir())
-	argv, _ := json.Marshal([]string{os.Args[0]})
-	env := append(replayEnv(t, f), contract.EnvRecordTo+"="+raw, contract.EnvRecordCmd+"="+string(argv))
+	env := append(replayEnv(t, f), contract.EnvRecordTo+"="+raw, contract.EnvRecordExe+"="+os.Args[0])
 	x := newRec()
 	o, err := startIn(t, r, testLaunch(), dir, "", x, env)
 	if err != nil {

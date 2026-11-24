@@ -21,7 +21,7 @@ const (
 	EnvReplay      = "ORIELHUB_CONTRACT_REPLAY"
 	EnvReplayState = "ORIELHUB_CONTRACT_REPLAY_STATE"
 	EnvRecordTo    = "ORIELHUB_CONTRACT_RECORD" // 錄下來的原始訊息寫到這裡
-	EnvRecordCmd   = "ORIELHUB_CONTRACT_CMD"    // 真正的 agent 命令，JSON 字串陣列
+	EnvRecordExe   = "ORIELHUB_CONTRACT_EXE"    // 真正的 agent 可執行檔；參數是代理自己的命令列
 )
 
 // Main 在測試二進位被重啟為 agent 或錄製代理時執行它並結束行程；否則回
@@ -29,7 +29,7 @@ const (
 func Main() bool {
 	// 錄製代理先於回放：代理去掉自己的變數再啟動 agent，所以也能錄回放的 agent。
 	if out := os.Getenv(EnvRecordTo); out != "" {
-		os.Exit(record(out, os.Getenv(EnvRecordCmd)))
+		os.Exit(record(out, os.Getenv(EnvRecordExe)))
 	}
 	if paths := os.Getenv(EnvReplay); paths != "" {
 		path, err := pick(paths, os.Getenv(EnvReplayState))
@@ -169,13 +169,13 @@ func mismatch(i int, format string, args ...any) int {
 	return 97
 }
 
-// record 啟動真正的 agent，原樣轉送 stdio，並把兩個方向的每一則訊息依序
-// 寫到 out（{"client": …} 或 {"agent": …}）。代理與 agent 在同一個行程群組，
-// 轉接器結束群組時一起結束；每行立刻寫出，不靠結束時清空緩衝。
-func record(out, cmdJSON string) int {
-	var argv []string
-	if err := json.Unmarshal([]byte(cmdJSON), &argv); err != nil || len(argv) == 0 {
-		fmt.Fprintln(os.Stderr, "contract: bad", EnvRecordCmd, err)
+// record 以代理自己的命令列參數原樣啟動真正的 agent exe（轉接器組出的參數
+// 都在這裡，不論它加在 Launch 參數的前後），原樣轉送 stdio，並把兩個方向的
+// 每一則訊息依序寫到 out（{"client": …} 或 {"agent": …}）。代理與 agent 在
+// 同一個行程群組，轉接器結束群組時一起結束；每行立刻寫出，不靠結束時清空緩衝。
+func record(out, exe string) int {
+	if exe == "" {
+		fmt.Fprintln(os.Stderr, "contract:", EnvRecordExe, "is empty")
 		return 98
 	}
 	f, err := os.OpenFile(out, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o600)
@@ -194,10 +194,10 @@ func record(out, cmdJSON string) int {
 		f.Write(append(b, '\n'))
 		mu.Unlock()
 	}
-	cmd := exec.Command(argv[0], argv[1:]...)
+	cmd := exec.Command(exe, os.Args[1:]...)
 	var env []string
 	for _, kv := range os.Environ() {
-		if !strings.HasPrefix(kv, EnvRecordTo+"=") && !strings.HasPrefix(kv, EnvRecordCmd+"=") {
+		if !strings.HasPrefix(kv, EnvRecordTo+"=") && !strings.HasPrefix(kv, EnvRecordExe+"=") {
 			env = append(env, kv)
 		}
 	}

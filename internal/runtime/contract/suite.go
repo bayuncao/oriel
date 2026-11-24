@@ -2,7 +2,6 @@ package contract
 
 import (
 	"context"
-	"encoding/json"
 	"maps"
 	"os"
 	"path/filepath"
@@ -208,9 +207,9 @@ func (x *session) start(resume task.NativeSessionID) error {
 			Executable: os.Args[0], Approval: task.ApprovalOrielHub, Caps: task.Capabilities{Resume: true}}
 		env = append(env, EnvReplay+"="+x.fixture(x.starts))
 	case x.record != nil:
-		argv, _ := json.Marshal(append([]string{l.Executable}, l.Args...))
-		l.Executable, l.Args = os.Args[0], nil
-		env = append(env, EnvRecordTo+"="+x.record(x.starts), EnvRecordCmd+"="+string(argv))
+		// 只換掉可執行檔：參數照常由轉接器組出，經代理的命令列原樣交給真正的 agent。
+		env = append(env, EnvRecordTo+"="+x.record(x.starts), EnvRecordExe+"="+l.Executable)
+		l.Executable = os.Args[0]
 	}
 	x.facts = &facts{wake: make(chan struct{}, 1)}
 	conn, err := x.s.Runtime.Start(context.Background(), hub.StartOptions{
