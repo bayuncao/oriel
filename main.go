@@ -119,6 +119,15 @@ func startTray() {
 	mygo.App.OnLocaleChanged(func(string) { showTrayCounts() })
 }
 
+// followRemote 把“有遠程”（開著且至少配對了一台設備）交給防止睡眠的聲明（D146）：有遠程時，Task 停在待答審批上
+// 也不讓電腦空閒睡眠，手機可能正要處理。正式版沒有遠程（D149），不呼叫。
+func followRemote(a *app.App, awake *app.KeepAwake) {
+	// 在這個 goroutine 上：KeepAwake 等主線程，不能在主線程上呼叫。
+	if err := app.FollowRemote(context.Background(), a.Remote(), awake); err != nil {
+		slog.Warn("following remote for keep-awake stopped", "err", err)
+	}
+}
+
 // watchCounts 跟著 hub 的 Task 列表更新菜單欄的數字與防止睡眠的聲明（D80）；沒有菜單欄圖標時也要防止睡眠，
 // 所以不放在 startTray 裡。
 func watchCounts(a *app.App, awake *app.KeepAwake) {
@@ -285,6 +294,9 @@ func main() {
 		go mygoipc.BroadcastChanges(a.Changes(), a.Agents())
 		startTray()
 		go watchCounts(a, awake)
+		if a.Remote() != nil {
+			go followRemote(a, awake)
+		}
 		showMain()
 	})
 	if err := mygo.App.Run(); err != nil {

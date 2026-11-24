@@ -27,7 +27,7 @@ func TestTaskCounts(t *testing.T) {
 			want: TaskCounts{Attention: 3}},
 		{name: "TR04 掛起的操作與待答提問相加；待確認還不在“需要處理”裡，不算（m2.md D09）",
 			rows: []hub.TaskView{{ID: "a", PendingAsks: 1, Failed: 2, Confirmations: 2}, {ID: "b", Failed: 1}},
-			want: TaskCounts{Attention: 4}},
+			want: TaskCounts{Attention: 4, Waiting: 1}}, // SL11 有待確認的 a 算在等
 		{name: "TR05 已歸檔的 Task 不算",
 			rows: []hub.TaskView{{ID: "a", Archived: true, Running: 1, PendingAsks: 2, Failed: 1}, {ID: "b", Running: 1}},
 			want: TaskCounts{Running: 1, Working: 1}},
@@ -42,10 +42,20 @@ func TestTaskCounts(t *testing.T) {
 				{ID: "d", Running: 1, Version: 2, UpdatedAt: at(2)},
 				{ID: "d", Version: 3, UpdatedAt: at(1)}, // 時鐘倒退後的新列
 			},
-			want: TaskCounts{Running: 1, Attention: 6}}, // 在跑的 a 停在待答審批上，不算在幹活
+			want: TaskCounts{Running: 1, Attention: 6, Waiting: 1}}, // 在跑的 a 停在待答審批上，不算在幹活，算在等
 		{name: "KA04 在跑但停在待答審批上的不算在幹活",
 			rows: []hub.TaskView{{ID: "a", Running: 1, PendingAsks: 1}, {ID: "b", Running: 1}},
-			want: TaskCounts{Running: 2, Attention: 1, Working: 1}},
+			want: TaskCounts{Running: 2, Attention: 1, Working: 1, Waiting: 1}},
+		{name: "SL01 在跑又有待答審批的 Task 直接算在等，不由 Running 減 Working 得出",
+			rows: []hub.TaskView{{ID: "a", Running: 1, PendingAsks: 1}, {ID: "b", Running: 1}, {ID: "c", Confirmations: 1},
+				{ID: "d", PendingAsks: 1}}, // d 沒有在跑：不算在等
+			want: TaskCounts{Running: 2, Attention: 2, Working: 1, Waiting: 2}}, // Running − Working 會是 1
+		{name: "SL11 只剩待確認也算在等，沒有 Session 在跑也算",
+			rows: []hub.TaskView{{ID: "a", Confirmations: 1}, {ID: "b", Archived: true, Confirmations: 1}},
+			want: TaskCounts{Waiting: 1}},
+		{name: "SL09 歸檔的、停在待答審批上的不算在等（Running 與 Working 都不算）",
+			rows: []hub.TaskView{{ID: "a", Archived: true, Running: 1, PendingAsks: 1}},
+			want: TaskCounts{}},
 		{name: "KA08 歸檔的不算在幹活",
 			rows: []hub.TaskView{{ID: "a", Archived: true, Running: 1}},
 			want: TaskCounts{}},

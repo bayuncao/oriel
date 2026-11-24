@@ -20,6 +20,10 @@ type TaskCounts struct {
 	// Working 是 agent 在幹活的 Task 數：有 Session 在跑、沒有待答的審批（KA01、KA04）。M2 一個 Task 最多
 	// 一個 agent（D95），所以這等於有 agent 不是在等人；一個 Task 有幾個 agent 時（M4）要改成按 Session 算。
 	Working int
+	// Waiting 是有人可能正要從手機處理的 Task 數（D146、SL01、SL11）：有 Session 在跑而停在待答的審批上，
+	// 或有待確認。有遠程時這些也不讓電腦空閒睡眠。直接按 Task 數，不從 Running 與 Working 相減：
+	// Working 改按 Session 算（M4）時兩者口徑不同。
+	Waiting int
 }
 
 // Title 是圖標旁的文字「運行中 · 需處理」；兩個都是 0 時為空。
@@ -72,6 +76,9 @@ func (f *taskFold) counts() TaskCounts {
 				c.Working++
 			}
 		}
+		if v.Running > 0 && v.PendingAsks > 0 || v.Confirmations > 0 {
+			c.Waiting++
+		}
 		c.Attention += v.PendingAsks + v.Failed // 待確認（M5）與評審推薦（M4）進列表時一起加
 	}
 	return c
@@ -103,12 +110,12 @@ func WatchTaskCounts(ctx context.Context, h *hub.Hub, sink func(TaskCounts)) err
 	}
 }
 
-// FollowTaskCounts 同 WatchTaskCounts，另外把“在幹活”交給 awake（D80）；不論為什麼結束，結束時都告訴它
-// 沒有在幹活，不留著聲明。不能在主線程上呼叫（KeepAwake 等主線程）。
+// FollowTaskCounts 同 WatchTaskCounts，另外把“在幹活”與“有 Task 在等人處理”交給 awake（D80、D146）；
+// 不論為什麼結束，結束時都告訴它兩者都沒有，不留著聲明。不能在主線程上呼叫（KeepAwake 等主線程）。
 func FollowTaskCounts(ctx context.Context, h *hub.Hub, awake *KeepAwake, sink func(TaskCounts)) error {
-	defer awake.SetWorking(false)
+	defer awake.SetTasks(false, false)
 	return WatchTaskCounts(ctx, h, func(c TaskCounts) {
-		awake.SetWorking(c.Working > 0)
+		awake.SetTasks(c.Working > 0, c.Waiting > 0)
 		sink(c)
 	})
 }
