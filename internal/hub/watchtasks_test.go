@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sync"
 	"testing"
 	"time"
 
@@ -51,13 +52,19 @@ func TestWatchTasksEvicted(t *testing.T) {
 	w.next(task.TurnCompletedKind)
 	w.cancel()
 	release := make(chan struct{})
+	blocked := make(chan struct{})
+	var once sync.Once
 	done := make(chan error, 1)
 	go func() {
 		done <- env.h.WatchTasks(ctxb(), LocalOwner, func(TaskView) error {
+			once.Do(func() { close(blocked) })
 			<-release // 初值第一筆就堵：ch 由 offer 端填滿
 			return nil
 		})
 	}()
+	// 等觀察者登記好並堵在初值上再提交：WatchTasks 先登記再推初值，所以 sink 被呼叫時已登記。
+	// 不等的話（單核時常見）300 次提交可能都在登記之前，觀察者沒落後，永遠等下一行。
+	<-blocked
 	for i := range 300 {
 		if _, err := env.h.Command(ctxb(), LocalOwner, id, task.Command{
 			Kind: task.CmdEditTask,

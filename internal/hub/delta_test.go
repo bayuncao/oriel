@@ -353,13 +353,16 @@ func TestDeltaBestEffort(t *testing.T) {
 	case <-time.After(testWait):
 		t.Fatal("blocked sub never got c1")
 	}
+	// 一道一道開，每道都等 P 看到下一筆：P 的通道裡最多一筆，不會半滿而丟增量。一次全開的話，
+	// 負載高時 P 也可能丟掉 c151，而 stale 的 Session 要到下一筆（c152，第 151 道門之後）才補 Reset，
+	// 這裡就永遠等不到。
 	for i := 1; i <= 150; i++ {
 		env.gate(t, i)
+		want := "c" + strconv.Itoa(i+1)
+		progress.until(func(u Update) bool {
+			return u.Delta != nil && strings.HasSuffix(u.Delta.Text, want)
+		}, &seen)
 	}
-	// P 看到 c151：普通增量，或 P 落後時補來的整段 Reset（結尾也是 c151）。
-	progress.until(func(u Update) bool {
-		return u.Delta != nil && strings.HasSuffix(u.Delta.Text, "c151")
-	}, &seen)
 	snapshotOf(t, env.h, id) // actor 往返：c151 已推給 X
 
 	// 放開 X，等它讀到 release 後的 TaskEdited：積壓的都讀完了，
