@@ -1532,6 +1532,140 @@ func (msgs Messages) WorkspaceGitFailed(detail string) string {
 	return Catalog.Format(msgs.locale, "workspace_git_failed", map[string]any{"detail": detail})
 }
 
+// WorkspaceGitTooOld says "git {version} is too old for OrielHub; install git {want} or newer."
+// in the language the app shows.
+//
+// The installed git is older than merging needs.
+func WorkspaceGitTooOld(version string, want string) string {
+	return In(i18n.Locale()).WorkspaceGitTooOld(version, want)
+}
+
+// WorkspaceGitTooOld says "git {version} is too old for OrielHub; install git {want} or newer."
+// in the language of msgs.
+//
+// The installed git is older than merging needs.
+func (msgs Messages) WorkspaceGitTooOld(version string, want string) string {
+	return Catalog.Format(msgs.locale, "workspace_git_too_old", map[string]any{"version": version, "want": want})
+}
+
+// WorkspacePathTaken says "{path} already exists and is not this task's worktree."
+// in the language the app shows.
+//
+// The worktree location is occupied by something else.
+func WorkspacePathTaken(path string) string { return In(i18n.Locale()).WorkspacePathTaken(path) }
+
+// WorkspacePathTaken says "{path} already exists and is not this task's worktree."
+// in the language of msgs.
+//
+// The worktree location is occupied by something else.
+func (msgs Messages) WorkspacePathTaken(path string) string {
+	return Catalog.Format(msgs.locale, "workspace_path_taken", map[string]any{"path": path})
+}
+
+// WorkspaceNoIdentity says "git has no name and email to commit with in {path}. Set user.name and user.email."
+// in the language the app shows.
+//
+// git has no user identity configured for committing.
+func WorkspaceNoIdentity(path string) string { return In(i18n.Locale()).WorkspaceNoIdentity(path) }
+
+// WorkspaceNoIdentity says "git has no name and email to commit with in {path}. Set user.name and user.email."
+// in the language of msgs.
+//
+// git has no user identity configured for committing.
+func (msgs Messages) WorkspaceNoIdentity(path string) string {
+	return Catalog.Format(msgs.locale, "workspace_no_identity", map[string]any{"path": path})
+}
+
+// WorkspaceDirtyTarget says "Uncommitted changes in {path} would be overwritten by the merge: {files}"
+// in the language the app shows.
+//
+// The merge would overwrite uncommitted changes in the target directory.
+func WorkspaceDirtyTarget(path string, files string) string {
+	return In(i18n.Locale()).WorkspaceDirtyTarget(path, files)
+}
+
+// WorkspaceDirtyTarget says "Uncommitted changes in {path} would be overwritten by the merge: {files}"
+// in the language of msgs.
+//
+// The merge would overwrite uncommitted changes in the target directory.
+func (msgs Messages) WorkspaceDirtyTarget(path string, files string) string {
+	return Catalog.Format(msgs.locale, "workspace_dirty_target", map[string]any{"path": path, "files": files})
+}
+
+// WorkspaceNoRemote says "{path} has no origin remote to push the branch to."
+// in the language the app shows.
+//
+// The repository has no origin remote for opening a pull request.
+func WorkspaceNoRemote(path string) string { return In(i18n.Locale()).WorkspaceNoRemote(path) }
+
+// WorkspaceNoRemote says "{path} has no origin remote to push the branch to."
+// in the language of msgs.
+//
+// The repository has no origin remote for opening a pull request.
+func (msgs Messages) WorkspaceNoRemote(path string) string {
+	return Catalog.Format(msgs.locale, "workspace_no_remote", map[string]any{"path": path})
+}
+
+// WorkspaceGhMissing says "GitHub CLI (gh) is not installed."
+// in the language the app shows.
+//
+// gh is needed to open a pull request.
+func WorkspaceGhMissing() string { return In(i18n.Locale()).WorkspaceGhMissing() }
+
+// WorkspaceGhMissing says "GitHub CLI (gh) is not installed."
+// in the language of msgs.
+//
+// gh is needed to open a pull request.
+func (msgs Messages) WorkspaceGhMissing() string {
+	return Catalog.Format(msgs.locale, "workspace_gh_missing", nil)
+}
+
+// WorkspaceGhFailed says "gh failed: {detail}"
+// in the language the app shows.
+//
+// A gh command failed.
+func WorkspaceGhFailed(detail string) string { return In(i18n.Locale()).WorkspaceGhFailed(detail) }
+
+// WorkspaceGhFailed says "gh failed: {detail}"
+// in the language of msgs.
+//
+// A gh command failed.
+func (msgs Messages) WorkspaceGhFailed(detail string) string {
+	return Catalog.Format(msgs.locale, "workspace_gh_failed", map[string]any{"detail": detail})
+}
+
+// WorkspaceBranchMoved says "{branch} kept changing while merging; try again."
+// in the language the app shows.
+//
+// The base branch moved on every attempt to merge.
+func WorkspaceBranchMoved(branch string) string {
+	return In(i18n.Locale()).WorkspaceBranchMoved(branch)
+}
+
+// WorkspaceBranchMoved says "{branch} kept changing while merging; try again."
+// in the language of msgs.
+//
+// The base branch moved on every attempt to merge.
+func (msgs Messages) WorkspaceBranchMoved(branch string) string {
+	return Catalog.Format(msgs.locale, "workspace_branch_moved", map[string]any{"branch": branch})
+}
+
+// WorkspaceNoRemoteBranch says "{branch} is not on origin, so a pull request cannot target it."
+// in the language the app shows.
+//
+// The pull request's base branch does not exist on the remote.
+func WorkspaceNoRemoteBranch(branch string) string {
+	return In(i18n.Locale()).WorkspaceNoRemoteBranch(branch)
+}
+
+// WorkspaceNoRemoteBranch says "{branch} is not on origin, so a pull request cannot target it."
+// in the language of msgs.
+//
+// The pull request's base branch does not exist on the remote.
+func (msgs Messages) WorkspaceNoRemoteBranch(branch string) string {
+	return Catalog.Format(msgs.locale, "workspace_no_remote_branch", map[string]any{"branch": branch})
+}
+
 // NotifyAsk says "{agent} wants to run: {what}"
 // in the language the app shows.
 //

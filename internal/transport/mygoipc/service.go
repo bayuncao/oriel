@@ -100,6 +100,20 @@ func (s *Hub) CreateTask(ctx context.Context, dir, title, brief string, agent ta
 	return id, nil
 }
 
+// Isolation 是在 dir 新建 Task 會用的隔離方式：none 時會與同目錄在跑的 Task 共用目錄，
+// 新建 Task 的彈窗據此提示（D97、T33）。
+func (s *Hub) Isolation(ctx context.Context, dir string) (task.IsolationMode, error) {
+	h, log, e := s.get()
+	if e != nil {
+		return "", e
+	}
+	mode, err := h.Isolation(ctx, dir)
+	if err != nil {
+		return "", wire(log, "Isolation", err)
+	}
+	return mode, nil
+}
+
 // StartAgent 給還沒有 Session 的 Task 啟動 agent，message 是它的第一個 Prompt
 // （m2.md I05–I11，D104）。同 CreateTask，頁面只給 agent ID，不給 Launch
 // Snapshot（D57）；create_session 仍在 Command 被拒絕（I12）。

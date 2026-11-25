@@ -130,7 +130,7 @@ func newTestHub(t *testing.T, tweak func(*Options)) *testEnv {
 			"test-line": lineRuntime{},
 		},
 		Git: workspace.New(workspace.Options{Runner: runner, Env: func(context.Context) (proc.Env, error) {
-			return proc.Inherited(), nil
+			return gitTestEnv(), nil
 		}}),
 		Env: func(context.Context) (proc.Env, error) {
 			return proc.Inherited().With("ORIELHUB_TEST_DIR=" + dir), nil
@@ -282,6 +282,22 @@ func realPath(t *testing.T, dir string) string {
 		t.Fatal(err)
 	}
 	return p
+}
+
+// gitTestEnv 是 hub 測試裡 workspace 跑 git 的環境：不讀使用者的 git 設定，
+// 有固定的作者與提交者，合併的結果不隨開發機而變。
+func gitTestEnv() proc.Env {
+	return proc.Inherited().With("GIT_CONFIG_GLOBAL=/dev/null", "GIT_CONFIG_NOSYSTEM=1",
+		"GIT_AUTHOR_NAME=t", "GIT_AUTHOR_EMAIL=t@t", "GIT_COMMITTER_NAME=t", "GIT_COMMITTER_EMAIL=t@t")
+}
+
+// blockWorktrees 讓 env 建不出 worktree：WorktreeRoot 被一個檔案佔著，
+// create_worktree 以 workspace.dir_missing 掛起。
+func blockWorktrees(t *testing.T, env *testEnv) {
+	t.Helper()
+	if err := os.WriteFile(env.wt, nil, 0o644); err != nil {
+		t.Fatal(err)
+	}
 }
 
 func gitRepo(t *testing.T) string {

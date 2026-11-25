@@ -582,35 +582,6 @@ func TestExists(t *testing.T) {
 	}
 }
 
-func TestUnsupported(t *testing.T) {
-	g := newGit(t, proc.Env{}, nil)
-	ctx := context.Background()
-	for name, err := range map[string]error{
-		"create":  g.Create(ctx, task.CreateWorktree{}),
-		"discard": g.Discard(ctx, task.Worktree{}),
-	} {
-		checkUnsupported(t, name, err)
-	}
-	if _, _, err := g.Merge(ctx, task.MergeWorktree{}); err != nil {
-		checkUnsupported(t, "merge", err)
-	} else {
-		t.Error("merge should fail")
-	}
-	if _, err := g.Diff(ctx, task.Worktree{}); err != nil {
-		checkUnsupported(t, "diff", err)
-	} else {
-		t.Error("diff should fail")
-	}
-}
-
-func checkUnsupported(t *testing.T, op string, err error) {
-	t.Helper()
-	var werr *workspace.Error
-	if !errors.As(err, &werr) || werr.Code != workspace.CodeUnsupported || werr.Params["op"] != op {
-		t.Fatalf("%s: got %v", op, err)
-	}
-}
-
 func missingGit() error { return &workspace.Error{Code: workspace.CodeGitMissing} }
 
 // fakeGit 在 dir 寫一個可執行的假 git script。

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/bayuncao/oriel/internal/task"
+	"github.com/bayuncao/oriel/internal/workspace"
 )
 
 func TestFirstPromptStartsAgent(t *testing.T) {
@@ -446,6 +447,7 @@ func TestCloseRunningSession(t *testing.T) {
 
 func TestGitEffectSuspended(t *testing.T) {
 	env := newTestHub(t, nil)
+	blockWorktrees(t, env)
 	dir := gitRepo(t)
 	env.store.PutWorkspace(context.Background(), Workspace{
 		ID: "w-always", Path: realPath(t, dir), Policy: task.PolicyAlways})
@@ -455,7 +457,7 @@ func TestGitEffectSuspended(t *testing.T) {
 	id := env.create(t, dir, "say hi", testLaunch())
 	w := watch(t, env.h, id)
 	e := w.next(task.EffectFailedKind)
-	if e.EffectFailed.Problem.Code != "workspace.unsupported" {
+	if e.EffectFailed.Problem.Code != string(workspace.CodeDirMissing) {
 		t.Fatalf("problem %+v", e.EffectFailed.Problem)
 	}
 	if _, err := env.h.Command(context.Background(), LocalOwner, id, task.Command{

@@ -171,7 +171,8 @@ func TestSQLiteRebuildFillsFailed(t *testing.T) {
 		t.Fatal(err)
 	}
 	env := hub.NewTestEnv(t, s)
-	id := env.Create(t, dir, "") // 沒有 agent：只有建 worktree 的 Effect，以 workspace.unsupported 掛起
+	env.BlockWorktrees(t)
+	id := env.Create(t, dir, "") // 沒有 agent：只有建 worktree 的 Effect，建不出來而掛起
 	w := env.Watch(t, id)
 	w.Next(task.EffectFailedKind)
 	w.Stop()

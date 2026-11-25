@@ -85,6 +85,13 @@ func createTask(d *decision, c Command) error {
 	return nil
 }
 
+// IsolationFor 是在 in 下從桌面新建、不扇出的 Task 會用的隔離方式；介面據此判斷
+// 新 Task 會不會與在跑的 Task 共用目錄（D97）。
+func IsolationFor(in Inputs) IsolationMode {
+	mode, _ := chooseIsolation(in, false, false) // 不扇出、不是遠端時不會拒絕
+	return mode
+}
+
 // chooseIsolation 依 domain.md「Isolation 與 Fork」的表選擇：非 git 與 detached HEAD 兩列優先於 Policy。
 func chooseIsolation(in Inputs, remote, fanout bool) (IsolationMode, error) {
 	switch {
@@ -102,16 +109,11 @@ func chooseIsolation(in Inputs, remote, fanout bool) (IsolationMode, error) {
 		return IsolationWorktree, nil
 	case in.Policy == PolicyNever:
 		return IsolationNone, nil
-	case fanout || remote || (worktreesForConcurrency && in.OtherTasksRunning):
+	case fanout || remote || in.OtherTasksRunning:
 		return IsolationWorktree, nil
 	}
 	return IsolationNone, nil
 }
-
-// worktreesForConcurrency 是 auto 策略是否因同倉庫已有 Task 在跑而用 worktree。
-// M4 做出 worktree 之前為假：否則新 Task 會一直等 create_worktree，Session
-// 起不來；兩個 Task 先共用主目錄，由介面提示（D97）。
-const worktreesForConcurrency = false
 
 func (d *decision) taskWorktree() Worktree {
 	id := string(d.s.ID)

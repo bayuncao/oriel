@@ -649,6 +649,88 @@
       }
     }
   },
+  "workspace_git_too_old": "git {version} is too old for OrielHub; install git {want} or newer.",
+  "@workspace_git_too_old": {
+    "description": "The installed git is older than merging needs.",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "want": {
+        "type": "String"
+      }
+    }
+  },
+  "workspace_path_taken": "{path} already exists and is not this task's worktree.",
+  "@workspace_path_taken": {
+    "description": "The worktree location is occupied by something else.",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "workspace_no_identity": "git has no name and email to commit with in {path}. Set user.name and user.email.",
+  "@workspace_no_identity": {
+    "description": "git has no user identity configured for committing.",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "workspace_dirty_target": "Uncommitted changes in {path} would be overwritten by the merge: {files}",
+  "@workspace_dirty_target": {
+    "description": "The merge would overwrite uncommitted changes in the target directory.",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      },
+      "files": {
+        "type": "String"
+      }
+    }
+  },
+  "workspace_no_remote": "{path} has no origin remote to push the branch to.",
+  "@workspace_no_remote": {
+    "description": "The repository has no origin remote for opening a pull request.",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "workspace_gh_missing": "GitHub CLI (gh) is not installed.",
+  "@workspace_gh_missing": {
+    "description": "gh is needed to open a pull request."
+  },
+  "workspace_gh_failed": "gh failed: {detail}",
+  "@workspace_gh_failed": {
+    "description": "A gh command failed.",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "workspace_branch_moved": "{branch} kept changing while merging; try again.",
+  "@workspace_branch_moved": {
+    "description": "The base branch moved on every attempt to merge.",
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "workspace_no_remote_branch": "{branch} is not on origin, so a pull request cannot target it.",
+  "@workspace_no_remote_branch": {
+    "description": "The pull request's base branch does not exist on the remote.",
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
   "notify_ask": "{agent} wants to run: {what}",
   "@notify_ask": {
     "description": "Notification when an agent asks to run a tool.",

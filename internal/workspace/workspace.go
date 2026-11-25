@@ -23,8 +23,8 @@ type Options struct {
 	Root string // 前綴到系統目錄上；"" 表示 /（測試用，與 proc 一致）
 }
 
-// Git 實作 hub 的 Git 連接埠：Inspect 與 Exists 可用，
-// worktree 操作在 M4 之前回傳 workspace.unsupported。
+// Git 實作 hub 的 Git 連接埠：倉庫狀態（Inspect、Resolve、Exists）與
+// worktree 的建立、合併、捨棄與差異（worktree.go）。
 type Git struct {
 	runner *proc.Runner
 	env    func(context.Context) (proc.Env, error)
@@ -175,14 +175,23 @@ func (g *Git) Exists(path string) bool {
 	return err == nil && info.IsDir()
 }
 
+// localTimeout 是檢查倉庫狀態的時限；opTimeout 是 worktree 操作的：大倉庫的 add -A 與 merge-tree、
+// 簽名提交時等使用者輸入密碼、push 與 gh 都可能超過幾秒，時限只用來擋住卡死的命令。
+const (
+	localTimeout = 10 * time.Second
+	opTimeout    = 2 * time.Minute
+)
+
 // run 以固定環境執行 git；取消、逾時與 Runner 關閉的錯誤原樣回傳，
 // 呼叫者可用 errors.Is 辨認 context 錯誤。
 func (g *Git) run(ctx context.Context, env proc.Env, git, dir string, args ...string) (proc.Result, error) {
-	res := g.runner.Run(ctx, proc.Probe{
-		Path: git, Args: args, Dir: dir,
-		Env:     env.Without(gitRepoVars...).With(gitEnv...),
-		Timeout: 10 * time.Second,
-	})
+	return g.exec(ctx, proc.Probe{Path: git, Args: args, Dir: dir,
+		Env: env.Without(gitRepoVars...).With(gitEnv...), Timeout: localTimeout})
+}
+
+// exec 執行 p，錯誤的分法同 run。
+func (g *Git) exec(ctx context.Context, p proc.Probe) (proc.Result, error) {
+	res := g.runner.Run(ctx, p)
 	if res.Err != nil && (res.TimedOut || ctx.Err() != nil || errors.Is(res.Err, proc.ErrClosed)) {
 		return res, res.Err
 	}

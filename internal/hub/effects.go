@@ -302,7 +302,7 @@ func (a *actor) mergeWorktree(e task.Effect) {
 func (a *actor) discardWorktree(e task.Effect) {
 	w := *e.DiscardWorktree
 	a.spawn(func() *effectDone {
-		if err := a.h.git.Discard(a.h.ctx, w.Worktree); err != nil {
+		if err := a.h.git.Discard(a.h.ctx, w); err != nil {
 			return a.failed(e, err)
 		}
 		return &effectDone{key: e.Key, facts: []task.Command{{

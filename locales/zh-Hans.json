@@ -228,6 +228,88 @@
       }
     }
   },
+  "workspace_git_too_old": "git {version} 太旧，请安装 {want} 或更新的版本。",
+  "@workspace_git_too_old": {
+    "description": "安装的 git 版本低于合并所需。",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "want": {
+        "type": "String"
+      }
+    }
+  },
+  "workspace_path_taken": "{path} 已存在，不是这个任务的 worktree。",
+  "@workspace_path_taken": {
+    "description": "worktree 的位置被别的东西占着。",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "workspace_no_identity": "git 在 {path} 没有可用于提交的姓名与邮箱，请设置 user.name 和 user.email。",
+  "@workspace_no_identity": {
+    "description": "git 没有配置提交用的身份。",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "workspace_dirty_target": "{path} 中未提交的改动会被合并覆盖：{files}",
+  "@workspace_dirty_target": {
+    "description": "合并会覆盖目标目录中未提交的改动。",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      },
+      "files": {
+        "type": "String"
+      }
+    }
+  },
+  "workspace_no_remote": "{path} 没有可推送分支的 origin 远程仓库。",
+  "@workspace_no_remote": {
+    "description": "仓库没有 origin，无法开 PR。",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "workspace_gh_missing": "没有安装 GitHub CLI（gh）。",
+  "@workspace_gh_missing": {
+    "description": "开 PR 需要 gh。"
+  },
+  "workspace_gh_failed": "gh 失败：{detail}",
+  "@workspace_gh_failed": {
+    "description": "gh 命令执行失败。",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "workspace_branch_moved": "合并时 {branch} 一直在变，请重试。",
+  "@workspace_branch_moved": {
+    "description": "每次合并时基础分支都被推进了。",
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "workspace_no_remote_branch": "{branch} 不在 origin 上，PR 无法以它为目标。",
+  "@workspace_no_remote_branch": {
+    "description": "PR 的基础分支在远程仓库里不存在。",
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
   "notify_ask": "{agent} 请求运行：{what}",
   "@notify_ask": {
     "description": "Notification when an agent asks to run a tool.",

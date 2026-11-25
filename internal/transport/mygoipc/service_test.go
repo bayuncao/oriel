@@ -353,7 +353,7 @@ func TestRemoteDisabled(t *testing.T) {
 func TestBoundMethodsArePageAPI(t *testing.T) {
 	want := map[reflect.Type][]string{
 		reflect.TypeFor[*Hub](): {"Attention", "Command", "Confirmations",
-			"CreateTask", "DeleteLabel", "DeleteRule", "DeleteTask", "Files", "Labels", "Models", "PutLabel", "PutSettings", "PutWorkspace", "Recap",
+			"CreateTask", "DeleteLabel", "DeleteRule", "DeleteTask", "Files", "Isolation", "Labels", "Models", "PutLabel", "PutSettings", "PutWorkspace", "Recap",
 			"Rules", "Search", "SetDefaultModel", "Settings", "Snapshot", "StartAgent", "Subscribe",
 			"Tasks", "WatchTasks", "Workspaces"},
 		reflect.TypeFor[*Agents](): {"List", "Refresh", "Registry"},

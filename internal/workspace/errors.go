@@ -21,19 +21,37 @@ type Error struct {
 type Code string
 
 const (
-	CodeUnsupported Code = "workspace.unsupported" // op
-	CodeDirMissing  Code = "workspace.dir_missing" // path
-	CodeGitMissing  Code = "workspace.git_missing" //
-	CodeGitFailed   Code = "workspace.git_failed"  // detail
+	CodeUnsupported    Code = "workspace.unsupported"      // op；不再產生，日誌裡掛起的 Effect 可能帶著它，介面仍要能翻譯
+	CodeDirMissing     Code = "workspace.dir_missing"      // path
+	CodeGitMissing     Code = "workspace.git_missing"      //
+	CodeGitFailed      Code = "workspace.git_failed"       // detail
+	CodeGitTooOld      Code = "workspace.git_too_old"      // version want
+	CodePathTaken      Code = "workspace.path_taken"       // path
+	CodeNoIdentity     Code = "workspace.no_identity"      // path
+	CodeDirtyTarget    Code = "workspace.dirty_target"     // path files
+	CodeNoRemote       Code = "workspace.no_remote"        // path
+	CodeGhMissing      Code = "workspace.gh_missing"       //
+	CodeGhFailed       Code = "workspace.gh_failed"        // detail
+	CodeBranchMoved    Code = "workspace.branch_moved"     // branch
+	CodeNoBaseOnRemote Code = "workspace.no_remote_branch" // branch
 )
 
 // codeText 是各代碼的英文說明，{name} 由同名參數填入；只供日誌。
 // 它的佔位符就是代碼的參數（Code.Params）。
 var codeText = map[Code]string{
-	CodeUnsupported: "{op} is not supported by this version",
-	CodeDirMissing:  "{path} is not a directory",
-	CodeGitMissing:  "no usable git found",
-	CodeGitFailed:   "git failed: {detail}",
+	CodeUnsupported:    "{op} is not supported by this version",
+	CodeDirMissing:     "{path} is not a directory",
+	CodeGitMissing:     "no usable git found",
+	CodeGitFailed:      "git failed: {detail}",
+	CodeGitTooOld:      "git {version} is too old, {want} or newer is needed",
+	CodePathTaken:      "{path} already exists and is not this worktree",
+	CodeNoIdentity:     "git has no user.name or user.email to commit with in {path}",
+	CodeDirtyTarget:    "uncommitted changes in {path} would be overwritten: {files}",
+	CodeNoRemote:       "{path} has no origin remote to push to",
+	CodeGhMissing:      "no usable gh found",
+	CodeGhFailed:       "gh failed: {detail}",
+	CodeBranchMoved:    "{branch} kept moving while merging",
+	CodeNoBaseOnRemote: "{branch} is not on origin, so a pull request cannot target it",
 }
 
 // Codes 是本套件的所有代碼。

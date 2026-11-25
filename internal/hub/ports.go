@@ -160,16 +160,18 @@ type Conn interface {
 }
 
 // Git 建立、合併、捨棄 worktree 並計算差異；由 workspace
-// 套件實作。
+// 套件實作。Create、Merge、Discard 都可重試：上次做到一半（崩潰、逾時）時再做一次得到同樣的結果。
 type Git interface {
 	Inspect(ctx context.Context, dir string) (task.Repo, error)
 	Resolve(dir string) (string, error)
 	Exists(path string) bool
 	Create(ctx context.Context, c task.CreateWorktree) error
-	// Merge 在因衝突停止時回傳衝突的檔案，
-	// 並為 MergePullRequest 回傳 pull request URL。
+	// Merge 把 From 合進它的 BaseBranch，成功後刪掉 From 的 worktree 與分支（D37）；
+	// 有衝突時什麼都不改，回傳衝突的檔案；MergePullRequest 回傳 pull request 的地址。
 	Merge(ctx context.Context, m task.MergeWorktree) (conflicts []string, url string, err error)
-	Discard(ctx context.Context, w task.Worktree) error
+	// Discard 刪掉 worktree 與它的分支，未提交的改動一併丟掉。
+	Discard(ctx context.Context, d task.DiscardWorktree) error
+	// Diff 是 worktree 相對 BaseCommit 的全部改動（已提交、未提交與未追蹤的檔案），不改動 worktree。
 	Diff(ctx context.Context, w task.Worktree) (string, error)
 }
 

@@ -286,6 +286,30 @@ func (h *Hub) CreateTask(ctx context.Context, p Principal, dir string, c task.Cr
 	return id, ver, nil
 }
 
+// Isolation 是在 dir 從桌面新建一個不扇出的 Task 會用的隔離方式（D97）：同 CreateTask 解開符號連結、
+// 檢查倉庫、看同倉庫有沒有在跑的 Task，但不登記 Workspace、不建 Task。
+func (h *Hub) Isolation(ctx context.Context, dir string) (task.IsolationMode, error) {
+	if err := h.alive(); err != nil {
+		return "", err
+	}
+	dir, err := filepath.Abs(dir)
+	if err != nil {
+		return "", fail(CodeUnknownWorkspace, err, "path", dir)
+	}
+	if dir, err = h.git.Resolve(filepath.Clean(dir)); err != nil {
+		return "", err
+	}
+	repo, err := h.git.Inspect(ctx, dir)
+	if err != nil {
+		return "", err
+	}
+	w, _ := h.findWorkspaceByPath(dir) // 未登記的 Workspace 照 auto
+	in := h.inputs(w.ID)
+	in.Repo = repo
+	in.OtherTasksRunning = h.otherRunning(repo.Root, nil)
+	return task.IsolationFor(in), nil
+}
+
 // CreateTaskWithAgent 建立 Task；agent 非空時先把它解析為 Launch Snapshot，
 // Task 帶一個 Session，說明是第一個 Prompt（D14、M2-2）。解析失敗、或這個
 // agent 的協議還沒有轉接器（hub.agent_unsupported）時不建 Task，也不登記
@@ -868,8 +892,8 @@ func (h *Hub) inputs(ws task.WorkspaceID) task.Inputs {
 
 // otherRunning 回傳同一 git 工作樹（D72）內是否有其他在跑的
 // Task：actor 的 Workspace 路徑等於 root 或在 root 之下；root
-// 為空（非 git）一律不算。只在 CreateTask 的 goroutine 上呼叫
-// （snap 往返）。exclude 是要建立的 actor。往返時不持 cfg.mu：被問的 Actor 處理排在
+// 為空（非 git）一律不算。只在 CreateTask 與 Isolation 的 goroutine 上呼叫
+// （snap 往返），不在 actor 上。exclude 是要建立的 actor（Isolation 沒有，為 nil）。往返時不持 cfg.mu：被問的 Actor 處理排在
 // 快照前面的訊息時自己要讀設定快取（inputs）。
 func (h *Hub) otherRunning(root string, exclude *actor) bool {
 	if root == "" {

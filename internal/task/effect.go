@@ -116,6 +116,7 @@ type MergeWorktree struct {
 type DiscardWorktree struct {
 	Intent   IntentID `json:"intent"`
 	Worktree Worktree `json:"worktree"`
+	Repo     string   `json:"repo"` // worktree 所屬倉庫的目錄，同 MergeWorktree.Into：worktree 已不在時仍能刪它的分支
 }
 
 type DeleteNative struct {

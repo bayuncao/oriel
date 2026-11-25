@@ -63,9 +63,10 @@ func TestProjectionFailedCount(t *testing.T) {
 }
 
 // alwaysTask 在策略 always 的 git 倉庫建一個沒有 agent 的 Task：
-// 建 worktree 的 Effect 以 workspace.unsupported 掛起（M1 沒有 worktree）。
+// env 建不出 worktree，建 worktree 的 Effect 掛起。
 func alwaysTask(t *testing.T, env *testEnv) task.TaskID {
 	t.Helper()
+	blockWorktrees(t, env)
 	dir := gitRepo(t)
 	env.store.PutWorkspace(ctxb(), Workspace{
 		ID: "w-always", Path: realPath(t, dir), Policy: task.PolicyAlways})

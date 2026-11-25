@@ -184,6 +184,13 @@ func runScript(script string, in <-chan map[string]any, dir string) bool {
 					break
 				}
 			}
+		case "write":
+			// write NAME TEXT：在工作目錄寫一個檔案（agent 改了 worktree 裡的東西）。
+			text := strings.TrimSpace(strings.TrimPrefix(rest, fields[1]))
+			if err := os.WriteFile(fields[1], []byte(text+"\n"), 0o644); err != nil {
+				fmt.Fprintln(os.Stderr, "test agent: write:", err)
+				os.Exit(1)
+			}
 		case "crash":
 			fmt.Fprintln(os.Stderr, "boom")
 			os.Exit(3)

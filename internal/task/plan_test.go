@@ -310,7 +310,7 @@ func TestPlan(t *testing.T) {
 			live:  func(l *Live) { l.Worktrees["/wt/t-1-s2"] = true },
 			want: []Effect{{Key: "discard_worktree:i4", Kind: EffDiscardWorktree, Session: "s2",
 				DiscardWorktree: &DiscardWorktree{Intent: "i4", Worktree: Worktree{
-					Path: "/wt/t-1-s2", Branch: "orielhub/t-1-s2", BaseBranch: "main", BaseCommit: "abc"}}}}},
+					Path: "/wt/t-1-s2", Branch: "orielhub/t-1-s2", BaseBranch: "main", BaseCommit: "abc"}, Repo: "/ws"}}}},
 		{name: "I6 suspended intent",
 			given: and(forked(), mergeEv("i4", forkS2, MergeSquash, "m"),
 				effectFailedEv("merge_worktree:i4", Problem{Code: "proc.exited"})),
@@ -327,10 +327,10 @@ func TestPlan(t *testing.T) {
 			want: []Effect{
 				{Key: "discard_worktree:i7", Kind: EffDiscardWorktree, Session: "s2",
 					DiscardWorktree: &DiscardWorktree{Intent: "i7", Worktree: Worktree{
-						Path: "/wt/t-1-s2", Branch: "orielhub/t-1-s2", BaseBranch: "main", BaseCommit: "abc"}}},
+						Path: "/wt/t-1-s2", Branch: "orielhub/t-1-s2", BaseBranch: "main", BaseCommit: "abc"}, Repo: "/ws"}},
 				{Key: "discard_worktree:i9", Kind: EffDiscardWorktree, Session: "s3",
 					DiscardWorktree: &DiscardWorktree{Intent: "i9", Worktree: Worktree{
-						Path: "/wt/t-1-s3", Branch: "orielhub/t-1-s3", BaseBranch: "main", BaseCommit: "abc"}}},
+						Path: "/wt/t-1-s3", Branch: "orielhub/t-1-s3", BaseBranch: "main", BaseCommit: "abc"}, Repo: "/ws"}},
 			}},
 		{name: "I8 delete native no conn",
 			given: seqs(created(IsolationNone), sessionLaunchEv("s2", launchDelete()),

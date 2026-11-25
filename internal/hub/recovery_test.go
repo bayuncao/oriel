@@ -272,9 +272,8 @@ func TestCloseRacesWithFacts(t *testing.T) {
 	}
 }
 
-// D97：同倉庫已有 Task 在跑時新 Task 也用主目錄，它的 Session 照常啟動
-// （M4 做出 worktree 之前）。
-func TestOtherTaskRunningSharesDir(t *testing.T) {
+// D97：同一倉庫已有 Task 在跑時，新的 Task 用自己的 worktree，Session 在那裡跑完一輪。
+func TestOtherTaskRunningGetsWorktree(t *testing.T) {
 	env := newTestHub(t, nil)
 	dir := gitRepo(t)
 	id1 := env.create(t, dir, "hang", testLaunch())
@@ -287,10 +286,14 @@ func TestOtherTaskRunningSharesDir(t *testing.T) {
 		t.Fatal(err)
 	}
 	w2 := watch(t, env.h, id2)
-	if e := w2.next(task.TaskCreatedKind); e.TaskCreated.Isolation != task.IsolationNone {
+	if e := w2.next(task.TaskCreatedKind); e.TaskCreated.Isolation != task.IsolationWorktree {
 		t.Fatalf("isolation %s", e.TaskCreated.Isolation)
 	}
+	wt := w2.next(task.WorktreeAttachedKind).WorktreeAttached
 	w2.next(task.TurnCompletedKind)
+	if !env.h.git.Exists(wt.Path) {
+		t.Fatalf("worktree %s was not created", wt.Path)
+	}
 }
 
 func TestNonGitDirIsNone(t *testing.T) {

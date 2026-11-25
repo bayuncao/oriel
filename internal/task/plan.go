@@ -200,18 +200,18 @@ func (p *planner) resolveIntent(in Intent) {
 	if w.Outcome != OutcomeOpen {
 		return
 	}
+	into := p.taskWorkdir()
+	if t.Level == TargetWorktree {
+		into = p.l.WorkspaceDir
+	}
 	if in.Kind == IntentMerge {
-		into := p.taskWorkdir()
-		if t.Level == TargetWorktree {
-			into = p.l.WorkspaceDir
-		}
 		p.emit(Effect{Kind: EffMergeWorktree, Session: sid, MergeWorktree: &MergeWorktree{
 			Intent: in.ID, From: w.Worktree, Into: into,
 			Strategy: in.Strategy, Message: in.Message,
 		}}, string(in.ID))
 	} else {
 		p.emit(Effect{Kind: EffDiscardWorktree, Session: sid, DiscardWorktree: &DiscardWorktree{
-			Intent: in.ID, Worktree: w.Worktree,
+			Intent: in.ID, Worktree: w.Worktree, Repo: into,
 		}}, string(in.ID))
 	}
 }

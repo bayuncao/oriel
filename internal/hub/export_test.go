@@ -34,7 +34,7 @@ func NewTestEnv(t *testing.T, store interface {
 			"test-line": lineRuntime{},
 		},
 		Git: workspace.New(workspace.Options{Runner: runner, Env: func(context.Context) (proc.Env, error) {
-			return proc.Inherited(), nil
+			return gitTestEnv(), nil
 		}}),
 		Env: func(context.Context) (proc.Env, error) {
 			return proc.Inherited().With("ORIELHUB_TEST_DIR=" + dir), nil
@@ -58,6 +58,9 @@ func (env *testEnv) Create(t *testing.T, dir, brief string) task.TaskID {
 
 // Hub 回傳底層的 Hub。
 func (env *testEnv) Hub() *Hub { return env.h }
+
+// BlockWorktrees 讓這個環境建不出 worktree（見 blockWorktrees）。
+func (env *testEnv) BlockWorktrees(t *testing.T) { blockWorktrees(t, env) }
 
 // Watch 訂閱一個 Task 的事件。
 func (env *testEnv) Watch(t *testing.T, id task.TaskID) *watcher {

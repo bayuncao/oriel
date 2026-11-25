@@ -75,10 +75,10 @@ func TestDecide(t *testing.T) {
 				turnEv("s2", "t4", "p3"), statusEv(TaskTodo, TaskInProgress, CauseAuto),
 			},
 			status: TaskInProgress},
-		// D97：M4 之前同倉庫有 Task 在跑也共用主目錄。
+		// D97：同倉庫有 Task 在跑時用 worktree，不共用主目錄。
 		{name: "create other tasks running", in: inputs(func(i *Inputs) { i.OtherTasksRunning = true }),
 			cmd:  create(nil),
-			want: []Event{created(IsolationNone)}},
+			want: []Event{created(IsolationWorktree), attached()}},
 		{name: "create policy always", in: inputs(func(i *Inputs) { i.Policy = PolicyAlways }),
 			cmd:  create(nil),
 			want: []Event{created(IsolationWorktree), attached()}},
