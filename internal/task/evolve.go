@@ -86,7 +86,7 @@ var folds = map[EventKind]func(State, Event) State{
 	NativeSessionDeletedKind: func(s State, e Event) State {
 		in := *e.NativeSessionDeleted
 		s = withSession(s, in.Target.Session, func(x *Session) { x.NativeGone = true })
-		s.Intents = put(s.Intents, in.ID, in)
+		s.Intents = putIntent(s.Intents, in)
 		return s
 	},
 	NativeFilesRemovedKind: func(s State, e Event) State {
@@ -320,15 +320,15 @@ var folds = map[EventKind]func(State, Event) State{
 		s.Failed = del(s.Failed, in.effectKey())
 		return s
 	},
-	ForkMergedKind:        resolve(OutcomeMerged, func(e Event) IntentID { return e.Merged.Intent }),
-	ForkDiscardedKind:     resolve(OutcomeDiscarded, func(e Event) IntentID { return e.Discarded.Intent }),
-	WorktreeMergedKind:    resolve(OutcomeMerged, func(e Event) IntentID { return e.Merged.Intent }),
-	WorktreeDiscardedKind: resolve(OutcomeDiscarded, func(e Event) IntentID { return e.Discarded.Intent }),
+	ForkMergedKind:        resolve(OutcomeMerged, mergedRef),
+	ForkDiscardedKind:     resolve(OutcomeDiscarded, discardedRef),
+	WorktreeMergedKind:    resolve(OutcomeMerged, mergedRef),
+	WorktreeDiscardedKind: resolve(OutcomeDiscarded, discardedRef),
 	MergeConflictedKind: func(s State, e Event) State {
 		c := e.MergeConflicted
 		if in, ok := s.Intents[c.Intent]; ok {
 			in.Conflicts = slices.Clone(c.Files)
-			s.Intents = put(s.Intents, in.ID, in)
+			s.Intents = putIntent(s.Intents, in)
 		}
 		return s
 	},
@@ -376,36 +376,47 @@ func endTurn(x *Session) {
 	x.Turn, x.Open, x.OpenChannel, x.Status = nil, "", "", SessionIdle
 }
 
+// putIntent 是意圖進 State 的唯一路徑：填上它的 Effect 的鍵（Intent.Effect）。
+func putIntent(m map[IntentID]Intent, in Intent) map[IntentID]Intent {
+	in.Effect = in.effectKey()
+	return put(m, in.ID, in)
+}
+
 func addIntent(of func(Event) Intent) func(State, Event) State {
 	return func(s State, e Event) State {
-		in := of(e)
-		s.Intents = put(s.Intents, in.ID, in)
+		s.Intents = putIntent(s.Intents, of(e))
 		return s
 	}
 }
 
 // resolve 把意圖的目標（Fork 或 Task Worktree）標為 outcome 並移除意圖。
-func resolve(outcome Outcome, intent func(Event) IntentID) func(State, Event) State {
+// mergedRef 與 discardedRef 取出結局事件所指的意圖與 pull request 的地址（只有以 PR 合併時有）。
+func mergedRef(e Event) (IntentID, string)    { return e.Merged.Intent, e.Merged.URL }
+func discardedRef(e Event) (IntentID, string) { return e.Discarded.Intent, "" }
+
+func resolve(outcome Outcome, ref func(Event) (IntentID, string)) func(State, Event) State {
 	return func(s State, e Event) State {
-		in, ok := s.Intents[intent(e)]
+		id, url := ref(e)
+		in, ok := s.Intents[id]
 		if !ok {
 			return s
 		}
 		s.Intents = del(s.Intents, in.ID)
 		if in.Target.Level == TargetFork {
-			return withSession(s, in.Target.Session, func(x *Session) { x.Fork = withOutcome(x.Fork, outcome) })
+			return withSession(s, in.Target.Session, func(x *Session) { x.Fork = withOutcome(x.Fork, outcome, url) })
 		}
-		s.Worktree = withOutcome(s.Worktree, outcome)
+		s.Worktree = withOutcome(s.Worktree, outcome, url)
 		return s
 	}
 }
 
-func withOutcome(w *WorktreeState, o Outcome) *WorktreeState {
+func withOutcome(w *WorktreeState, o Outcome, pr string) *WorktreeState {
 	if w == nil {
 		return nil
 	}
 	c := *w
 	c.Outcome = o
+	c.PullRequest = pr
 	return &c
 }
 

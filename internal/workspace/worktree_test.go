@@ -222,6 +222,23 @@ func TestDiff(t *testing.T) {
 			t.Errorf("diff has the ignored file:\n%s", d)
 		}
 	})
+	t.Run("D6 big files as binary", func(t *testing.T) {
+		big := f.wt("big")
+		f.create(t, big)
+		write(t, big.Path, "big.txt", strings.Repeat(strings.Repeat("a", 99)+"\n", 20000)) // 2 MB
+		d, err := f.g.Diff(ctx, big)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !strings.Contains(d, "Binary files /dev/null and b/big.txt differ") || len(d) > 1000 {
+			t.Fatalf("diff of a big file (%d bytes):\n%.300s", len(d), d)
+		}
+	})
+	t.Run("D5 worktree not there", func(t *testing.T) {
+		missing := f.wt("absent")
+		_, err := f.g.Diff(ctx, missing)
+		wantCode(t, err, workspace.CodeDirMissing, map[string]string{"path": missing.Path})
+	})
 }
 
 func TestMerge(t *testing.T) {

@@ -98,7 +98,7 @@ func TestEvolve(t *testing.T) {
 		},
 		NativeSessionDeletedKind: func(s *State) {
 			session(s, "s3", func(x *Session) { x.NativeGone = true })
-			s.Intents["i31"] = Intent{ID: "i31", Kind: IntentDeleteNative, Target: Target{Session: "s3"}}
+			s.Intents["i31"] = Intent{ID: "i31", Kind: IntentDeleteNative, Target: Target{Session: "s3"}, Effect: "delete_native:i31"}
 		},
 		NativeFilesRemovedKind: func(s *State) { delete(s.Intents, "i13") },
 		ConfirmationRequestedKind: func(s *State) {
@@ -204,10 +204,10 @@ func TestEvolve(t *testing.T) {
 			})
 		},
 		MergeRequestedKind: func(s *State) {
-			s.Intents["i31"] = Intent{ID: "i31", Kind: IntentMerge, Target: Target{Level: TargetWorktree}, Strategy: MergePullRequest, Message: "Login"}
+			s.Intents["i31"] = Intent{ID: "i31", Kind: IntentMerge, Target: Target{Level: TargetWorktree}, Strategy: MergePullRequest, Message: "Login", Effect: "merge_worktree:i31"}
 		},
 		DiscardRequestedKind: func(s *State) {
-			s.Intents["i31"] = Intent{ID: "i31", Kind: IntentDiscard, Target: Target{Level: TargetFork, Session: "s3"}}
+			s.Intents["i31"] = Intent{ID: "i31", Kind: IntentDiscard, Target: Target{Level: TargetFork, Session: "s3"}, Effect: "discard_worktree:i31"}
 		},
 		IntentCancelledKind: func(s *State) {
 			delete(s.Intents, "i12")
@@ -224,6 +224,7 @@ func TestEvolve(t *testing.T) {
 		WorktreeMergedKind: func(s *State) {
 			delete(s.Intents, "i12")
 			s.Worktree.Outcome = OutcomeMerged
+			s.Worktree.PullRequest = "https://example.test/pr/1"
 		},
 		WorktreeDiscardedKind: func(s *State) {
 			delete(s.Intents, "i12")
@@ -391,4 +392,16 @@ func replyOf(r *TurnRecord) *Reply {
 		return nil
 	}
 	return r.Reply
+}
+
+// 每個事件之後，State 裡的每個意圖都帶著它的 Effect 的鍵（putIntent 是唯一路徑），前端以它找掛起的意圖（m4.md WT08）。
+func TestIntentsCarryEffect(t *testing.T) {
+	for _, e := range samples() {
+		s := Evolve(fixture(), e)
+		for id, in := range s.Intents {
+			if in.Effect != in.effectKey() {
+				t.Errorf("after %s: intent %s has effect %q, want %q", e.Kind, id, in.Effect, in.effectKey())
+			}
+		}
+	}
 }

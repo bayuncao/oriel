@@ -195,6 +195,19 @@ func (s *Hub) Snapshot(ctx context.Context, id task.TaskID) (task.State, error) 
 	return v, nil
 }
 
+// Diff 是 Task Worktree 的改動，逐檔拆開（m4.md WT01–WT09）：合併、丟棄前在介面上看。
+func (s *Hub) Diff(ctx context.Context, id task.TaskID) (hub.DiffView, error) {
+	h, log, e := s.get()
+	if e != nil {
+		return hub.DiffView{}, e
+	}
+	v, err := h.Diff(ctx, hub.LocalOwner, id)
+	if err != nil {
+		return hub.DiffView{}, wire(log, "Diff", err)
+	}
+	return v, nil
+}
+
 // Attention 是“需要處理”的條目，等得最久的在前（D78）。
 func (s *Hub) Attention(ctx context.Context) ([]hub.AttentionItem, error) {
 	h, log, e := s.get()

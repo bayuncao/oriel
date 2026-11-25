@@ -29,7 +29,8 @@ type Worktree struct {
 // WorktreeState 是 Worktree 加上它的結局。
 type WorktreeState struct {
 	Worktree
-	Outcome Outcome `json:"outcome"`
+	Outcome     Outcome `json:"outcome"`
+	PullRequest string  `json:"pullRequest,omitzero"` // 以 MergePullRequest 合併後 PR 的地址
 }
 
 type Outcome string

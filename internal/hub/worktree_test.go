@@ -90,3 +90,45 @@ func TestIsolationQuery(t *testing.T) {
 		t.Fatalf("missing folder: %v", err)
 	}
 }
+
+// WT01、WT05、WT06：Diff 逐檔回答 Task Worktree 的改動；沒有開著的 Task Worktree 時 hub.no_worktree。
+func TestWorktreeDiffThroughHub(t *testing.T) {
+	env := newTestHub(t, nil)
+	dir := gitRepo(t)
+	env.store.PutWorkspace(ctxb(), Workspace{
+		ID: "w-always", Path: realPath(t, dir), Policy: task.PolicyAlways})
+	if err := env.h.loadCache(ctxb()); err != nil {
+		t.Fatal(err)
+	}
+	id := env.create(t, dir, "write out.txt hello", testLaunch())
+	w := watch(t, env.h, id)
+	w.next(task.TurnCompletedKind)
+	v, err := env.h.Diff(ctxb(), LocalOwner, id)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(v.Files) != 1 || v.Omitted {
+		t.Fatalf("Diff = %+v", v)
+	}
+	if f := v.Files[0]; f.Path != "out.txt" || f.Change != ChangeAdded || f.Added != 1 || f.Removed != 0 ||
+		!strings.Contains(f.Patch, "+hello") {
+		t.Fatalf("file = %+v", f)
+	}
+
+	if _, err := env.h.Command(ctxb(), LocalOwner, id, task.Command{
+		Kind: task.CmdDiscard, Discard: &task.Discard{Target: task.Target{Level: task.TargetWorktree}}}); err != nil {
+		t.Fatal(err)
+	}
+	w.next(task.WorktreeDiscardedKind)
+	if _, err := env.h.Diff(ctxb(), LocalOwner, id); errCode(err) != string(CodeNoWorktree) {
+		t.Fatalf("discarded: %v", err)
+	}
+
+	plain := env.create(t, t.TempDir(), "hang", testLaunch())
+	if _, err := env.h.Diff(ctxb(), LocalOwner, plain); errCode(err) != string(CodeNoWorktree) {
+		t.Fatalf("no isolation: %v", err)
+	}
+	if _, err := env.h.Diff(ctxb(), LocalOwner, "t-nope"); errCode(err) != string(CodeUnknownTask) {
+		t.Fatalf("unknown task: %v", err)
+	}
+}

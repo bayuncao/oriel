@@ -41,9 +41,9 @@ func fixture() State {
 		Rules:         map[RuleID]Rule{"r9": {ID: "r9", Scope: ScopeTask, Match: MatchPrefix, Pattern: "go test", Verdict: Allow}},
 		Confirmations: map[ConfirmationID]Confirmation{"c10": {ID: "c10", Command: Command{Kind: CmdArchive}, RequestedBy: "d1", RequestedAt: at0}},
 		Intents: map[IntentID]Intent{
-			"i11": {ID: "i11", Kind: IntentMerge, Target: Target{Level: TargetFork, Session: "s2"}, Strategy: MergeSquash},
-			"i12": {ID: "i12", Kind: IntentDiscard, Target: Target{Level: TargetWorktree}},
-			"i13": {ID: "i13", Kind: IntentDeleteNative, Target: Target{Session: "s3"}},
+			"i11": {ID: "i11", Kind: IntentMerge, Target: Target{Level: TargetFork, Session: "s2"}, Strategy: MergeSquash, Effect: "merge_worktree:i11"},
+			"i12": {ID: "i12", Kind: IntentDiscard, Target: Target{Level: TargetWorktree}, Effect: "discard_worktree:i12"},
+			"i13": {ID: "i13", Kind: IntentDeleteNative, Target: Target{Session: "s3"}, Effect: "delete_native:i13"},
 		},
 		Review: &Review{Launch: new(newLaunch()), Candidates: []SessionID{"s2", "s3"}},
 		Failed: map[EffectKey]Suspension{

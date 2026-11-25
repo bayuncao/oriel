@@ -225,7 +225,6 @@ func (h *Hub) PutWorkspace(ctx context.Context, p Principal, w Workspace) error 
 	}
 	w.Name = name
 	switch w.Policy {
-	// always 照常開放（D71）：worktree 隨 M4，在那之前建 worktree 的 Effect 以 workspace.unsupported 掛起（W08）。
 	case task.PolicyAuto, task.PolicyAlways, task.PolicyNever:
 	default:
 		return fail(CodeInvalidField, nil, "field", "policy")

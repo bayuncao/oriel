@@ -87,6 +87,8 @@ type Intent struct {
 	Strategy  MergeStrategy `json:"strategy,omitzero"` // 僅限合併
 	Message   string        `json:"message,omitzero"`  // 提交訊息或 PR 標題，僅限合併
 	Conflicts []string      `json:"conflicts"`         // 上一次衝突嘗試涉及的檔案
+	// Effect 是執行這個意圖的 Effect 的鍵，State.Failed 以它記掛起；Evolve 加入意圖時填入，事件裡沒有。
+	Effect EffectKey `json:"effect,omitzero"`
 }
 
 type IntentKind string

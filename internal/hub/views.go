@@ -200,6 +200,37 @@ type FileView struct {
 	Tasks int         `json:"tasks"`
 }
 
+// DiffView 是 Hub.Diff 的結果：Task Worktree 相對它的 BaseCommit 的改動（m4.md WT01–WT04），
+// 每個檔案一筆，照 git diff 的順序（路徑序）。
+type DiffView struct {
+	Files []DiffFile `json:"files"`
+	// Omitted：patch 合計超過上限（maxDiffPatch），有檔案只列路徑與行數。
+	Omitted bool `json:"omitted"`
+}
+
+// DiffFile 是一個檔案的改動。Patch 是它的 hunk（從第一個 @@ 起的 unified diff）；
+// 二進位檔與只改模式的檔案沒有 Patch。
+type DiffFile struct {
+	Path    string     `json:"path"`
+	OldPath string     `json:"oldPath,omitzero"` // 僅限 renamed
+	Change  FileChange `json:"change"`
+	Added   int        `json:"added"`
+	Removed int        `json:"removed"`
+	Binary  bool       `json:"binary"`
+	Patch   string     `json:"patch"`
+	Omitted bool       `json:"omitted"` // 合計超過上限，沒放 Patch
+}
+
+// FileChange 是檔案改動的種類。
+type FileChange string
+
+const (
+	ChangeAdded    FileChange = "added"
+	ChangeModified FileChange = "modified"
+	ChangeDeleted  FileChange = "deleted"
+	ChangeRenamed  FileChange = "renamed"
+)
+
 // TurnEnd 是「結束的回合」投影的一列（D115，m2.md R01）：一個 Session 完成或失敗的一輪；取消的不算。
 type TurnEnd struct {
 	Session task.SessionID  `json:"session"`

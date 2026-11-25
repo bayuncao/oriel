@@ -41,6 +41,7 @@ const (
 	CodeDuplicateLabel   Code = "hub.duplicate_label"   // name
 	CodeNotArchived      Code = "hub.not_archived"      //
 	CodeUnknownDevice    Code = "hub.unknown_device"    // device
+	CodeNoWorktree       Code = "hub.no_worktree"       //
 )
 
 // ErrClosed 是 hub 關閉後的操作錯誤。
@@ -68,6 +69,7 @@ var codeText = map[Code]string{
 	CodeDuplicateLabel:   "a label named {name} already exists",
 	CodeNotArchived:      "only an archived task can be deleted",
 	CodeUnknownDevice:    "device {device} is not paired",
+	CodeNoWorktree:       "the task has no open worktree",
 }
 
 // Codes 是本套件的所有代碼。

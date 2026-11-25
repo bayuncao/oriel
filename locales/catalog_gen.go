@@ -1104,6 +1104,22 @@ func (msgs Messages) HubInvalidField(field string) string {
 	return Catalog.Format(msgs.locale, "hub_invalid_field", map[string]any{"field": field})
 }
 
+// HubNoWorktree says "This task has no open worktree"
+// in the language the app shows.
+//
+// Asked for the changes of a task that works in the folder itself, or whose
+// worktree was already merged or discarded.
+func HubNoWorktree() string { return In(i18n.Locale()).HubNoWorktree() }
+
+// HubNoWorktree says "This task has no open worktree"
+// in the language of msgs.
+//
+// Asked for the changes of a task that works in the folder itself, or whose
+// worktree was already merged or discarded.
+func (msgs Messages) HubNoWorktree() string {
+	return Catalog.Format(msgs.locale, "hub_no_worktree", nil)
+}
+
 // HubUnknownTask says "No such task"
 // in the language the app shows.
 //
@@ -8638,13 +8654,13 @@ func (msgs Messages) UiPolicyNever() string {
 	return Catalog.Format(msgs.locale, "ui_policy_never", nil)
 }
 
-// UiPolicyAutoText says "New tasks get a worktree only when they are created remotely or go to several agents at once; otherwise they work in …"
+// UiPolicyAutoText says "New tasks get a worktree when another task in the same repository is running, when they are created remotely or when …"
 // in the language the app shows.
 //
 // What isolation policy auto does (W06).
 func UiPolicyAutoText() string { return In(i18n.Locale()).UiPolicyAutoText() }
 
-// UiPolicyAutoText says "New tasks get a worktree only when they are created remotely or go to several agents at once; otherwise they work in …"
+// UiPolicyAutoText says "New tasks get a worktree when another task in the same repository is running, when they are created remotely or when …"
 // in the language of msgs.
 //
 // What isolation policy auto does (W06).
@@ -8692,20 +8708,6 @@ func UiPolicyNote() string { return In(i18n.Locale()).UiPolicyNote() }
 // Under the isolation options (W06, W10).
 func (msgs Messages) UiPolicyNote() string {
 	return Catalog.Format(msgs.locale, "ui_policy_note", nil)
-}
-
-// UiPolicyNoteUnsupported says "This version can't create worktrees yet: with “Always”, new tasks are marked as needing attention."
-// in the language the app shows.
-//
-// Under the isolation options: worktrees come later (W08).
-func UiPolicyNoteUnsupported() string { return In(i18n.Locale()).UiPolicyNoteUnsupported() }
-
-// UiPolicyNoteUnsupported says "This version can't create worktrees yet: with “Always”, new tasks are marked as needing attention."
-// in the language of msgs.
-//
-// Under the isolation options: worktrees come later (W08).
-func (msgs Messages) UiPolicyNoteUnsupported() string {
-	return Catalog.Format(msgs.locale, "ui_policy_note_unsupported", nil)
 }
 
 // UiWorkspaceName says "Name"
@@ -17316,4 +17318,866 @@ func UiArchivedEmptyDetail() string { return In(i18n.Locale()).UiArchivedEmptyDe
 // Archived list: empty state description (AR21).
 func (msgs Messages) UiArchivedEmptyDetail() string {
 	return Catalog.Format(msgs.locale, "ui_archived_empty_detail", nil)
+}
+
+// UiTaskIsolationWorktreeMerged says "Task worktree (merged)"
+// in the language the app shows.
+//
+// Task isolation: the worktree was merged (WT16).
+func UiTaskIsolationWorktreeMerged() string { return In(i18n.Locale()).UiTaskIsolationWorktreeMerged() }
+
+// UiTaskIsolationWorktreeMerged says "Task worktree (merged)"
+// in the language of msgs.
+//
+// Task isolation: the worktree was merged (WT16).
+func (msgs Messages) UiTaskIsolationWorktreeMerged() string {
+	return Catalog.Format(msgs.locale, "ui_task_isolation_worktree_merged", nil)
+}
+
+// UiTaskIsolationWorktreePr says "Task worktree (pull request opened)"
+// in the language the app shows.
+//
+// Task isolation: the worktree was pushed and a pull request opened (WT17).
+func UiTaskIsolationWorktreePr() string { return In(i18n.Locale()).UiTaskIsolationWorktreePr() }
+
+// UiTaskIsolationWorktreePr says "Task worktree (pull request opened)"
+// in the language of msgs.
+//
+// Task isolation: the worktree was pushed and a pull request opened (WT17).
+func (msgs Messages) UiTaskIsolationWorktreePr() string {
+	return Catalog.Format(msgs.locale, "ui_task_isolation_worktree_pr", nil)
+}
+
+// UiTaskIsolationWorktreeDiscarded says "Task worktree (discarded)"
+// in the language the app shows.
+//
+// Task isolation: the worktree was discarded (WT18).
+func UiTaskIsolationWorktreeDiscarded() string {
+	return In(i18n.Locale()).UiTaskIsolationWorktreeDiscarded()
+}
+
+// UiTaskIsolationWorktreeDiscarded says "Task worktree (discarded)"
+// in the language of msgs.
+//
+// Task isolation: the worktree was discarded (WT18).
+func (msgs Messages) UiTaskIsolationWorktreeDiscarded() string {
+	return Catalog.Format(msgs.locale, "ui_task_isolation_worktree_discarded", nil)
+}
+
+// UiWtSection says "Worktree"
+// in the language the app shows.
+//
+// Task details: the section about the task's worktree (WT11).
+func UiWtSection() string { return In(i18n.Locale()).UiWtSection() }
+
+// UiWtSection says "Worktree"
+// in the language of msgs.
+//
+// Task details: the section about the task's worktree (WT11).
+func (msgs Messages) UiWtSection() string {
+	return Catalog.Format(msgs.locale, "ui_wt_section", nil)
+}
+
+// UiWtBranch says "Branch"
+// in the language the app shows.
+//
+// Worktree section: the worktree's branch.
+func UiWtBranch() string { return In(i18n.Locale()).UiWtBranch() }
+
+// UiWtBranch says "Branch"
+// in the language of msgs.
+//
+// Worktree section: the worktree's branch.
+func (msgs Messages) UiWtBranch() string {
+	return Catalog.Format(msgs.locale, "ui_wt_branch", nil)
+}
+
+// UiWtBase says "Base branch"
+// in the language the app shows.
+//
+// Worktree section: the branch it merges into.
+func UiWtBase() string { return In(i18n.Locale()).UiWtBase() }
+
+// UiWtBase says "Base branch"
+// in the language of msgs.
+//
+// Worktree section: the branch it merges into.
+func (msgs Messages) UiWtBase() string {
+	return Catalog.Format(msgs.locale, "ui_wt_base", nil)
+}
+
+// UiWtPath says "Path"
+// in the language the app shows.
+//
+// Worktree section: the worktree's folder.
+func UiWtPath() string { return In(i18n.Locale()).UiWtPath() }
+
+// UiWtPath says "Path"
+// in the language of msgs.
+//
+// Worktree section: the worktree's folder.
+func (msgs Messages) UiWtPath() string {
+	return Catalog.Format(msgs.locale, "ui_wt_path", nil)
+}
+
+// UiWtViewChanges says "View changes"
+// in the language the app shows.
+//
+// Worktree section: opens the changes (WT19).
+func UiWtViewChanges() string { return In(i18n.Locale()).UiWtViewChanges() }
+
+// UiWtViewChanges says "View changes"
+// in the language of msgs.
+//
+// Worktree section: opens the changes (WT19).
+func (msgs Messages) UiWtViewChanges() string {
+	return Catalog.Format(msgs.locale, "ui_wt_view_changes", nil)
+}
+
+// UiWtMerge says "Merge"
+// in the language the app shows.
+//
+// Worktree section: opens the merge dialog (WT23).
+func UiWtMerge() string { return In(i18n.Locale()).UiWtMerge() }
+
+// UiWtMerge says "Merge"
+// in the language of msgs.
+//
+// Worktree section: opens the merge dialog (WT23).
+func (msgs Messages) UiWtMerge() string {
+	return Catalog.Format(msgs.locale, "ui_wt_merge", nil)
+}
+
+// UiWtDiscard says "Discard"
+// in the language the app shows.
+//
+// Worktree section: opens the discard confirmation (WT28).
+func UiWtDiscard() string { return In(i18n.Locale()).UiWtDiscard() }
+
+// UiWtDiscard says "Discard"
+// in the language of msgs.
+//
+// Worktree section: opens the discard confirmation (WT28).
+func (msgs Messages) UiWtDiscard() string {
+	return Catalog.Format(msgs.locale, "ui_wt_discard", nil)
+}
+
+// UiWtRunning says "The agent is running. Stop it before merging or discarding."
+// in the language the app shows.
+//
+// Worktree section: why merge and discard are disabled (WT12).
+func UiWtRunning() string { return In(i18n.Locale()).UiWtRunning() }
+
+// UiWtRunning says "The agent is running. Stop it before merging or discarding."
+// in the language of msgs.
+//
+// Worktree section: why merge and discard are disabled (WT12).
+func (msgs Messages) UiWtRunning() string {
+	return Catalog.Format(msgs.locale, "ui_wt_running", nil)
+}
+
+// UiWtNotReady says "The worktree isn't ready yet."
+// in the language the app shows.
+//
+// Worktree section: creating the worktree hasn't finished or is suspended
+// (WT13).
+func UiWtNotReady() string { return In(i18n.Locale()).UiWtNotReady() }
+
+// UiWtNotReady says "The worktree isn't ready yet."
+// in the language of msgs.
+//
+// Worktree section: creating the worktree hasn't finished or is suspended
+// (WT13).
+func (msgs Messages) UiWtNotReady() string {
+	return Catalog.Format(msgs.locale, "ui_wt_not_ready", nil)
+}
+
+// UiWtMerging says "Merging into {base}…"
+// in the language the app shows.
+//
+// Worktree section: a squash merge is running (WT14).
+func UiWtMerging(base string) string { return In(i18n.Locale()).UiWtMerging(base) }
+
+// UiWtMerging says "Merging into {base}…"
+// in the language of msgs.
+//
+// Worktree section: a squash merge is running (WT14).
+func (msgs Messages) UiWtMerging(base string) string {
+	return Catalog.Format(msgs.locale, "ui_wt_merging", map[string]any{"base": base})
+}
+
+// UiWtOpeningPr says "Pushing and opening a pull request…"
+// in the language the app shows.
+//
+// Worktree section: a pull request merge is running (WT14).
+func UiWtOpeningPr() string { return In(i18n.Locale()).UiWtOpeningPr() }
+
+// UiWtOpeningPr says "Pushing and opening a pull request…"
+// in the language of msgs.
+//
+// Worktree section: a pull request merge is running (WT14).
+func (msgs Messages) UiWtOpeningPr() string {
+	return Catalog.Format(msgs.locale, "ui_wt_opening_pr", nil)
+}
+
+// UiWtDiscarding says "Discarding…"
+// in the language the app shows.
+//
+// Worktree section: a discard is running.
+func UiWtDiscarding() string { return In(i18n.Locale()).UiWtDiscarding() }
+
+// UiWtDiscarding says "Discarding…"
+// in the language of msgs.
+//
+// Worktree section: a discard is running.
+func (msgs Messages) UiWtDiscarding() string {
+	return Catalog.Format(msgs.locale, "ui_wt_discarding", nil)
+}
+
+// UiWtWaitingMerge says "Will merge into {base} once the agent stops."
+// in the language the app shows.
+//
+// Worktree section: a merge waits for running sessions (WT15).
+func UiWtWaitingMerge(base string) string { return In(i18n.Locale()).UiWtWaitingMerge(base) }
+
+// UiWtWaitingMerge says "Will merge into {base} once the agent stops."
+// in the language of msgs.
+//
+// Worktree section: a merge waits for running sessions (WT15).
+func (msgs Messages) UiWtWaitingMerge(base string) string {
+	return Catalog.Format(msgs.locale, "ui_wt_waiting_merge", map[string]any{"base": base})
+}
+
+// UiWtWaitingPr says "Will open a pull request once the agent stops."
+// in the language the app shows.
+//
+// Worktree section: a pull request merge waits for running sessions (WT15).
+func UiWtWaitingPr() string { return In(i18n.Locale()).UiWtWaitingPr() }
+
+// UiWtWaitingPr says "Will open a pull request once the agent stops."
+// in the language of msgs.
+//
+// Worktree section: a pull request merge waits for running sessions (WT15).
+func (msgs Messages) UiWtWaitingPr() string {
+	return Catalog.Format(msgs.locale, "ui_wt_waiting_pr", nil)
+}
+
+// UiWtWaitingDiscard says "Will discard once the agent stops."
+// in the language the app shows.
+//
+// Worktree section: a discard waits for running sessions.
+func UiWtWaitingDiscard() string { return In(i18n.Locale()).UiWtWaitingDiscard() }
+
+// UiWtWaitingDiscard says "Will discard once the agent stops."
+// in the language of msgs.
+//
+// Worktree section: a discard waits for running sessions.
+func (msgs Messages) UiWtWaitingDiscard() string {
+	return Catalog.Format(msgs.locale, "ui_wt_waiting_discard", nil)
+}
+
+// UiWtHeld says "Stopped; see “Needs attention” for why."
+// in the language the app shows.
+//
+// Worktree section: the merge or discard is suspended (WT36).
+func UiWtHeld() string { return In(i18n.Locale()).UiWtHeld() }
+
+// UiWtHeld says "Stopped; see “Needs attention” for why."
+// in the language of msgs.
+//
+// Worktree section: the merge or discard is suspended (WT36).
+func (msgs Messages) UiWtHeld() string {
+	return Catalog.Format(msgs.locale, "ui_wt_held", nil)
+}
+
+// UiWtMerged says "Merged into {base}"
+// in the language the app shows.
+//
+// Worktree section: squash merged (WT16).
+func UiWtMerged(base string) string { return In(i18n.Locale()).UiWtMerged(base) }
+
+// UiWtMerged says "Merged into {base}"
+// in the language of msgs.
+//
+// Worktree section: squash merged (WT16).
+func (msgs Messages) UiWtMerged(base string) string {
+	return Catalog.Format(msgs.locale, "ui_wt_merged", map[string]any{"base": base})
+}
+
+// UiWtPrOpened says "Pull request opened"
+// in the language the app shows.
+//
+// Worktree section: merged as a pull request; the link follows (WT17).
+func UiWtPrOpened() string { return In(i18n.Locale()).UiWtPrOpened() }
+
+// UiWtPrOpened says "Pull request opened"
+// in the language of msgs.
+//
+// Worktree section: merged as a pull request; the link follows (WT17).
+func (msgs Messages) UiWtPrOpened() string {
+	return Catalog.Format(msgs.locale, "ui_wt_pr_opened", nil)
+}
+
+// UiWtDiscarded says "Discarded"
+// in the language the app shows.
+//
+// Worktree section: discarded (WT18).
+func UiWtDiscarded() string { return In(i18n.Locale()).UiWtDiscarded() }
+
+// UiWtDiscarded says "Discarded"
+// in the language of msgs.
+//
+// Worktree section: discarded (WT18).
+func (msgs Messages) UiWtDiscarded() string {
+	return Catalog.Format(msgs.locale, "ui_wt_discarded", nil)
+}
+
+// UiWtChangesTitle says "Changes in {branch}"
+// in the language the app shows.
+//
+// Changes dialog: title (WT19).
+func UiWtChangesTitle(branch string) string { return In(i18n.Locale()).UiWtChangesTitle(branch) }
+
+// UiWtChangesTitle says "Changes in {branch}"
+// in the language of msgs.
+//
+// Changes dialog: title (WT19).
+func (msgs Messages) UiWtChangesTitle(branch string) string {
+	return Catalog.Format(msgs.locale, "ui_wt_changes_title", map[string]any{"branch": branch})
+}
+
+// UiWtChangesTotal says "{files, plural, one {# file} other {# files}}, +{added} −{removed}"
+// in the language the app shows.
+//
+// Changes: how many files and lines changed (WT19).
+func UiWtChangesTotal(files int, added int, removed int) string {
+	return In(i18n.Locale()).UiWtChangesTotal(files, added, removed)
+}
+
+// UiWtChangesTotal says "{files, plural, one {# file} other {# files}}, +{added} −{removed}"
+// in the language of msgs.
+//
+// Changes: how many files and lines changed (WT19).
+func (msgs Messages) UiWtChangesTotal(files int, added int, removed int) string {
+	return Catalog.Format(msgs.locale, "ui_wt_changes_total", map[string]any{"files": files, "added": added, "removed": removed})
+}
+
+// UiWtChangesNone says "No changes in the worktree"
+// in the language the app shows.
+//
+// Changes dialog: nothing changed (WT20).
+func UiWtChangesNone() string { return In(i18n.Locale()).UiWtChangesNone() }
+
+// UiWtChangesNone says "No changes in the worktree"
+// in the language of msgs.
+//
+// Changes dialog: nothing changed (WT20).
+func (msgs Messages) UiWtChangesNone() string {
+	return Catalog.Format(msgs.locale, "ui_wt_changes_none", nil)
+}
+
+// UiWtChangesBinary says "Binary or very large file; contents not shown"
+// in the language the app shows.
+//
+// Changes dialog: a binary file (WT21).
+func UiWtChangesBinary() string { return In(i18n.Locale()).UiWtChangesBinary() }
+
+// UiWtChangesBinary says "Binary or very large file; contents not shown"
+// in the language of msgs.
+//
+// Changes dialog: a binary file (WT21).
+func (msgs Messages) UiWtChangesBinary() string {
+	return Catalog.Format(msgs.locale, "ui_wt_changes_binary", nil)
+}
+
+// UiWtChangesOmittedFile says "Too many changes; this file's contents are not shown"
+// in the language the app shows.
+//
+// Changes dialog: a file whose patch was left out (WT21).
+func UiWtChangesOmittedFile() string { return In(i18n.Locale()).UiWtChangesOmittedFile() }
+
+// UiWtChangesOmittedFile says "Too many changes; this file's contents are not shown"
+// in the language of msgs.
+//
+// Changes dialog: a file whose patch was left out (WT21).
+func (msgs Messages) UiWtChangesOmittedFile() string {
+	return Catalog.Format(msgs.locale, "ui_wt_changes_omitted_file", nil)
+}
+
+// UiWtChangesOmitted says "The changes are too large, so some files' contents are not shown."
+// in the language the app shows.
+//
+// Changes dialog: some patches were left out (WT21).
+func UiWtChangesOmitted() string { return In(i18n.Locale()).UiWtChangesOmitted() }
+
+// UiWtChangesOmitted says "The changes are too large, so some files' contents are not shown."
+// in the language of msgs.
+//
+// Changes dialog: some patches were left out (WT21).
+func (msgs Messages) UiWtChangesOmitted() string {
+	return Catalog.Format(msgs.locale, "ui_wt_changes_omitted", nil)
+}
+
+// UiWtChangesNoPatch says "Only the file mode changed"
+// in the language the app shows.
+//
+// Changes dialog: a file with no content change.
+func UiWtChangesNoPatch() string { return In(i18n.Locale()).UiWtChangesNoPatch() }
+
+// UiWtChangesNoPatch says "Only the file mode changed"
+// in the language of msgs.
+//
+// Changes dialog: a file with no content change.
+func (msgs Messages) UiWtChangesNoPatch() string {
+	return Catalog.Format(msgs.locale, "ui_wt_changes_no_patch", nil)
+}
+
+// UiWtChangesRefresh says "Refresh"
+// in the language the app shows.
+//
+// Changes dialog: load the changes again (WT22).
+func UiWtChangesRefresh() string { return In(i18n.Locale()).UiWtChangesRefresh() }
+
+// UiWtChangesRefresh says "Refresh"
+// in the language of msgs.
+//
+// Changes dialog: load the changes again (WT22).
+func (msgs Messages) UiWtChangesRefresh() string {
+	return Catalog.Format(msgs.locale, "ui_wt_changes_refresh", nil)
+}
+
+// UiWtChangesFailed says "Couldn't load the changes"
+// in the language the app shows.
+//
+// Changes dialog: loading failed (WT22).
+func UiWtChangesFailed() string { return In(i18n.Locale()).UiWtChangesFailed() }
+
+// UiWtChangesFailed says "Couldn't load the changes"
+// in the language of msgs.
+//
+// Changes dialog: loading failed (WT22).
+func (msgs Messages) UiWtChangesFailed() string {
+	return Catalog.Format(msgs.locale, "ui_wt_changes_failed", nil)
+}
+
+// UiWtChangesUnknown says "Changes unknown"
+// in the language the app shows.
+//
+// Discard confirmation: the changes couldn't be loaded (WT28).
+func UiWtChangesUnknown() string { return In(i18n.Locale()).UiWtChangesUnknown() }
+
+// UiWtChangesUnknown says "Changes unknown"
+// in the language of msgs.
+//
+// Discard confirmation: the changes couldn't be loaded (WT28).
+func (msgs Messages) UiWtChangesUnknown() string {
+	return Catalog.Format(msgs.locale, "ui_wt_changes_unknown", nil)
+}
+
+// UiWtChangesMissing says "The worktree's folder isn't there: it hasn't been created yet, or it was removed."
+// in the language the app shows.
+//
+// Changes dialog: the worktree directory is missing (WT13).
+func UiWtChangesMissing() string { return In(i18n.Locale()).UiWtChangesMissing() }
+
+// UiWtChangesMissing says "The worktree's folder isn't there: it hasn't been created yet, or it was removed."
+// in the language of msgs.
+//
+// Changes dialog: the worktree directory is missing (WT13).
+func (msgs Messages) UiWtChangesMissing() string {
+	return Catalog.Format(msgs.locale, "ui_wt_changes_missing", nil)
+}
+
+// UiWtChangeAdded says "Added"
+// in the language the app shows.
+//
+// Changes: a new file.
+func UiWtChangeAdded() string { return In(i18n.Locale()).UiWtChangeAdded() }
+
+// UiWtChangeAdded says "Added"
+// in the language of msgs.
+//
+// Changes: a new file.
+func (msgs Messages) UiWtChangeAdded() string {
+	return Catalog.Format(msgs.locale, "ui_wt_change_added", nil)
+}
+
+// UiWtChangeModified says "Modified"
+// in the language the app shows.
+//
+// Changes: a changed file.
+func UiWtChangeModified() string { return In(i18n.Locale()).UiWtChangeModified() }
+
+// UiWtChangeModified says "Modified"
+// in the language of msgs.
+//
+// Changes: a changed file.
+func (msgs Messages) UiWtChangeModified() string {
+	return Catalog.Format(msgs.locale, "ui_wt_change_modified", nil)
+}
+
+// UiWtChangeDeleted says "Deleted"
+// in the language the app shows.
+//
+// Changes: a deleted file.
+func UiWtChangeDeleted() string { return In(i18n.Locale()).UiWtChangeDeleted() }
+
+// UiWtChangeDeleted says "Deleted"
+// in the language of msgs.
+//
+// Changes: a deleted file.
+func (msgs Messages) UiWtChangeDeleted() string {
+	return Catalog.Format(msgs.locale, "ui_wt_change_deleted", nil)
+}
+
+// UiWtChangeRenamed says "Renamed"
+// in the language the app shows.
+//
+// Changes: a renamed file.
+func UiWtChangeRenamed() string { return In(i18n.Locale()).UiWtChangeRenamed() }
+
+// UiWtChangeRenamed says "Renamed"
+// in the language of msgs.
+//
+// Changes: a renamed file.
+func (msgs Messages) UiWtChangeRenamed() string {
+	return Catalog.Format(msgs.locale, "ui_wt_change_renamed", nil)
+}
+
+// UiWtMergeTitle says "Merge the worktree"
+// in the language the app shows.
+//
+// Merge dialog: title (WT23).
+func UiWtMergeTitle() string { return In(i18n.Locale()).UiWtMergeTitle() }
+
+// UiWtMergeTitle says "Merge the worktree"
+// in the language of msgs.
+//
+// Merge dialog: title (WT23).
+func (msgs Messages) UiWtMergeTitle() string {
+	return Catalog.Format(msgs.locale, "ui_wt_merge_title", nil)
+}
+
+// UiWtHow says "What to do with the worktree"
+// in the language the app shows.
+//
+// Merge and finish dialogs: label of the choices.
+func UiWtHow() string { return In(i18n.Locale()).UiWtHow() }
+
+// UiWtHow says "What to do with the worktree"
+// in the language of msgs.
+//
+// Merge and finish dialogs: label of the choices.
+func (msgs Messages) UiWtHow() string {
+	return Catalog.Format(msgs.locale, "ui_wt_how", nil)
+}
+
+// UiWtStrategySquash says "Squash into {base}"
+// in the language the app shows.
+//
+// Merge choice: squash merge (WT23).
+func UiWtStrategySquash(base string) string { return In(i18n.Locale()).UiWtStrategySquash(base) }
+
+// UiWtStrategySquash says "Squash into {base}"
+// in the language of msgs.
+//
+// Merge choice: squash merge (WT23).
+func (msgs Messages) UiWtStrategySquash(base string) string {
+	return Catalog.Format(msgs.locale, "ui_wt_strategy_squash", map[string]any{"base": base})
+}
+
+// UiWtStrategySquashHint says "All changes become one commit with the message below."
+// in the language the app shows.
+//
+// Merge choice: what squash does.
+func UiWtStrategySquashHint() string { return In(i18n.Locale()).UiWtStrategySquashHint() }
+
+// UiWtStrategySquashHint says "All changes become one commit with the message below."
+// in the language of msgs.
+//
+// Merge choice: what squash does.
+func (msgs Messages) UiWtStrategySquashHint() string {
+	return Catalog.Format(msgs.locale, "ui_wt_strategy_squash_hint", nil)
+}
+
+// UiWtStrategyPr says "Push and open a pull request"
+// in the language the app shows.
+//
+// Merge choice: pull request (WT23).
+func UiWtStrategyPr() string { return In(i18n.Locale()).UiWtStrategyPr() }
+
+// UiWtStrategyPr says "Push and open a pull request"
+// in the language of msgs.
+//
+// Merge choice: pull request (WT23).
+func (msgs Messages) UiWtStrategyPr() string {
+	return Catalog.Format(msgs.locale, "ui_wt_strategy_pr", nil)
+}
+
+// UiWtStrategyPrHint says "Push the branch to origin and open a pull request against {base}."
+// in the language the app shows.
+//
+// Merge choice: what the pull request option does.
+func UiWtStrategyPrHint(base string) string { return In(i18n.Locale()).UiWtStrategyPrHint(base) }
+
+// UiWtStrategyPrHint says "Push the branch to origin and open a pull request against {base}."
+// in the language of msgs.
+//
+// Merge choice: what the pull request option does.
+func (msgs Messages) UiWtStrategyPrHint(base string) string {
+	return Catalog.Format(msgs.locale, "ui_wt_strategy_pr_hint", map[string]any{"base": base})
+}
+
+// UiWtStrategyDiscard says "Discard"
+// in the language the app shows.
+//
+// Finish choice: discard (WT30).
+func UiWtStrategyDiscard() string { return In(i18n.Locale()).UiWtStrategyDiscard() }
+
+// UiWtStrategyDiscard says "Discard"
+// in the language of msgs.
+//
+// Finish choice: discard (WT30).
+func (msgs Messages) UiWtStrategyDiscard() string {
+	return Catalog.Format(msgs.locale, "ui_wt_strategy_discard", nil)
+}
+
+// UiWtStrategyDiscardHint says "Delete the worktree, its branch and every change in it."
+// in the language the app shows.
+//
+// Finish choice: what discard does.
+func UiWtStrategyDiscardHint() string { return In(i18n.Locale()).UiWtStrategyDiscardHint() }
+
+// UiWtStrategyDiscardHint says "Delete the worktree, its branch and every change in it."
+// in the language of msgs.
+//
+// Finish choice: what discard does.
+func (msgs Messages) UiWtStrategyDiscardHint() string {
+	return Catalog.Format(msgs.locale, "ui_wt_strategy_discard_hint", nil)
+}
+
+// UiWtMessage says "Commit message"
+// in the language the app shows.
+//
+// Merge dialog: the message field (WT23).
+func UiWtMessage() string { return In(i18n.Locale()).UiWtMessage() }
+
+// UiWtMessage says "Commit message"
+// in the language of msgs.
+//
+// Merge dialog: the message field (WT23).
+func (msgs Messages) UiWtMessage() string {
+	return Catalog.Format(msgs.locale, "ui_wt_message", nil)
+}
+
+// UiWtMessagePr says "The first line is the pull request's title; the rest is its description."
+// in the language the app shows.
+//
+// Merge dialog: the message when opening a pull request.
+func UiWtMessagePr() string { return In(i18n.Locale()).UiWtMessagePr() }
+
+// UiWtMessagePr says "The first line is the pull request's title; the rest is its description."
+// in the language of msgs.
+//
+// Merge dialog: the message when opening a pull request.
+func (msgs Messages) UiWtMessagePr() string {
+	return Catalog.Format(msgs.locale, "ui_wt_message_pr", nil)
+}
+
+// UiWtMergeAfter says "Once merged, the task is marked done, its agent sessions close and the worktree and branch are deleted."
+// in the language the app shows.
+//
+// Merge dialog: what happens after merging (WT23).
+func UiWtMergeAfter() string { return In(i18n.Locale()).UiWtMergeAfter() }
+
+// UiWtMergeAfter says "Once merged, the task is marked done, its agent sessions close and the worktree and branch are deleted."
+// in the language of msgs.
+//
+// Merge dialog: what happens after merging (WT23).
+func (msgs Messages) UiWtMergeAfter() string {
+	return Catalog.Format(msgs.locale, "ui_wt_merge_after", nil)
+}
+
+// UiWtMergeFailed says "Couldn't merge"
+// in the language the app shows.
+//
+// Merge dialog: the command was rejected (WT26).
+func UiWtMergeFailed() string { return In(i18n.Locale()).UiWtMergeFailed() }
+
+// UiWtMergeFailed says "Couldn't merge"
+// in the language of msgs.
+//
+// Merge dialog: the command was rejected (WT26).
+func (msgs Messages) UiWtMergeFailed() string {
+	return Catalog.Format(msgs.locale, "ui_wt_merge_failed", nil)
+}
+
+// UiWtDiscardTitle says "Discard all changes in the worktree?"
+// in the language the app shows.
+//
+// Discard confirmation: title (WT28).
+func UiWtDiscardTitle() string { return In(i18n.Locale()).UiWtDiscardTitle() }
+
+// UiWtDiscardTitle says "Discard all changes in the worktree?"
+// in the language of msgs.
+//
+// Discard confirmation: title (WT28).
+func (msgs Messages) UiWtDiscardTitle() string {
+	return Catalog.Format(msgs.locale, "ui_wt_discard_title", nil)
+}
+
+// UiWtDiscardText says "Uncommitted changes are deleted too and can't be recovered. The task is marked done and its agent sessions close."
+// in the language the app shows.
+//
+// Discard confirmation: what discarding does (WT28).
+func UiWtDiscardText() string { return In(i18n.Locale()).UiWtDiscardText() }
+
+// UiWtDiscardText says "Uncommitted changes are deleted too and can't be recovered. The task is marked done and its agent sessions close."
+// in the language of msgs.
+//
+// Discard confirmation: what discarding does (WT28).
+func (msgs Messages) UiWtDiscardText() string {
+	return Catalog.Format(msgs.locale, "ui_wt_discard_text", nil)
+}
+
+// UiWtDiscardFailed says "Couldn't discard"
+// in the language the app shows.
+//
+// Discard confirmation: the command was rejected.
+func UiWtDiscardFailed() string { return In(i18n.Locale()).UiWtDiscardFailed() }
+
+// UiWtDiscardFailed says "Couldn't discard"
+// in the language of msgs.
+//
+// Discard confirmation: the command was rejected.
+func (msgs Messages) UiWtDiscardFailed() string {
+	return Catalog.Format(msgs.locale, "ui_wt_discard_failed", nil)
+}
+
+// UiWtFinishTitle says "Finish {title}"
+// in the language the app shows.
+//
+// Finish dialog: title (WT30).
+func UiWtFinishTitle(title string) string { return In(i18n.Locale()).UiWtFinishTitle(title) }
+
+// UiWtFinishTitle says "Finish {title}"
+// in the language of msgs.
+//
+// Finish dialog: title (WT30).
+func (msgs Messages) UiWtFinishTitle(title string) string {
+	return Catalog.Format(msgs.locale, "ui_wt_finish_title", map[string]any{"title": title})
+}
+
+// UiWtFinishText says "The worktree's changes haven't been merged or discarded yet."
+// in the language the app shows.
+//
+// Finish dialog: why it opened (WT30).
+func UiWtFinishText() string { return In(i18n.Locale()).UiWtFinishText() }
+
+// UiWtFinishText says "The worktree's changes haven't been merged or discarded yet."
+// in the language of msgs.
+//
+// Finish dialog: why it opened (WT30).
+func (msgs Messages) UiWtFinishText() string {
+	return Catalog.Format(msgs.locale, "ui_wt_finish_text", nil)
+}
+
+// UiWtFinishYes says "Finish"
+// in the language the app shows.
+//
+// Finish dialog: confirm button.
+func UiWtFinishYes() string { return In(i18n.Locale()).UiWtFinishYes() }
+
+// UiWtFinishYes says "Finish"
+// in the language of msgs.
+//
+// Finish dialog: confirm button.
+func (msgs Messages) UiWtFinishYes() string {
+	return Catalog.Format(msgs.locale, "ui_wt_finish_yes", nil)
+}
+
+// UiWtFinishFailed says "Couldn't finish the task"
+// in the language the app shows.
+//
+// Finish dialog: the command was rejected.
+func UiWtFinishFailed() string { return In(i18n.Locale()).UiWtFinishFailed() }
+
+// UiWtFinishFailed says "Couldn't finish the task"
+// in the language of msgs.
+//
+// Finish dialog: the command was rejected.
+func (msgs Messages) UiWtFinishFailed() string {
+	return Catalog.Format(msgs.locale, "ui_wt_finish_failed", nil)
+}
+
+// UiWtConflictTitle says "Merge conflict"
+// in the language the app shows.
+//
+// Needs attention: a merge stopped on conflicts (WT36).
+func UiWtConflictTitle() string { return In(i18n.Locale()).UiWtConflictTitle() }
+
+// UiWtConflictTitle says "Merge conflict"
+// in the language of msgs.
+//
+// Needs attention: a merge stopped on conflicts (WT36).
+func (msgs Messages) UiWtConflictTitle() string {
+	return Catalog.Format(msgs.locale, "ui_wt_conflict_title", nil)
+}
+
+// UiWtConflictHelp says "In the worktree, merge {base} into {branch} and commit, then retry."
+// in the language the app shows.
+//
+// Needs attention: how to resolve a merge conflict (WT36).
+func UiWtConflictHelp(base string, branch string) string {
+	return In(i18n.Locale()).UiWtConflictHelp(base, branch)
+}
+
+// UiWtConflictHelp says "In the worktree, merge {base} into {branch} and commit, then retry."
+// in the language of msgs.
+//
+// Needs attention: how to resolve a merge conflict (WT36).
+func (msgs Messages) UiWtConflictHelp(base string, branch string) string {
+	return Catalog.Format(msgs.locale, "ui_wt_conflict_help", map[string]any{"base": base, "branch": branch})
+}
+
+// UiWtCancelMerge says "Cancel merge"
+// in the language the app shows.
+//
+// Needs attention: cancel a suspended merge (WT38).
+func UiWtCancelMerge() string { return In(i18n.Locale()).UiWtCancelMerge() }
+
+// UiWtCancelMerge says "Cancel merge"
+// in the language of msgs.
+//
+// Needs attention: cancel a suspended merge (WT38).
+func (msgs Messages) UiWtCancelMerge() string {
+	return Catalog.Format(msgs.locale, "ui_wt_cancel_merge", nil)
+}
+
+// UiWtCancelDiscard says "Cancel discard"
+// in the language the app shows.
+//
+// Needs attention: cancel a suspended discard (WT40).
+func UiWtCancelDiscard() string { return In(i18n.Locale()).UiWtCancelDiscard() }
+
+// UiWtCancelDiscard says "Cancel discard"
+// in the language of msgs.
+//
+// Needs attention: cancel a suspended discard (WT40).
+func (msgs Messages) UiWtCancelDiscard() string {
+	return Catalog.Format(msgs.locale, "ui_wt_cancel_discard", nil)
+}
+
+// UiWtActionFailed says "Couldn't do that"
+// in the language the app shows.
+//
+// Needs attention: retry or cancel was rejected (WT41).
+func UiWtActionFailed() string { return In(i18n.Locale()).UiWtActionFailed() }
+
+// UiWtActionFailed says "Couldn't do that"
+// in the language of msgs.
+//
+// Needs attention: retry or cancel was rejected (WT41).
+func (msgs Messages) UiWtActionFailed() string {
+	return Catalog.Format(msgs.locale, "ui_wt_action_failed", nil)
 }

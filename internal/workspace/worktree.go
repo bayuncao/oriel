@@ -157,9 +157,13 @@ func (g *Git) Create(ctx context.Context, c task.CreateWorktree) error {
 	return err
 }
 
-// Diff 是 worktree 相對 BaseCommit 的全部改動：已提交、未提交與未追蹤的檔案，.gitignore 忽略的不算（D1–D4）。
+// Diff 是 worktree 相對 BaseCommit 的全部改動：已提交、未提交與未追蹤的檔案，.gitignore 忽略的不算（D1–D6）。
 // 在臨時的 index 上算，worktree 的 index 與檔案都不變；diff 寫進檔案，不受探測輸出的上限截斷。
+// 大於 diffBigFile 的檔案當作二進位（只寫一行 "Binary files … differ"），agent 寫出的大檔不會讓 diff 跟著變大。
 func (g *Git) Diff(ctx context.Context, w task.Worktree) (string, error) {
+	if !g.Exists(w.Path) {
+		return "", fail(CodeDirMissing, nil, "path", w.Path) // 還沒建好或已刪掉
+	}
 	o, err := g.begin(ctx)
 	if err != nil {
 		return "", err
@@ -170,17 +174,14 @@ func (g *Git) Diff(ctx context.Context, w task.Worktree) (string, error) {
 	}
 	defer os.RemoveAll(tmp)
 	out := filepath.Join(tmp, "diff")
-	for _, args := range [][]string{
-		{"diff", "--cached", "--no-color", "--no-ext-diff", "--no-textconv",
-			"--src-prefix=a/", "--dst-prefix=b/", "--output=" + out, w.BaseCommit, "--"},
-	} {
-		res, err := o.try(w.Path, extra, opTimeout, args...)
-		if err != nil {
-			return "", err
-		}
-		if res.ExitCode != 0 {
-			return "", gitFailed(res)
-		}
+	res, err := o.try(w.Path, extra, opTimeout, "-c", "core.bigFileThreshold="+diffBigFile,
+		"diff", "--cached", "-M", "--no-color", "--no-ext-diff", "--no-textconv",
+		"--src-prefix=a/", "--dst-prefix=b/", "--output="+out, w.BaseCommit, "--")
+	if err != nil {
+		return "", err
+	}
+	if res.ExitCode != 0 {
+		return "", gitFailed(res)
 	}
 	b, err := os.ReadFile(out)
 	if err != nil {
@@ -188,6 +189,9 @@ func (g *Git) Diff(ctx context.Context, w task.Worktree) (string, error) {
 	}
 	return string(b), nil
 }
+
+// diffBigFile 是 Diff 逐行比較的檔案大小上限（git 的 core.bigFileThreshold）。
+const diffBigFile = "1m"
 
 // tempIndex 在臨時目錄做一份 dir 的 index，加進 dir 現在的全部改動（含未追蹤的檔案），
 // 回傳臨時目錄（用完由呼叫者刪）與指向它的環境。dir 的 index 與檔案都不變。
