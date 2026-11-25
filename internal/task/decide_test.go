@@ -226,31 +226,43 @@ func sessionCmd(kind CommandKind, sid SessionID, origin Origin, set func(*Comman
 	return c
 }
 
-func commandKinds(t *testing.T) map[CommandKind]string {
+// declaredKinds 讀 file 頂層宣告的 K 型別常數：值 → 名稱。
+func declaredKinds[K ~string](t *testing.T, file, typ string) map[K]string {
 	t.Helper()
-	f, err := parser.ParseFile(token.NewFileSet(), "command.go", nil, 0)
+	f, err := parser.ParseFile(token.NewFileSet(), file, nil, 0)
 	if err != nil {
 		t.Fatal(err)
 	}
-	kinds := map[CommandKind]string{}
-	ast.Inspect(f, func(n ast.Node) bool {
-		vs, ok := n.(*ast.ValueSpec)
-		if !ok {
-			return true
+	kinds := map[K]string{}
+	for _, d := range f.Decls {
+		g, ok := d.(*ast.GenDecl)
+		if !ok || g.Tok != token.CONST {
+			continue
 		}
-		if id, ok := vs.Type.(*ast.Ident); !ok || id.Name != "CommandKind" {
-			return true
-		}
-		for i, v := range vs.Values {
-			lit, ok := v.(*ast.BasicLit)
-			if !ok || lit.Kind != token.STRING {
-				t.Fatalf("%s is not a string literal", vs.Names[i].Name)
+		for _, spec := range g.Specs {
+			vs, ok := spec.(*ast.ValueSpec)
+			if !ok {
+				continue
 			}
-			s, _ := strconv.Unquote(lit.Value)
-			kinds[CommandKind(s)] = vs.Names[i].Name
+			if id, ok := vs.Type.(*ast.Ident); !ok || id.Name != typ {
+				continue
+			}
+			if len(vs.Values) != len(vs.Names) {
+				t.Fatalf("%s: %d names, %d values", vs.Names[0].Name, len(vs.Names), len(vs.Values))
+			}
+			for i, v := range vs.Values {
+				lit, ok := v.(*ast.BasicLit)
+				if !ok || lit.Kind != token.STRING {
+					t.Fatalf("%s is not a string literal", vs.Names[i].Name)
+				}
+				s, _ := strconv.Unquote(lit.Value)
+				kinds[K(s)] = vs.Names[i].Name
+			}
 		}
-		return true
-	})
+	}
+	if len(kinds) == 0 {
+		t.Fatalf("%s declares no %s", file, typ)
+	}
 	return kinds
 }
 
@@ -258,7 +270,7 @@ func commandKinds(t *testing.T) map[CommandKind]string {
 // CommandKind，事實旗標與名稱的 Fact 前綴一致，且 cmdSlots
 // 恰好是 Command 的全部指標欄位。
 func TestKindsCoverCommand(t *testing.T) {
-	declared := commandKinds(t)
+	declared := declaredKinds[CommandKind](t, "command.go", "CommandKind")
 	for k, name := range declared {
 		ki, ok := kinds[k]
 		if !ok {

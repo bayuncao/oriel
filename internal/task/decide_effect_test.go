@@ -1,8 +1,19 @@
 package task
 
-import (
-	"testing"
-)
+import "testing"
+
+// noFailure 是不會失敗的 Effect：hub 分派它們時從不回報 effect_failed
+// （schedule_timer 只排計時器、close_conn 的錯誤只記日誌、report_exited 由 hub 的 plan 就地記為退出）。
+var noFailure = map[EffectKind]bool{EffScheduleTimer: true, EffCloseConn: true, EffReportExited: true}
+
+// 其餘每種 Effect 都有失敗後的處置：hub 回報的 effect_failed 不會被當成程式錯誤拒絕。
+func TestOnFailureCoversEffects(t *testing.T) {
+	for k, name := range declaredKinds[EffectKind](t, "effect.go", "EffectKind") {
+		if _, ok := onFailure[k]; ok == noFailure[k] {
+			t.Errorf("%s: in onFailure = %v, want %v", name, ok, !noFailure[k])
+		}
+	}
+}
 
 func TestDecideEffects(t *testing.T) {
 	prob := Problem{Code: "proc.exited", Params: map[string]string{"status": "1"}}
