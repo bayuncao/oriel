@@ -66,6 +66,8 @@ type Index interface {
 	Files(ctx context.Context) ([]TaskFile, error)
 	// Recap 是未歸檔的 Task 在 since 之後（含）結束的回合（D115），帶 Task 的標題與 Workspace，順序不定。
 	Recap(ctx context.Context, since time.Time) ([]RecapTurn, error)
+	// SecretsInUse 是 agent 的快照引用的密鑰（Views.Secrets，含已歸檔的 Task），順序不定。
+	SecretsInUse(ctx context.Context, agent task.AgentID) ([]string, error)
 }
 
 // Views 是從新 State 衍生的投影列。
@@ -86,6 +88,9 @@ type Views struct {
 	// 內容相同），Delete 也不刪（刪掉的 Task 的用量仍算，DL12）。
 	Links    []SessionLink
 	Reported []ReportedUsage
+	// Secrets 是 Task 引用的密鑰（secretsOf）。Append 時只在變了時非 nil，整組替換已存的（空切片清掉）；
+	// nil 是沒變。Reproject 時是整組。Delete 一起刪。
+	Secrets []TaskSecret
 }
 
 // Config 保存跨 Task 的設定，由 hub 直接寫入，而非
@@ -129,11 +134,15 @@ type StartOptions struct {
 	Emit func(task.Command)
 }
 
-// Launcher 把 Agent 解析為 Session 啟動時保存的 Launch Snapshot（預設 Profile，
-// D95）：先確認 agent 裝好了、能啟動，ACP agent 探測它能否恢復（D98）。
+// Launcher 用 Agent 的一個 Profile 解析出 Session 啟動時保存的 Launch Snapshot（D95、m4.md 第 3 節）：
+// 先確認 agent 裝好了、能啟動，ACP agent 探測它能否恢復（D98）。
 // 由 app 實作。
 type Launcher interface {
-	Launch(ctx context.Context, agent task.AgentID) (task.LaunchSnapshot, error)
+	// Launch 用 agent 的 Profile profile 解析出 Launch Snapshot；profile 為空時用預設的（PO18），agent 沒有它是
+	// agent.unknown_profile（PO17）。成功時 release 非 nil：hub 把快照寫進事件流（或確定寫不了）
+	// 之後呼叫它，一次。在那之前快照引用的密鑰算「正在用」，app 清理待清理的密鑰時跳過它們
+	// （m4.md AC37）。失敗時 release 是 nil。
+	Launch(ctx context.Context, agent task.AgentID, profile task.ProfileID) (snap task.LaunchSnapshot, release func(), err error)
 	// CheckAgent 在 agent 在目錄裡時回 nil（不檢查是否安裝），否則回 agent.unknown_agent
 	// （hub 不導入 agent，錯誤由它給）；設預設模型時用（MD11）。
 	CheckAgent(agent task.AgentID) error

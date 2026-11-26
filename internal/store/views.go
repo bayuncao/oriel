@@ -135,6 +135,22 @@ func (s *Store) ViewsOf(ctx context.Context, id task.TaskID) (hub.Views, error) 
 	return v, nil
 }
 
+// SecretsInUse 是 Index.SecretsInUse：agent 的快照引用的密鑰（走 agent 的索引）。
+func (s *Store) SecretsInUse(ctx context.Context, agent task.AgentID) ([]string, error) {
+	if err := s.check(); err != nil {
+		return nil, err
+	}
+	rows, err := s.r.Query(ctx, "SELECT DISTINCT key FROM task_secrets WHERE agent=?", string(agent))
+	if err != nil {
+		return nil, mapErr(err)
+	}
+	out := make([]string, 0, len(rows.Values))
+	for _, r := range rows.Values {
+		out = append(out, toStr(r[0]))
+	}
+	return out, nil
+}
+
 // Recap 是 Index.Recap：未歸檔的 Task 在 since 之後（含）結束的回合，連同 Task 的標題與 Workspace
 // （在 SQL 裡篩，走 ended_at 的索引）。
 func (s *Store) Recap(ctx context.Context, since time.Time) ([]hub.RecapTurn, error) {

@@ -1525,3 +1525,64 @@ func TestSearchMessageCap(t *testing.T) {
 		})
 	}
 }
+
+// Views.Secrets（m4.md AC37）：非 nil 時整組替換、nil 時不動、空的清掉；Reproject 整組；刪 Task 一起刪；按 agent 查。
+func TestTaskSecrets(t *testing.T) {
+	for name, mk := range impls(t) {
+		t.Run(name, func(t *testing.T) {
+			ctx := context.Background()
+			s := mk(t)
+			used := func(agent task.AgentID) []string {
+				t.Helper()
+				keys, err := s.SecretsInUse(ctx, agent)
+				if err != nil {
+					t.Fatal(err)
+				}
+				slices.Sort(keys)
+				return keys
+			}
+			b := batch(rec(1, "a"))
+			b.Views.Secrets = []hub.TaskSecret{{Agent: "grok", Key: "k1"}, {Agent: "codex", Key: "k2"}}
+			if err := s.Append(ctx, "t-1", 0, b); err != nil {
+				t.Fatal(err)
+			}
+			b2 := batch(rec(1, "b"))
+			b2.Views.Secrets = []hub.TaskSecret{{Agent: "grok", Key: "k3"}}
+			if err := s.Append(ctx, "t-2", 0, b2); err != nil {
+				t.Fatal(err)
+			}
+			if got := used("grok"); !slices.Equal(got, []string{"k1", "k3"}) {
+				t.Fatalf("grok %v", got)
+			}
+			if got := used("codex"); !slices.Equal(got, []string{"k2"}) {
+				t.Fatalf("codex %v", got)
+			}
+			if err := s.Append(ctx, "t-1", 1, batch(rec(2, "c"))); err != nil { // nil：不動
+				t.Fatal(err)
+			}
+			if got := used("codex"); !slices.Equal(got, []string{"k2"}) {
+				t.Fatalf("an append without secrets changed them: %v", got)
+			}
+			b3 := batch(rec(3, "d"))
+			b3.Views.Secrets = []hub.TaskSecret{} // 空的：清掉
+			if err := s.Append(ctx, "t-1", 2, b3); err != nil {
+				t.Fatal(err)
+			}
+			if got := used("codex"); len(got) != 0 {
+				t.Fatalf("an empty set kept %v", got)
+			}
+			if err := s.Reproject(ctx, "t-1", hub.Views{Secrets: []hub.TaskSecret{{Agent: "grok", Key: "k4"}}}); err != nil {
+				t.Fatal(err)
+			}
+			if got := used("grok"); !slices.Equal(got, []string{"k3", "k4"}) {
+				t.Fatalf("after reproject %v", got)
+			}
+			if err := s.Delete(ctx, "t-2"); err != nil {
+				t.Fatal(err)
+			}
+			if got := used("grok"); !slices.Equal(got, []string{"k4"}) {
+				t.Fatalf("after deleting t-2 %v", got)
+			}
+		})
+	}
+}

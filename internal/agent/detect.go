@@ -104,9 +104,9 @@ func (d *detector) detect(ctx context.Context, env proc.Env, def Definition, ov 
 			res.fp = v.fp
 			break
 		}
-		// 覆寫路徑被拒即為 broken，不回退；只是逾時不代表候選錯了，
-		// 它保住順位，等背景重試（D137）。
-		if c.Source == FromOverride || v.timedOut {
+		// 指定的路徑（覆寫或自訂 agent 的絕對路徑命令）被拒即為 broken，不回退；
+		// 只是逾時不代表候選錯了，它保住順位，等背景重試（D137）。
+		if c.Source.Pinned() || v.timedOut {
 			broken = c.Rejected
 			break
 		}
@@ -137,7 +137,7 @@ func (d *detector) candidates(env proc.Env, def Definition, ov Override) []Candi
 	}
 	cmd := def.Detect.Command
 	if filepath.IsAbs(cmd) {
-		return []Candidate{{Path: cmd, Source: FromOverride}}
+		return []Candidate{{Path: cmd, Source: FromCommand}}
 	}
 	var out []Candidate
 	for _, src := range []struct {

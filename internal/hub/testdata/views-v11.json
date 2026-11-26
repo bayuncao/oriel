@@ -107,5 +107,11 @@
     }
   ],
   "Links": null,
-  "Reported": null
+  "Reported": null,
+  "Secrets": [
+    {
+      "agent": "test",
+      "key": "profile:test:default:TOKEN:n1"
+    }
+  ]
 }

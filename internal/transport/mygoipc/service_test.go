@@ -356,7 +356,7 @@ func TestBoundMethodsArePageAPI(t *testing.T) {
 			"CreateTask", "DeleteLabel", "DeleteRule", "DeleteTask", "Diff", "Files", "Isolation", "Labels", "Models", "PutLabel", "PutSettings", "PutWorkspace", "Recap",
 			"Rules", "Search", "SetDefaultModel", "Settings", "Snapshot", "StartAgent", "Subscribe",
 			"Tasks", "WatchTasks", "Workspaces"},
-		reflect.TypeFor[*Agents](): {"List", "Refresh", "Registry"},
+		reflect.TypeFor[*Agents](): {"AddCustom", "AddProfile", "AddRegistry", "EditCustom", "EditProfile", "List", "Problems", "Refresh", "Registry", "Remove", "RemoveProfile", "SetOverride", "UpdateRegistry"},
 		reflect.TypeFor[*Desktop](): {"Attachable", "CheckForUpdates", "ChooseFiles", "ChooseFolder", "ContinueWithoutAccount", "Folder", "KeepAwake", "Languages",
 			"OpenLink", "Privacy", "Quit", "RecentSearches", "ReleaseNotesShown", "RemoteAvailable", "RestartToUpdate", "RevealFolder", "SetKeepAwake", "SetLanguage", "SetRecentSearches", "SetTheme", "ShowMain", "ShowTask", "Theme",
 			"WatchReleaseNotes", "WatchUpdates", "WithoutAccount"},

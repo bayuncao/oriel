@@ -188,6 +188,23 @@
     }
   },
   "agent_duplicate_agent": "Another agent already uses this ID",
+  "agent_already_added": "{id} is already added",
+  "agent_registry_entry_changed": "{id} changed to version {version} in the registry. Check it and confirm again",
+  "@agent_registry_entry_changed": {"description": "The registry entry changed after the user confirmed adding or updating it.", "placeholders": {"id": {"type": "String"}, "version": {"type": "String"}}},
+  "agent_registry_entry_missing": "{id} is no longer in the registry. Refresh the registry and try again",
+  "agent_builtin": "Built-in agents cannot be removed",
+  "agent_relative_override": "The path {path} must be absolute",
+  "agent_invalid_env": "The environment variable name “{name}” is empty, contains =, or is repeated",
+  "agent_secret_empty": "Enter a value for the secret {name}",
+  "agent_unknown_profile": "This profile no longer exists",
+  "agent_profile_name_empty": "Enter a name for the profile",
+  "agent_profile_name_taken": "This agent already has a profile named “{name}”",
+  "@agent_profile_name_taken": {"description": "A profile name is already used by another profile of the agent.", "placeholders": {"name": {"type": "String"}}},
+  "agent_default_profile": "The default profile can’t be deleted",
+  "agent_native_unsupported": "This agent has no permissive mode of its own",
+  "agent_invalid_timeout": "The approval timeout must be between 0 and 24 hours",
+  "agent_timeout_verdict_missing": "Choose what happens when an approval times out",
+  "agent_keychain_unavailable": "The system keychain is not available: {detail}",
   "@agent_duplicate_agent": {
     "description": "Two configured agents have the same ID."
   },
@@ -1334,6 +1351,10 @@
   "@ui_path_source_override": {
     "description": "Where the program was found: a path the user set."
   },
+  "ui_path_source_command": "Command path",
+  "@ui_path_source_command": {
+    "description": "Where the program was found: the absolute path a custom agent's command names."
+  },
   "ui_path_source_path": "PATH",
   "@ui_path_source_path": {
     "description": "Where the program was found: the login shell's PATH."
@@ -1456,6 +1477,210 @@
   "@ui_agent_state_changed": {
     "description": "Announced to screen readers when the availability of the agent shown in the inspector changes.",
     "placeholders": { "name": { "type": "String" }, "state": { "type": "String" } }
+  },
+  "ui_agentcfg_section": "Settings",
+  "@ui_agentcfg_section": {
+    "description": "Title of the section in an agent's details that holds its override path, version, edit and remove."
+  },
+  "ui_agentcfg_add": "Add",
+  "@ui_agentcfg_add": {
+    "description": "Button in a registry entry's details that adds it to the agents."
+  },
+  "ui_agentcfg_add_title": "Add {name}?",
+  "@ui_agentcfg_add_title": {
+    "description": "Title of the confirmation before adding a registry entry.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_agentcfg_add_text": "OrielHub runs this command to start the agent. It downloads and runs code from the package's publisher.",
+  "@ui_agentcfg_add_text": {
+    "description": "Description of the confirmation before adding or updating a registry entry."
+  },
+  "ui_agentcfg_add_yes": "Add",
+  "@ui_agentcfg_add_yes": {
+    "description": "Confirm button of the add confirmation."
+  },
+  "ui_agentcfg_add_failed": "Could not add the agent",
+  "@ui_agentcfg_add_failed": {
+    "description": "Title of the error shown when adding a registry entry fails."
+  },
+  "ui_agentcfg_added": "Added · {version}",
+  "@ui_agentcfg_added": {
+    "description": "Badge on a registry entry that is already added, with the pinned version.",
+    "placeholders": { "version": { "type": "String" } }
+  },
+  "ui_agentcfg_native": "Supported natively by a built-in agent",
+  "@ui_agentcfg_native": {
+    "description": "Footer note on a registry entry that a built-in agent already supports."
+  },
+  "ui_agentcfg_update": "Update to {version}",
+  "@ui_agentcfg_update": {
+    "description": "Button that replaces an added registry entry with the registry's newer version.",
+    "placeholders": { "version": { "type": "String" } }
+  },
+  "ui_agentcfg_update_badge": "Update: {version}",
+  "@ui_agentcfg_update_badge": {
+    "description": "Badge on an added registry entry when the registry has another version.",
+    "placeholders": { "version": { "type": "String" } }
+  },
+  "ui_agentcfg_update_title": "Update {name} to {version}?",
+  "@ui_agentcfg_update_title": {
+    "description": "Title of the confirmation before updating a registry entry.",
+    "placeholders": { "name": { "type": "String" }, "version": { "type": "String" } }
+  },
+  "ui_agentcfg_update_yes": "Update",
+  "@ui_agentcfg_update_yes": {
+    "description": "Confirm button of the update confirmation."
+  },
+  "ui_agentcfg_update_failed": "Could not update the agent",
+  "@ui_agentcfg_update_failed": {
+    "description": "Title of the error shown when updating a registry entry fails."
+  },
+  "ui_agentcfg_version_change": "{from} → {to}",
+  "@ui_agentcfg_version_change": {
+    "description": "Old and new version in the update confirmation.",
+    "placeholders": { "from": { "type": "String" }, "to": { "type": "String" } }
+  },
+  "ui_agentcfg_pinned": "Version {version}",
+  "@ui_agentcfg_pinned": {
+    "description": "Pinned version of an added registry entry in its details.",
+    "placeholders": { "version": { "type": "String" } }
+  },
+  "ui_agentcfg_command": "Command",
+  "@ui_agentcfg_command": {
+    "description": "Label of the command that starts an agent."
+  },
+  "ui_agentcfg_command_hint": "A command name, found the same way as other agents, or an absolute path.",
+  "@ui_agentcfg_command_hint": {
+    "description": "Help under the command field of a custom agent."
+  },
+  "ui_agentcfg_override": "Program path",
+  "@ui_agentcfg_override": {
+    "description": "Label of the field that overrides where the agent's program is."
+  },
+  "ui_agentcfg_override_hint": "An absolute path. When set, only this program is used.",
+  "@ui_agentcfg_override_hint": {
+    "description": "Help under the override path field."
+  },
+  "ui_agentcfg_override_clear": "Clear",
+  "@ui_agentcfg_override_clear": {
+    "description": "Button that clears the override path."
+  },
+  "ui_agentcfg_save": "Save",
+  "@ui_agentcfg_save": {
+    "description": "Save button of the agent settings."
+  },
+  "ui_agentcfg_save_failed": "Could not save",
+  "@ui_agentcfg_save_failed": {
+    "description": "Title of the error shown when saving a custom agent fails."
+  },
+  "ui_agentcfg_edit": "Edit",
+  "@ui_agentcfg_edit": {
+    "description": "Button that opens the custom agent form."
+  },
+  "ui_agentcfg_remove": "Remove",
+  "@ui_agentcfg_remove": {
+    "description": "Button that removes an added registry entry or a custom agent."
+  },
+  "ui_agentcfg_remove_title": "Remove {name}?",
+  "@ui_agentcfg_remove_title": {
+    "description": "Title of the confirmation before removing an agent.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_agentcfg_remove_text": "Its tasks keep their conversations and can still continue. New tasks cannot use it.",
+  "@ui_agentcfg_remove_text": {
+    "description": "Description of the remove confirmation."
+  },
+  "ui_agentcfg_remove_yes": "Remove",
+  "@ui_agentcfg_remove_yes": {
+    "description": "Confirm button of the remove confirmation."
+  },
+  "ui_agentcfg_remove_failed": "Could not remove the agent",
+  "@ui_agentcfg_remove_failed": {
+    "description": "Title of the error shown when removing an agent fails."
+  },
+  "ui_agentcfg_problems": "{count, plural, one {# configured agent could not be loaded} other {# configured agents could not be loaded}}",
+  "@ui_agentcfg_problems": {
+    "description": "Title of the list of configured agents left out of the catalog.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ui_agentcfg_custom_new": "Add custom agent",
+  "@ui_agentcfg_custom_new": {
+    "description": "Button and dialog title for adding a custom ACP agent."
+  },
+  "ui_agentcfg_custom_edit": "Edit {name}",
+  "@ui_agentcfg_custom_edit": {
+    "description": "Title of the dialog that edits a custom agent.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_agentcfg_custom_text": "Any program that speaks the Agent Client Protocol over stdio.",
+  "@ui_agentcfg_custom_text": {
+    "description": "Description of the custom agent dialog."
+  },
+  "ui_agentcfg_custom_add": "Add",
+  "@ui_agentcfg_custom_add": {
+    "description": "Submit button of the new custom agent form."
+  },
+  "ui_agentcfg_name": "Name",
+  "@ui_agentcfg_name": {
+    "description": "Label of the custom agent's name field."
+  },
+  "ui_agentcfg_slug": "ID",
+  "@ui_agentcfg_slug": {
+    "description": "Label of the custom agent's slug field."
+  },
+  "ui_agentcfg_slug_hint": "Lowercase letters, digits and -. Cannot be changed later.",
+  "@ui_agentcfg_slug_hint": {
+    "description": "Help under the slug field when adding."
+  },
+  "ui_agentcfg_slug_fixed": "The ID cannot be changed.",
+  "@ui_agentcfg_slug_fixed": {
+    "description": "Help under the slug field when editing."
+  },
+  "ui_agentcfg_args": "Arguments",
+  "@ui_agentcfg_args": {
+    "description": "Label of the custom agent's arguments field."
+  },
+  "ui_agentcfg_args_hint": "One per line, passed as they are.",
+  "@ui_agentcfg_args_hint": {
+    "description": "Help under the arguments field."
+  },
+  "ui_agentcfg_env": "Environment variables",
+  "@ui_agentcfg_env": {
+    "description": "Legend of the custom agent's environment variables."
+  },
+  "ui_agentcfg_env_name": "Name",
+  "@ui_agentcfg_env_name": {
+    "description": "Label of an environment variable's name."
+  },
+  "ui_agentcfg_env_value": "Value",
+  "@ui_agentcfg_env_value": {
+    "description": "Label of an environment variable's value."
+  },
+  "ui_agentcfg_env_add": "Add variable",
+  "@ui_agentcfg_env_add": {
+    "description": "Button that adds an environment variable row."
+  },
+  "ui_agentcfg_env_remove": "Remove {name}",
+  "@ui_agentcfg_env_remove": {
+    "description": "Spoken name of the button that removes an environment variable row.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "ui_agentcfg_env_remove_unnamed": "Remove this variable",
+  "@ui_agentcfg_env_remove_unnamed": {
+    "description": "Spoken name of the button that removes an environment variable row whose name is still empty."
+  },
+  "ui_agentcfg_secret": "Secret",
+  "@ui_agentcfg_secret": {
+    "description": "Switch that stores the value in the system keychain."
+  },
+  "ui_agentcfg_secret_kept": "Saved · leave empty to keep",
+  "@ui_agentcfg_secret_kept": {
+    "description": "Placeholder of a saved secret's value field."
+  },
+  "ui_agentcfg_secret_unsecured": "{name} was saved as a secret. Enter its new value, or turn Secret back on to keep it",
+  "@ui_agentcfg_secret_unsecured": {
+    "description": "Shown when a saved secret is switched to plain text without a value: saving would replace it with an empty value.",
+    "placeholders": { "name": { "type": "String" } }
   },
   "ui_candidate_selected": "In use",
   "@ui_candidate_selected": {
@@ -5246,5 +5471,69 @@
   "ui_wt_cancel_discard": "Cancel discard",
   "@ui_wt_cancel_discard": {"description": "Needs attention: cancel a suspended discard (WT40)."},
   "ui_wt_action_failed": "Couldn't do that",
-  "@ui_wt_action_failed": {"description": "Needs attention: retry or cancel was rejected (WT41)."}
+  "@ui_wt_action_failed": {"description": "Needs attention: retry or cancel was rejected (WT41)."},
+  "ui_profile_section": "Profiles",
+  "@ui_profile_section": {"description": "Title of the profiles section in an agent's details."},
+  "ui_profile_default": "Default profile",
+  "@ui_profile_default": {"description": "Name of an agent's default profile."},
+  "ui_profile_default_badge": "Default",
+  "@ui_profile_default_badge": {"description": "Badge on the default profile in the list."},
+  "ui_profile_new": "New profile",
+  "@ui_profile_new": {"description": "Button and dialog title that create a profile."},
+  "ui_profile_edit_title": "Edit {name}",
+  "@ui_profile_edit_title": {"description": "Title of the dialog that edits a profile.", "placeholders": {"name": {"type": "String"}}},
+  "ui_profile_text": "Settings to start this agent with. Sessions keep the settings they started with.",
+  "@ui_profile_text": {"description": "Description of the profile dialog."},
+  "ui_profile_name": "Name",
+  "@ui_profile_name": {"description": "Label of the profile name field."},
+  "ui_profile_name_fixed": "The default profile keeps its name",
+  "@ui_profile_name_fixed": {"description": "Hint under the disabled name of the default profile."},
+  "ui_profile_approval": "Approvals",
+  "@ui_profile_approval": {"description": "Label of the approval mode choice."},
+  "ui_profile_approval_orielhub": "Through OrielHub",
+  "@ui_profile_approval_orielhub": {"description": "Approval mode: the agent asks OrielHub."},
+  "ui_profile_approval_orielhub_detail": "The agent asks before acting; you answer in OrielHub",
+  "@ui_profile_approval_orielhub_detail": {"description": "Detail of the OrielHub approval mode."},
+  "ui_profile_approval_native": "Agent's permissive mode",
+  "@ui_profile_approval_native": {"description": "Approval mode: the agent's own permissive mode."},
+  "ui_profile_approval_native_detail": "The agent's actions no longer go through OrielHub for approval",
+  "@ui_profile_approval_native_detail": {"description": "Warning shown with the permissive mode."},
+  "ui_profile_args": "Extra arguments",
+  "@ui_profile_args": {"description": "Label of the extra arguments field."},
+  "ui_profile_args_hint": "One per line, added after the agent's own arguments, not through a shell",
+  "@ui_profile_args_hint": {"description": "Hint under the extra arguments field."},
+  "ui_profile_timeout": "Approval timeout (minutes)",
+  "@ui_profile_timeout": {"description": "Label of the approval timeout field."},
+  "ui_profile_timeout_hint": "0 means never; at most 1440 (24 hours)",
+  "@ui_profile_timeout_hint": {"description": "Hint under the approval timeout field."},
+  "ui_profile_timeout_invalid": "Enter a whole number of minutes",
+  "@ui_profile_timeout_invalid": {"description": "Error when the timeout is not a whole number."},
+  "ui_profile_verdict": "When an approval times out",
+  "@ui_profile_verdict": {"description": "Label of the timeout verdict choice."},
+  "ui_profile_verdict_allow": "Allow",
+  "@ui_profile_verdict_allow": {"description": "Timeout verdict: allow."},
+  "ui_profile_verdict_deny": "Deny",
+  "@ui_profile_verdict_deny": {"description": "Timeout verdict: deny."},
+  "ui_profile_add": "Add profile",
+  "@ui_profile_add": {"description": "Submit button of the new profile dialog."},
+  "ui_profile_edit": "Edit {name}",
+  "@ui_profile_edit": {"description": "Accessible name of the edit button of a profile.", "placeholders": {"name": {"type": "String"}}},
+  "ui_profile_remove": "Delete {name}",
+  "@ui_profile_remove": {"description": "Accessible name of the delete button of a profile.", "placeholders": {"name": {"type": "String"}}},
+  "ui_profile_remove_title": "Delete {name}?",
+  "@ui_profile_remove_title": {"description": "Title of the confirmation that deletes a profile.", "placeholders": {"name": {"type": "String"}}},
+  "ui_profile_remove_text": "Existing sessions keep their settings. Its secrets are removed from the keychain once no task uses them.",
+  "@ui_profile_remove_text": {"description": "Text of the confirmation that deletes a profile."},
+  "ui_profile_remove_yes": "Delete",
+  "@ui_profile_remove_yes": {"description": "Confirm button that deletes a profile."},
+  "ui_profile_remove_failed": "Could not delete the profile",
+  "@ui_profile_remove_failed": {"description": "Title of the error when deleting a profile fails."},
+  "ui_profile_summary_args": "{count, plural, one {# extra argument} other {# extra arguments}}",
+  "@ui_profile_summary_args": {"description": "Profile summary: number of extra arguments.", "placeholders": {"count": {"type": "int"}}},
+  "ui_profile_summary_env": "{count, plural, one {# environment variable} other {# environment variables}}",
+  "@ui_profile_summary_env": {"description": "Profile summary: number of environment variables.", "placeholders": {"count": {"type": "int"}}},
+  "ui_profile_summary_timeout": "Times out after {minutes} min",
+  "@ui_profile_summary_timeout": {"description": "Profile summary: approval timeout.", "placeholders": {"minutes": {"type": "int"}}},
+  "ui_profile_field": "Profile",
+  "@ui_profile_field": {"description": "Label of the profile choice when creating a task or starting an agent."}
 }

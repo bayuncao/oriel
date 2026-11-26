@@ -51,6 +51,24 @@ func (h *Hub) Snapshot(ctx context.Context, p Principal, id task.TaskID) (task.S
 	}
 }
 
+// SecretsInUse 回傳 agent 的 Launch Snapshot（Task 的各 Session 與待審查的審查者，含已歸檔的 Task）引用的
+// 密鑰（m4.md AC37–AC39：app 據此決定待清理的密鑰能不能刪）；成功時不是 nil。讀的是隨事件寫入的投影
+// （Views.Secrets），不重放事件。
+func (h *Hub) SecretsInUse(ctx context.Context, agent task.AgentID) (map[string]bool, error) {
+	if err := h.alive(); err != nil {
+		return nil, err
+	}
+	keys, err := h.index.SecretsInUse(ctx, agent)
+	if err != nil {
+		return nil, fail(CodeStoreFailed, err, "detail", err.Error())
+	}
+	used := make(map[string]bool, len(keys))
+	for _, k := range keys {
+		used[k] = true
+	}
+	return used, nil
+}
+
 // Confirmations 回傳全部 Task 的待確認。
 func (h *Hub) Confirmations(ctx context.Context, p Principal) ([]ConfirmationView, error) {
 	if err := h.alive(); err != nil {

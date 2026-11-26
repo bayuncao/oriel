@@ -157,7 +157,7 @@ var methods = map[string]method{
 		if err := decodeParams(params, &p); err != nil {
 			return nil, err
 		}
-		id, _, err := c.hub.CreateTaskWithAgent(ctx, c.p, p.Dir, task.CreateTask{Title: p.Title, Brief: p.Brief}, p.Agent)
+		id, _, err := c.hub.CreateTaskWithAgent(ctx, c.p, p.Dir, task.CreateTask{Title: p.Title, Brief: p.Brief}, p.Agent, "") // 預設 Profile（m4.md PO18）
 		return id, err
 	}},
 	"Agents.List": {unary: func(ctx context.Context, c call, params json.RawMessage) (any, error) {

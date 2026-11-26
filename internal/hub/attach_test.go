@@ -48,8 +48,9 @@ func TestAttachmentsInsideWorkdir(t *testing.T) {
 	}
 	// 啟動 agent 的第一個 Prompt 也核對。
 	bare := env.create(t, dir, "", task.LaunchSnapshot{})
-	_, err = env.h.CreateSessionWithAgent(ctxb(), LocalOwner, bare, "test", task.Prompt{Text: "see",
+	_, err = env.h.CreateSessionWithAgent(ctxb(), LocalOwner, bare, "test", "", task.Prompt{Text: "see",
 		Attachments: []task.Attachment{{Name: "hosts", Path: filepath.FromSlash("/etc/hosts")}}})
+
 	if r, isRej := err.(*task.Rejection); !isRej || r.Reason != task.ReasonInvalid {
 		t.Fatalf("starting an agent with an outside attachment: %v, want invalid", err)
 	}

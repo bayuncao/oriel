@@ -22,10 +22,9 @@ type Definition struct {
 	Auth     *AuthProbe        `json:"auth"`    // nil：認證狀態永遠未知
 	Install  InstallHint       `json:"install"`
 	Caps     task.Capabilities `json:"caps"`
-	// Launchable 是能不能用它建 Task、啟動 Session：內建、且 hub 有它協議的轉接器。由 app 組目錄時
+	// Launchable 是能不能用它建 Task、啟動 Session：hub 有它協議的轉接器（Registry 條目與自訂 agent 是 ACP）。由 app 組目錄時
 	// 填（m3.md CX53）；頁面的 Agent 欄位只列這些，不自己判斷協議。
-	Launchable bool   `json:"launchable"`
-	Modes      []Mode `json:"modes"` // Profile.Mode 可接受的值
+	Launchable bool `json:"launchable"`
 	// Supersedes 是此 builtin 已原生支援的 ACP Registry 條目 ID
 	// （claude 對應的 claude-acp）；ListRegistry 會隱藏它們。
 	Supersedes []string `json:"supersedes,omitzero"`
@@ -107,10 +106,4 @@ type AuthProbe struct {
 type InstallHint struct {
 	DocsURL  string            `json:"docsUrl"`
 	Commands map[string]string `json:"commands"` // 依 GOOS 區分
-}
-
-// Mode 是 agent 可接受的權限或核准模式。
-type Mode struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
 }

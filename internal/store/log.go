@@ -86,7 +86,7 @@ func (s *Store) Append(ctx context.Context, id task.TaskID, expected task.Seq, b
 	return nil
 }
 
-// replaceViews 是全集替換的投影：Task 列（有才寫）與確認列。
+// replaceViews 是全集替換的投影：Task 列（有才寫）、確認列與引用的密鑰（Secrets 非 nil 時才換）。
 // Append 與 Reproject 共用。
 func replaceViews(id task.TaskID, v hub.Views) []sqlite.Statement {
 	var stmts []sqlite.Statement
@@ -107,6 +107,16 @@ func replaceViews(id task.TaskID, v hub.Views) []sqlite.Statement {
 			Args: []any{string(x.ID), string(x.Task), string(x.Kind),
 				string(x.RequestedBy), formatAt(x.RequestedAt)},
 		})
+	}
+	if v.Secrets != nil {
+		stmts = append(stmts, sqlite.Statement{
+			SQL: "DELETE FROM task_secrets WHERE task_id=?", Args: []any{string(id)}})
+		for _, x := range v.Secrets {
+			stmts = append(stmts, sqlite.Statement{
+				SQL:  "INSERT INTO task_secrets(task_id, key, agent) VALUES(?,?,?)",
+				Args: []any{string(id), x.Key, string(x.Agent)},
+			})
+		}
 	}
 	return stmts
 }
@@ -276,6 +286,7 @@ func (s *Store) Delete(ctx context.Context, id task.TaskID) error {
 		{SQL: "DELETE FROM search WHERE stream=?", Args: []any{string(id)}},
 		{SQL: "DELETE FROM files_view WHERE task_id=?", Args: []any{string(id)}},
 		{SQL: "DELETE FROM turns_view WHERE task_id=?", Args: []any{string(id)}},
+		{SQL: "DELETE FROM task_secrets WHERE task_id=?", Args: []any{string(id)}},
 	})
 	if err != nil {
 		return mapErr(err)

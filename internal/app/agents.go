@@ -44,16 +44,19 @@ func newRuntimes(runner *proc.Runner, version string, log *slog.Logger, acpRunti
 	}
 }
 
-// catalog 是經 agent.Catalog 合併的目錄（標上 Source 與 Launchable：內建、且 runtimes 有它協議的轉接器，
-// m3.md CX53）；M1 只有 builtin。每次呼叫都是新的一份，discovery 與 Agents 服務不共用切片。
-func catalog(log *slog.Logger, runtimes map[task.Protocol]hub.Runtime) []agent.Definition {
-	defs, problems := agent.Catalog(builtins(), nil, nil)
+// catalog 是經 agent.Catalog 合併的目錄：內建、加入的 Registry 條目、自訂 agent（m4.md 第 2 節），標上
+// Launchable：hub 有它協議的轉接器（m3.md CX53；Registry 條目與自訂 agent 是 ACP，AC50）。進不了目錄的
+// 記日誌並回傳（AC03）。每次呼叫都是新的一份，不與舊的共用切片。
+func catalog(log *slog.Logger, runtimes map[task.Protocol]hub.Runtime, builtins []agent.Definition, cfg agent.Config) ([]agent.Definition, []agent.CatalogError) {
+	defs, problems := agent.Catalog(builtins, cfg.Registry, cfg.Custom)
 	for _, p := range problems {
 		log.Error("app: agent left out of the catalog", "agent", p.Agent, "problem", p.Problem.Code)
 	}
 	for i, d := range defs {
-		// 建 Task 的解析只認內建的 Definition（launcher.go）。
-		defs[i].Launchable = d.Source == agent.SourceBuiltin && runtimes[d.Protocol] != nil
+		defs[i].Launchable = runtimes[d.Protocol] != nil
 	}
-	return defs
+	if problems == nil {
+		problems = []agent.CatalogError{}
+	}
+	return defs, problems
 }

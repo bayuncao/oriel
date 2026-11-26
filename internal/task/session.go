@@ -215,8 +215,7 @@ type LaunchSnapshot struct {
 	Executable     string        `json:"executable"`
 	Args           []string      `json:"args"`
 	Env            []EnvVar      `json:"env"`
-	Model          string        `json:"model,omitzero"`
-	Mode           string        `json:"mode,omitzero"`
+	Model          string        `json:"model,omitzero"` // 設定裡的預設模型（MD05，hub 解析時填）
 	Approval       ApprovalMode  `json:"approval"`
 	AskTimeout     time.Duration `json:"askTimeout"`              // 0 = 永不
 	TimeoutVerdict Verdict       `json:"timeoutVerdict,omitzero"` // AskTimeout 到期時套用

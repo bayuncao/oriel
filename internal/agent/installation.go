@@ -59,10 +59,14 @@ type PathSource string
 
 const (
 	FromOverride  PathSource = "override"   // 使用者明確指定的路徑；絕不退回
+	FromCommand   PathSource = "command"    // 自訂 agent 的命令本身是絕對路徑；同樣絕不退回
 	FromPath      PathSource = "path"       // 登入 shell 的 PATH 快照
 	FromToolDir   PathSource = "tool_dir"   // 使用者工具目錄（npm prefix、nvm、mise、bun、Homebrew……）
 	FromVendorDir PathSource = "vendor_dir" // DetectSpec.Dirs
 )
+
+// Pinned 回報這個來源是否是指定的唯一路徑（覆寫或自訂 agent 的絕對路徑命令）：被拒時不退回別的候選。
+func (s PathSource) Pinned() bool { return s == FromOverride || s == FromCommand }
 
 // Override 是使用者對各 Agent 的 discovery 設定。
 type Override struct {

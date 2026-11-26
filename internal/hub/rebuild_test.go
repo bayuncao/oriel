@@ -314,7 +314,8 @@ func TestRebuildMatchesIncremental(t *testing.T) {
 func goldenEvents() []task.Event {
 	at := time.Date(2026, 11, 2, 9, 0, 0, 0, time.UTC)
 	launch := task.LaunchSnapshot{Agent: "test", AgentName: "Test Agent",
-		Protocol: "test-line", Profile: "default", Approval: task.ApprovalOrielHub}
+		Protocol: "test-line", Profile: "default", Approval: task.ApprovalOrielHub,
+		Env: []task.EnvVar{{Name: "MODE", Value: "x"}, {Name: "TOKEN", Secret: "profile:test:default:TOKEN:n1"}}}
 	events := []task.Event{
 		{Kind: task.TaskCreatedKind, TaskCreated: &task.TaskCreated{
 			Title: "Alpha", Brief: "first", Workspace: "w-1", Isolation: task.IsolationWorktree}},

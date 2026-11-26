@@ -65,7 +65,13 @@ func (Keychain) Set(name string, value []byte) error {
 	return keychainErr(mygo.Secrets.Set(name, value))
 }
 
-func (Keychain) Delete(name string) error { return keychainErr(mygo.Secrets.Delete(name)) }
+// Delete 找不到時不算錯（provider.Keychain 的約定）。
+func (Keychain) Delete(name string) error {
+	if err := mygo.Secrets.Delete(name); err != nil && !errors.Is(err, mygo.ErrSecretNotFound) {
+		return keychainErr(err)
+	}
+	return nil
+}
 
 // keychainErr 把 mygo 的“找不到”換成 provider.ErrNoSecret；其他錯誤（含沒有憑證儲存時的
 // errors.ErrUnsupported）原樣返回。

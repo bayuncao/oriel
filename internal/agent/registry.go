@@ -254,6 +254,9 @@ type RegistryListing struct {
 	Runnable bool `json:"runnable"`
 	// Installed 是本機已裝的對應程式（FindInstalled），可直接加入。
 	Installed LocalInstall `json:"installed,omitzero"`
+	// Command 是加入後啟動它的命令與參數（m4.md AC10：加入前的確認框照它顯示，條目會執行遠端程式碼）；
+	// 不能執行時為空。binary 條目的第一個是命令名，依發現規則找。
+	Command []string `json:"command"`
 }
 
 // RegistryList 是 Agent 頁看到的 Registry：條目加上索引的新舊。
@@ -277,8 +280,13 @@ func ListRegistry(idx RegistryIndex, builtins []Definition, added []RegistryAgen
 	}
 	out := make([]RegistryListing, 0, len(idx.Agents))
 	for _, e := range idx.Agents {
-		_, err := entryDefinition(e)
+		d, err := entryDefinition(e)
+		command := []string{}
+		if err == nil {
+			command = append([]string{d.Detect.Command}, d.Launch.Args...)
+		}
 		out = append(out, RegistryListing{
+			Command:   command,
 			Entry:     e,
 			Native:    native[e.ID],
 			Added:     pinned[e.ID],

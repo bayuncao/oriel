@@ -310,12 +310,12 @@ func (h *Hub) Isolation(ctx context.Context, dir string) (task.IsolationMode, er
 	return task.IsolationFor(in), nil
 }
 
-// CreateTaskWithAgent 建立 Task；agent 非空時先把它解析為 Launch Snapshot，
-// Task 帶一個 Session，說明是第一個 Prompt（D14、M2-2）。解析失敗、或這個
+// CreateTaskWithAgent 建立 Task；agent 非空時先用它的 Profile profile（空著是預設的，m4.md PO18）
+// 解析為 Launch Snapshot，Task 帶一個 Session，說明是第一個 Prompt（D14、M2-2）。解析失敗、或這個
 // agent 的協議還沒有轉接器（hub.agent_unsupported）時不建 Task，也不登記
 // Workspace。agent 為空時同 CreateTask。
 func (h *Hub) CreateTaskWithAgent(ctx context.Context, p Principal, dir string, c task.CreateTask,
-	agent task.AgentID) (task.TaskID, task.Seq, error) {
+	agent task.AgentID, profile task.ProfileID) (task.TaskID, task.Seq, error) {
 	if agent != "" {
 		if err := h.alive(); err != nil {
 			return "", 0, err
@@ -337,22 +337,23 @@ func (h *Hub) CreateTaskWithAgent(ctx context.Context, p Principal, dir string, 
 				return "", 0, fail(CodeUnknownWorkspace, nil, "path", filepath.Clean(abs))
 			}
 		}
-		l, err := h.resolveLaunch(ctx, agent)
+		l, release, err := h.resolveLaunch(ctx, agent, profile)
 		if err != nil {
 			return "", 0, err
 		}
+		defer release() // 快照寫進事件流（或建不成）之後
 		c.Launches = []task.LaunchSnapshot{l}
 	}
 	return h.CreateTask(ctx, p, dir, c)
 }
 
 // CreateSessionWithAgent 給還沒有 Session 的 Task 啟動 agent（m2.md I05–I11）：
-// 解析為 Launch Snapshot（預設 Profile，D95），建一個 Session，prompt 是它的
+// 用它的 Profile profile（空著是預設的）解析為 Launch Snapshot（D95），建一個 Session，prompt 是它的
 // 第一個 Prompt。先做不必啟動 agent 的檢查（agent 與 prompt 不能空、Task 存在、
 // 未歸檔、還沒有 Session），再解析；送進 Actor 時再核對一次 Session 數，同時來的
 // 兩次只有一次建得成（hub.session_exists）。M2 裡一個 Task 最多一個 agent（D95）。
 func (h *Hub) CreateSessionWithAgent(ctx context.Context, p Principal, id task.TaskID,
-	agent task.AgentID, prompt task.Prompt) (task.Seq, error) {
+	agent task.AgentID, profile task.ProfileID, prompt task.Prompt) (task.Seq, error) {
 	if err := h.alive(); err != nil {
 		return 0, err
 	}
@@ -369,10 +370,11 @@ func (h *Hub) CreateSessionWithAgent(ctx context.Context, p Principal, id task.T
 	if err := oneAgent(s); err != nil {
 		return 0, err
 	}
-	l, err := h.resolveLaunch(ctx, agent)
+	l, release, err := h.resolveLaunch(ctx, agent, profile)
 	if err != nil {
 		return 0, err
 	}
+	defer release() // 快照寫進事件流（或建不成）之後
 	a, err := h.loadActor(ctx, id)
 	if err != nil {
 		return 0, err
@@ -390,24 +392,24 @@ func (h *Hub) CreateSessionWithAgent(ctx context.Context, p Principal, id task.T
 	return r.version, r.err
 }
 
-// resolveLaunch 把 agent 解析為 Launch Snapshot（預設 Profile，D95）：要跑 agent（版本、探測），所以呼叫者先做完
+// resolveLaunch 用 agent 的 Profile profile 解析出 Launch Snapshot（D95）：要跑 agent（版本、探測），所以呼叫者先做完
 // 不必啟動 agent 的檢查。沒有 Launcher、或這個 agent 的協議還沒有轉接器時是 hub.agent_unsupported。
-func (h *Hub) resolveLaunch(ctx context.Context, agent task.AgentID) (task.LaunchSnapshot, error) {
+// 成功時呼叫者在快照寫進事件流（或建不成）之後呼叫 release（Launcher.Launch）。
+func (h *Hub) resolveLaunch(ctx context.Context, agent task.AgentID, profile task.ProfileID) (task.LaunchSnapshot, func(), error) {
 	if h.launcher == nil {
-		return task.LaunchSnapshot{}, fail(CodeAgentUnsupported, nil, "agent", string(agent))
+		return task.LaunchSnapshot{}, nil, fail(CodeAgentUnsupported, nil, "agent", string(agent))
 	}
-	l, err := h.launcher.Launch(ctx, agent)
+	l, release, err := h.launcher.Launch(ctx, agent, profile)
 	if err != nil {
-		return task.LaunchSnapshot{}, err
+		return task.LaunchSnapshot{}, nil, err
 	}
 	if h.runtimes[l.Protocol] == nil {
-		return task.LaunchSnapshot{}, fail(CodeAgentUnsupported, nil, "agent", l.AgentName)
+		release()
+		return task.LaunchSnapshot{}, nil, fail(CodeAgentUnsupported, nil, "agent", l.AgentName)
 	}
-	// 預設模型（MD05）：Profile 沒指定時用設定頁設的；會話開始時換成它（task 的 modelReported）。
-	if l.Model == "" {
-		l.Model = h.defaultModel(agent)
-	}
-	return l, nil
+	// 預設模型（MD05）：設定頁設的；會話開始時換成它（task 的 modelReported）。
+	l.Model = h.defaultModel(agent)
+	return l, release, nil
 }
 
 // oneAgent 是 M2 給 Task 啟動 agent 的前提：未歸檔（Decide 也會拒絕，這裡先擋，

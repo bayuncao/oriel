@@ -92,7 +92,7 @@ func TestDefaultModelOnNewSession(t *testing.T) {
 			if err := env.h.SetDefaultModel(ctxb(), LocalOwner, "models", tc.model); err != nil {
 				t.Fatal(err)
 			}
-			id, _, err := env.h.CreateTaskWithAgent(ctxb(), LocalOwner, t.TempDir(), task.CreateTask{Title: "t", Brief: "say hi"}, "models")
+			id, _, err := env.h.CreateTaskWithAgent(ctxb(), LocalOwner, t.TempDir(), task.CreateTask{Title: "t", Brief: "say hi"}, "models", "")
 			if err != nil {
 				t.Fatal(err)
 			}

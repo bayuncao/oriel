@@ -119,8 +119,7 @@ func waitTurn(t *testing.T, a *App, id task.TaskID) {
 
 func createWithAgent(t *testing.T, a *App, id task.AgentID) task.TaskID {
 	t.Helper()
-	tid, _, err := a.Hub().CreateTaskWithAgent(ctxb2(), hub.LocalOwner, t.TempDir(),
-		task.CreateTask{Title: "t", Brief: "say hi"}, id)
+	tid, _, err := a.Hub().CreateTaskWithAgent(ctxb2(), hub.LocalOwner, t.TempDir(), task.CreateTask{Title: "t", Brief: "say hi"}, id, "")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -171,6 +170,49 @@ func TestCreateTaskWithAgent(t *testing.T) {
 	}
 }
 
+// P06、P07：快取鍵不只是可執行檔。兩個自訂 agent 共用同一個程式各探測一次；改了參數或環境變數也再探測。
+func TestProbeCacheIsPerAgent(t *testing.T) {
+	home, bin := fakeHome(t)
+	writeExe(t, bin, "grok", fakeGrok("1.0.70", filepath.Join(t.TempDir(), "grok.log"), false))
+	log := filepath.Join(t.TempDir(), "shared.log")
+	dir := t.TempDir()
+	writeExe(t, dir, "shared-acp", fakeGrok("0.1.0", log, false))
+	a := launchApp(t, home)
+	for _, slug := range []string{"one", "two"} {
+		in := agent.CustomAgentInput{Slug: slug, Command: filepath.Join(dir, "shared-acp")}
+		if err := a.Agents().AddCustom(ctxb2(), in); err != nil {
+			t.Fatal(err)
+		}
+		waitReady(t, a, task.AgentID("custom:"+slug))
+	}
+	probes := func(want int) {
+		t.Helper()
+		if got := len(probeDirs(t, log)); got != want {
+			t.Fatalf("%d probes, want %d", got, want)
+		}
+	}
+	waitTurn(t, a, createWithAgent(t, a, "custom:one"))
+	probes(1)
+	waitTurn(t, a, createWithAgent(t, a, "custom:two"))
+	probes(2)
+	waitTurn(t, a, createWithAgent(t, a, "custom:one"))
+	probes(2)
+	edit := agent.CustomAgentInput{Slug: "one", Command: filepath.Join(dir, "shared-acp"), Args: []string{"--acp"}}
+	if err := a.Agents().EditCustom(ctxb2(), edit); err != nil {
+		t.Fatal(err)
+	}
+	waitReady(t, a, "custom:one")
+	waitTurn(t, a, createWithAgent(t, a, "custom:one"))
+	probes(3)
+	edit.Env = []agent.EnvInput{{Name: "MODE", Value: "resume"}} // 只改環境變數也再探測
+	if err := a.Agents().EditCustom(ctxb2(), edit); err != nil {
+		t.Fatal(err)
+	}
+	waitReady(t, a, "custom:one")
+	waitTurn(t, a, createWithAgent(t, a, "custom:one"))
+	probes(4)
+}
+
 // gatedLauncher 是探測停在具名管道上的 launcher：測試等到 waiters 個呼叫者
 // 都在等這次探測，再放行。
 func gatedLauncher(t *testing.T, fail bool) (a *App, l *launcher, log, gate string, waiting chan struct{}) {
@@ -183,7 +225,7 @@ func gatedLauncher(t *testing.T, fail bool) (a *App, l *launcher, log, gate stri
 	}
 	writeExe(t, bin, "grok", fakeGrok("1.0.70", log, fail))
 	a = launchApp(t, home, "GROK_GATE="+gate)
-	l = newLauncher(a.disc, catalog(a.agents.log, nil), acp.New(acp.Options{Runner: a.runner}).Capabilities, a.agents.log)
+	l = newLauncher(a.disc, a.agents, acp.New(acp.Options{Runner: a.runner}).Capabilities, a.agents.log)
 	waiting = make(chan struct{}, 16)
 	l.waiting = func() { waiting <- struct{}{} }
 	return a, l, log, gate, waiting
@@ -233,7 +275,7 @@ func TestConcurrentLaunchesShareProbe(t *testing.T) {
 			var wg sync.WaitGroup
 			for range n {
 				wg.Go(func() {
-					s, err := l.Launch(ctxb2(), "grok")
+					s, _, err := l.Launch(ctxb2(), "grok", "")
 					if err != nil {
 						t.Error(err)
 					}
@@ -258,7 +300,7 @@ func TestConcurrentLaunchesShareProbe(t *testing.T) {
 			// 失敗沒有記下來：下一次再探測。
 			released := make(chan error, 1)
 			go func() { released <- release(gate) }()
-			if _, err := l.Launch(ctxb2(), "grok"); err != nil {
+			if _, _, err := l.Launch(ctxb2(), "grok", ""); err != nil {
 				t.Fatal(err)
 			}
 			if err := <-released; err != nil {
@@ -277,12 +319,12 @@ func TestCanceledCallerDoesNotFailOthers(t *testing.T) {
 	ctx, cancel := context.WithCancel(ctxb2())
 	first := make(chan error, 1)
 	go func() {
-		_, err := l.Launch(ctx, "grok")
+		_, _, err := l.Launch(ctx, "grok", "")
 		first <- err
 	}()
 	second := make(chan task.LaunchSnapshot, 1)
 	go func() {
-		s, err := l.Launch(ctxb2(), "grok")
+		s, _, err := l.Launch(ctxb2(), "grok", "")
 		if err != nil {
 			t.Error(err)
 		}
@@ -322,13 +364,14 @@ func TestProbeFailureDoesNotBlock(t *testing.T) {
 	}
 }
 
-// m3.md CX53、PI54：目錄只把內建、且 hub 有它協議轉接器的 agent 標成能啟動（從 newRuntimes 推出，不另列一份）。
+// m3.md CX53、PI54、m4.md AC50：目錄只把 hub 有它協議轉接器的 agent 標成能啟動（從 newRuntimes 推出，不另列一份）。
 func TestLaunchableFollowsRuntimes(t *testing.T) {
 	runner := &proc.Runner{}
 	defer runner.Close()
 	launchable := func(runtimes map[task.Protocol]hub.Runtime) []task.AgentID {
 		var out []task.AgentID
-		for _, d := range catalog(slog.New(slog.DiscardHandler), runtimes) {
+		defs, _ := catalog(slog.New(slog.DiscardHandler), runtimes, builtins(), agent.Config{})
+		for _, d := range defs {
 			if d.Launchable {
 				out = append(out, d.ID)
 			}
@@ -361,8 +404,8 @@ func TestLaunchNativeUsesDefinitionCaps(t *testing.T) {
 		t.Error("probed a native-protocol agent")
 		return task.Capabilities{}, nil
 	}
-	l := newLauncher(a.disc, catalog(a.agents.log, nil), probe, a.agents.log)
-	snap, err := l.Launch(ctxb2(), "claude")
+	l := newLauncher(a.disc, a.agents, probe, a.agents.log)
+	snap, _, err := l.Launch(ctxb2(), "claude", "")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -383,8 +426,8 @@ func TestCreateTaskWithAgentRejects(t *testing.T) {
 		{"gemini", string(agent.CodeNotInstalled)},
 		{"nobody", string(agent.CodeUnknownAgent)},
 	} {
-		_, _, err := a.Hub().CreateTaskWithAgent(ctxb2(), hub.LocalOwner, t.TempDir(),
-			task.CreateTask{Title: "t", Brief: "say hi"}, tc.agent)
+		_, _, err := a.Hub().CreateTaskWithAgent(ctxb2(), hub.LocalOwner, t.TempDir(), task.CreateTask{Title: "t", Brief: "say hi"}, tc.agent, "")
+
 		c, ok := errors.AsType[interface {
 			error
 			ErrorCode() string
@@ -398,8 +441,7 @@ func TestCreateTaskWithAgentRejects(t *testing.T) {
 	if len(tasks) != 0 || len(ws) != 0 {
 		t.Fatalf("%d tasks, %d workspaces after rejected creations", len(tasks), len(ws))
 	}
-	id, _, err := a.Hub().CreateTaskWithAgent(ctxb2(), hub.LocalOwner, t.TempDir(),
-		task.CreateTask{Title: "t"}, "")
+	id, _, err := a.Hub().CreateTaskWithAgent(ctxb2(), hub.LocalOwner, t.TempDir(), task.CreateTask{Title: "t"}, "", "")
 	if err != nil {
 		t.Fatal(err)
 	}

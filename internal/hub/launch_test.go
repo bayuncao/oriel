@@ -4,6 +4,7 @@ package hub
 
 import (
 	"context"
+	"maps"
 	"os"
 	"path/filepath"
 	"slices"
@@ -23,21 +24,24 @@ type discoveryLauncher struct {
 	defs []agent.Definition
 }
 
-func (l discoveryLauncher) Launch(ctx context.Context, id task.AgentID) (task.LaunchSnapshot, error) {
+func (l discoveryLauncher) Launch(ctx context.Context, id task.AgentID, profile task.ProfileID) (task.LaunchSnapshot, func(), error) {
 	for _, def := range l.defs {
 		if def.ID != id {
 			continue
 		}
+		if profile != "" && profile != agent.DefaultProfileID { // 只有預設 Profile（m4.md PO17、PO18）
+			return task.LaunchSnapshot{}, nil, agent.ErrUnknownProfile
+		}
 		inst, err := l.disc.Verify(ctx, id)
 		if err != nil {
-			return task.LaunchSnapshot{}, err
+			return task.LaunchSnapshot{}, nil, err
 		}
 		if err := inst.Unready(); err != nil {
-			return task.LaunchSnapshot{}, err
+			return task.LaunchSnapshot{}, nil, err
 		}
-		return agent.Launch(def, inst, agent.DefaultProfile(def), task.Capabilities{Resume: true}), nil
+		return agent.Launch(def, inst, agent.DefaultProfile(def), task.Capabilities{Resume: true}), func() {}, nil
 	}
-	return task.LaunchSnapshot{}, agent.ErrUnknownAgent
+	return task.LaunchSnapshot{}, nil, agent.ErrUnknownAgent
 }
 
 func (l discoveryLauncher) CheckAgent(id task.AgentID) error {
@@ -105,8 +109,8 @@ func TestCreateTaskWithAgent(t *testing.T) {
 					o.Launcher = tc.launcher
 				}
 			})
-			id, _, err := env.h.CreateTaskWithAgent(ctxb(), tc.p, t.TempDir(),
-				task.CreateTask{Title: "t", Brief: tc.brief}, tc.agent)
+			id, _, err := env.h.CreateTaskWithAgent(ctxb(), tc.p, t.TempDir(), task.CreateTask{Title: "t", Brief: tc.brief}, tc.agent, "")
+
 			if tc.code != "" {
 				if errCode(err) != tc.code {
 					t.Fatalf("got %v, want %s", err, tc.code)
@@ -134,23 +138,26 @@ func TestCreateTaskWithAgent(t *testing.T) {
 	t.Run("closed hub", func(t *testing.T) {
 		env := newTestHub(t, func(o *Options) { o.Launcher = l })
 		env.h.Close()
-		if _, _, err := env.h.CreateTaskWithAgent(ctxb(), LocalOwner, t.TempDir(),
-			task.CreateTask{Title: "t", Brief: "say hi"}, "test"); err != ErrClosed {
+		if _, _, err := env.h.CreateTaskWithAgent(ctxb(), LocalOwner, t.TempDir(), task.CreateTask{Title: "t", Brief: "say hi"}, "test", ""); err != ErrClosed {
 			t.Fatalf("got %v", err)
 		}
 	})
 }
 
 // countingLauncher 把解析交給真的 launcher，並數它被呼叫幾次；enter 非 nil 時
-// 每次呼叫先經過它（參數是第幾次），測試據此在解析途中插入別的操作。
+// 每次呼叫先經過它（參數是第幾次），測試據此在解析途中插入別的操作。它也數還沒
+// release 的解析（held）：每次成功的解析都要正好 release 一次（m4.md AC37）；
+// onRelease 非 nil 時在 release 裡呼叫（測試據此核對 release 時快照已寫進事件流）。
 type countingLauncher struct {
-	inner Launcher
-	enter func(n int)
-	mu    sync.Mutex
-	n     int
+	inner     Launcher
+	enter     func(n int)
+	onRelease func()
+	mu        sync.Mutex
+	n         int
+	held      int
 }
 
-func (l *countingLauncher) Launch(ctx context.Context, id task.AgentID) (task.LaunchSnapshot, error) {
+func (l *countingLauncher) Launch(ctx context.Context, id task.AgentID, profile task.ProfileID) (task.LaunchSnapshot, func(), error) {
 	l.mu.Lock()
 	l.n++
 	n := l.n
@@ -158,7 +165,29 @@ func (l *countingLauncher) Launch(ctx context.Context, id task.AgentID) (task.La
 	if l.enter != nil {
 		l.enter(n)
 	}
-	return l.inner.Launch(ctx, id)
+	snap, release, err := l.inner.Launch(ctx, id, profile)
+	if err != nil {
+		return snap, nil, err
+	}
+	l.mu.Lock()
+	l.held++
+	l.mu.Unlock()
+	return snap, func() {
+		if l.onRelease != nil {
+			l.onRelease()
+		}
+		l.mu.Lock()
+		l.held-- // 多 release 一次會變成負數
+		l.mu.Unlock()
+		release()
+	}, nil
+}
+
+// unreleased 是成功解析、還沒 release 的次數；多 release 時是負數。
+func (l *countingLauncher) unreleased() int {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	return l.held
 }
 
 func (l *countingLauncher) CheckAgent(id task.AgentID) error { return l.inner.CheckAgent(id) }
@@ -219,7 +248,7 @@ func TestCreateSessionWithAgent(t *testing.T) {
 	t.Run("I05 the message is the first prompt", func(t *testing.T) {
 		env := newTestHub(t, func(o *Options) { o.Launcher = l })
 		id := bare(t, env)
-		if _, err := env.h.CreateSessionWithAgent(ctxb(), LocalOwner, id, "test", task.Prompt{Text: "say hi"}); err != nil {
+		if _, err := env.h.CreateSessionWithAgent(ctxb(), LocalOwner, id, "test", "", task.Prompt{Text: "say hi"}); err != nil {
 			t.Fatal(err)
 		}
 		w := watch(t, env.h, id)
@@ -263,7 +292,7 @@ func TestCreateSessionWithAgent(t *testing.T) {
 			if s, err := env.h.Snapshot(ctxb(), LocalOwner, id); err == nil {
 				before = len(s.Sessions)
 			}
-			_, err := env.h.CreateSessionWithAgent(ctxb(), LocalOwner, id, tc.agent, task.Prompt{Text: tc.prompt})
+			_, err := env.h.CreateSessionWithAgent(ctxb(), LocalOwner, id, tc.agent, "", task.Prompt{Text: tc.prompt})
 			if got := errCode(err); got != tc.code {
 				t.Fatalf("got %v, want %s", err, tc.code)
 			}
@@ -272,6 +301,9 @@ func TestCreateSessionWithAgent(t *testing.T) {
 			}
 			if s, err := env.h.Snapshot(ctxb(), LocalOwner, id); err == nil && len(s.Sessions) != before {
 				t.Fatalf("%d sessions after a rejection, had %d", len(s.Sessions), before)
+			}
+			if n := cl.unreleased(); n != 0 {
+				t.Fatalf("%d resolutions not released exactly once", n)
 			}
 		})
 	}
@@ -293,11 +325,11 @@ func TestCreateSessionWithAgent(t *testing.T) {
 		id := bare(t, env)
 		first := make(chan error, 1)
 		go func() {
-			_, err := env.h.CreateSessionWithAgent(ctxb(), LocalOwner, id, "test", task.Prompt{Text: "say hi"})
+			_, err := env.h.CreateSessionWithAgent(ctxb(), LocalOwner, id, "test", "", task.Prompt{Text: "say hi"})
 			first <- err
 		}()
 		<-entered
-		if _, err := env.h.CreateSessionWithAgent(ctxb(), LocalOwner, id, "test", task.Prompt{Text: "say hi"}); err != nil {
+		if _, err := env.h.CreateSessionWithAgent(ctxb(), LocalOwner, id, "test", "", task.Prompt{Text: "say hi"}); err != nil {
 			t.Fatal(err)
 		}
 		open()
@@ -307,14 +339,113 @@ func TestCreateSessionWithAgent(t *testing.T) {
 		if s, err := env.h.Snapshot(ctxb(), LocalOwner, id); err != nil || len(s.Sessions) != 1 {
 			t.Fatalf("%d sessions, %v", len(s.Sessions), err)
 		}
+		if n := cl.unreleased(); n != 0 {
+			t.Fatalf("%d resolutions not released exactly once (the rejected one too)", n)
+		}
 	})
 
 	t.Run("closed hub", func(t *testing.T) {
 		env := newTestHub(t, func(o *Options) { o.Launcher = l })
 		id := bare(t, env)
 		env.h.Close()
-		if _, err := env.h.CreateSessionWithAgent(ctxb(), LocalOwner, id, "test", task.Prompt{Text: "say hi"}); err != ErrClosed {
+		if _, err := env.h.CreateSessionWithAgent(ctxb(), LocalOwner, id, "test", "", task.Prompt{Text: "say hi"}); err != ErrClosed {
 			t.Fatalf("got %v", err)
 		}
 	})
+}
+
+// m4.md AC37：Launcher 的 release 在快照寫進事件流之後才呼叫（建 Task 與給 Task 啟動 agent 都是），
+// 解析成功但建不成時也呼叫；每次正好一次。
+func TestLaunchReleasedAfterPersisting(t *testing.T) {
+	l := newDiscoveryLauncher(t)
+	var env *testEnv
+	var sessions []int // 每次 release 時，事件流裡帶 Session 的 Task 數
+	cl := &countingLauncher{inner: l, onRelease: func() {
+		views, err := env.h.Tasks(ctxb(), LocalOwner)
+		if err != nil {
+			t.Error(err)
+		}
+		n := 0
+		for _, v := range views {
+			if v.Sessions > 0 {
+				n++
+			}
+		}
+		sessions = append(sessions, n)
+	}}
+	env = newTestHub(t, func(o *Options) { o.Launcher = cl })
+	if _, _, err := env.h.CreateTaskWithAgent(ctxb(), LocalOwner, t.TempDir(), task.CreateTask{Title: "t", Brief: "say hi"}, "test", ""); err != nil {
+		t.Fatal(err)
+	}
+	id, _, err := env.h.CreateTask(ctxb(), LocalOwner, t.TempDir(), task.CreateTask{Title: "t"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := env.h.CreateSessionWithAgent(ctxb(), LocalOwner, id, "test", "", task.Prompt{Text: "say hi"}); err != nil {
+		t.Fatal(err)
+	}
+	if _, _, err := env.h.CreateTaskWithAgent(ctxb(), LocalOwner, t.TempDir(), task.CreateTask{Title: "t", Brief: "say hi"}, "noruntime", ""); errCode(err) != string(CodeAgentUnsupported) {
+		t.Fatalf("no runtime: %v", err)
+	}
+	if !slices.Equal(sessions, []int{1, 2, 2}) || cl.unreleased() != 0 {
+		t.Fatalf("tasks with a session at each release %v, %d unreleased", sessions, cl.unreleased())
+	}
+}
+
+// m4.md AC37–AC39：SecretsInUse 收集 agent 的快照（含已歸檔的 Task）引用的密鑰，只看那個 agent 的；
+// 讀的是隨事件寫入的投影，重開 hub 後（Task 沒載入）也一樣。
+func TestSecretsInUse(t *testing.T) {
+	env := newTestHub(t, func(o *Options) {
+		o.Secret = func(string) (string, error) { return "v", nil }
+	})
+	launch := func(agent task.AgentID, key string) task.LaunchSnapshot {
+		l := testLaunch()
+		l.Agent, l.Env = agent, []task.EnvVar{{Name: "K", Secret: key}}
+		return l
+	}
+	settle := func(id task.TaskID) {
+		w := watch(t, env.h, id)
+		w.next(task.TurnCompletedKind)
+		w.cancel()
+	}
+	open := env.create(t, t.TempDir(), "say hi", launch("test", "k1"))
+	settle(open)
+	archived := env.create(t, t.TempDir(), "say hi", launch("test", "k2"))
+	settle(archived)
+	if _, err := env.h.Command(ctxb(), LocalOwner, archived, task.Command{Kind: task.CmdArchive}); err != nil {
+		t.Fatal(err)
+	}
+	other := env.create(t, t.TempDir(), "say hi", launch("other", "k3"))
+	settle(other)
+	env.h.Close()
+
+	h := New(Options{Log: env.store, Config: env.store, Index: env.store, Now: env.clock.Now, Timer: env.clock.Timer,
+		Runtimes: map[task.Protocol]Runtime{"test-line": lineRuntime{}}})
+	t.Cleanup(h.Close)
+	if err := h.Start(ctxb()); err != nil {
+		t.Fatal(err)
+	}
+	for _, tc := range []struct {
+		agent task.AgentID
+		want  []string
+	}{{"test", []string{"k1", "k2"}}, {"other", []string{"k3"}}, {"nobody", nil}} {
+		used, err := h.SecretsInUse(ctxb(), tc.agent)
+		if err != nil || used == nil {
+			t.Fatalf("%s: %v, %v", tc.agent, used, err)
+		}
+		got := slices.Sorted(maps.Keys(used))
+		if !slices.Equal(got, tc.want) {
+			t.Errorf("%s: %v, want %v", tc.agent, got, tc.want)
+		}
+	}
+	h.mu.Lock()
+	_, loaded := h.actors[archived]
+	h.mu.Unlock()
+	if loaded {
+		t.Error("reading an archived task's secrets started its actor")
+	}
+	h.Close()
+	if _, err := h.SecretsInUse(ctxb(), "test"); err != ErrClosed {
+		t.Fatalf("closed hub: %v", err)
+	}
 }

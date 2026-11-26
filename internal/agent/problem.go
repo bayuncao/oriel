@@ -52,6 +52,21 @@ const (
 	CodeRegistryStatus        ProblemCode = "agent.registry_status"         // status
 	CodeRegistryInvalid       ProblemCode = "agent.registry_invalid"        // detail
 	CodeRegistryCacheWrite    ProblemCode = "agent.registry_cache_write"    // detail
+	CodeAlreadyAdded          ProblemCode = "agent.already_added"           // id
+	CodeRegistryEntryMissing  ProblemCode = "agent.registry_entry_missing"  // id
+	CodeRegistryEntryChanged  ProblemCode = "agent.registry_entry_changed"  // id, version
+	CodeBuiltin               ProblemCode = "agent.builtin"                 //
+	CodeRelativeOverride      ProblemCode = "agent.relative_override"       // path
+	CodeInvalidEnv            ProblemCode = "agent.invalid_env"             // name
+	CodeSecretEmpty           ProblemCode = "agent.secret_empty"            // name
+	CodeKeychainUnavailable   ProblemCode = "agent.keychain_unavailable"    // detail
+	CodeUnknownProfile        ProblemCode = "agent.unknown_profile"         //
+	CodeProfileNameEmpty      ProblemCode = "agent.profile_name_empty"      //
+	CodeProfileNameTaken      ProblemCode = "agent.profile_name_taken"      // name
+	CodeDefaultProfile        ProblemCode = "agent.default_profile"         //
+	CodeNativeUnsupported     ProblemCode = "agent.native_unsupported"      //
+	CodeInvalidTimeout        ProblemCode = "agent.invalid_timeout"         //
+	CodeTimeoutVerdictMissing ProblemCode = "agent.timeout_verdict_missing" //
 	CodeInternal              ProblemCode = "agent.internal"                // detail（不應發生的錯誤）
 )
 
@@ -83,6 +98,21 @@ var problemText = map[ProblemCode]string{
 	CodeRegistryStatus:        "registry answered {status}",
 	CodeRegistryInvalid:       "registry index is invalid: {detail}",
 	CodeRegistryCacheWrite:    "cannot write the registry cache: {detail}",
+	CodeAlreadyAdded:          "registry entry {id} is already added",
+	CodeRegistryEntryMissing:  "registry entry {id} is not in the registry",
+	CodeRegistryEntryChanged:  "registry entry {id} is now version {version}; confirm it again",
+	CodeBuiltin:               "a built-in agent cannot be removed",
+	CodeRelativeOverride:      "override path {path} must be absolute",
+	CodeInvalidEnv:            "invalid environment variable name {name}",
+	CodeSecretEmpty:           "secret {name} has no value",
+	CodeKeychainUnavailable:   "the system keychain is not available: {detail}",
+	CodeUnknownProfile:        "unknown profile",
+	CodeProfileNameEmpty:      "the profile has no name",
+	CodeProfileNameTaken:      "this agent already has a profile named {name}",
+	CodeDefaultProfile:        "the default profile cannot be removed",
+	CodeNativeUnsupported:     "this agent has no permissive mode of its own",
+	CodeInvalidTimeout:        "the approval timeout must be between 0 and 24 hours",
+	CodeTimeoutVerdictMissing: "choose what happens when an approval times out",
 	CodeInternal:              "internal error: {detail}",
 }
 
@@ -108,6 +138,8 @@ var placeholderRE = regexp.MustCompile(`\{([a-z_]+)\}`)
 var (
 	// ErrUnknownAgent 回傳給不在目錄中的 Agent。
 	ErrUnknownAgent = &Problem{Code: CodeUnknownAgent}
+	// ErrUnknownProfile 回傳給 agent 沒有的 Profile（PO17）。
+	ErrUnknownProfile = &Problem{Code: CodeUnknownProfile}
 	// ErrClosed 在 Close 之後回傳。
 	ErrClosed = &Problem{Code: CodeClosed}
 	// ErrNotRunnable 表示 Registry 條目在此平台上沒有 OrielHub 可用的

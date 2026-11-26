@@ -91,6 +91,11 @@ var migrations = [][]string{
 	{ // v14：額度快照是 agent 經協議報來的（Claude 的 rate_limit_event，D156），還是讀本機記錄得來的
 		`ALTER TABLE usage_quotas ADD COLUMN reported INTEGER NOT NULL DEFAULT 0`,
 	},
+	{ // v15：Task 的快照引用的密鑰（m4.md AC37，hub.Views.Secrets）；由 hub 的投影重建（viewsVersion 11）填入，
+		// 刪除 Task 時一起刪。按 agent 查（清理待清理的密鑰時）
+		`CREATE TABLE task_secrets(task_id TEXT NOT NULL, key TEXT NOT NULL, agent TEXT NOT NULL, PRIMARY KEY(task_id, key)) WITHOUT ROWID`,
+		`CREATE INDEX task_secrets_agent ON task_secrets(agent)`,
+	},
 }
 
 // migrate 依序套用比 user_version 新的版本。

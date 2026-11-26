@@ -206,6 +206,32 @@ func (h *Hub) updateModels(ctx context.Context, agent task.AgentID, change func(
 	return nil
 }
 
+// ForgetAgent 刪掉 agent 記下的模型與預設模型（m4.md AC22：移除 Registry 條目或自訂 agent 時，由 app 呼叫）。
+// 沒記過時什麼都不做；與 updateModels 同在 cfgWrite 下。之後它留下的 Session 再報告模型時照常記下
+// （只有列表，沒有預設）。
+func (h *Hub) ForgetAgent(ctx context.Context, agent task.AgentID) error {
+	if err := h.alive(); err != nil {
+		return err
+	}
+	h.cfgWrite.Lock()
+	defer h.cfgWrite.Unlock()
+	h.cfg.mu.Lock()
+	if _, had := h.cfg.models[agent]; !had {
+		h.cfg.mu.Unlock()
+		return nil
+	}
+	all := maps.Clone(h.cfg.models)
+	h.cfg.mu.Unlock()
+	delete(all, agent)
+	if err := h.config.PutModels(ctx, sortedModels(all)); err != nil {
+		return fail(CodeStoreFailed, err, "detail", err.Error())
+	}
+	h.cfg.mu.Lock()
+	delete(h.cfg.models, agent)
+	h.cfg.mu.Unlock()
+	return nil
+}
+
 func sortedModels(m map[task.AgentID]AgentModels) []AgentModels {
 	out := slices.Collect(maps.Values(m))
 	slices.SortFunc(out, func(a, b AgentModels) int { return strings.Compare(string(a.Agent), string(b.Agent)) })

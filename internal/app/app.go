@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"path/filepath"
 	"strings"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -67,7 +68,11 @@ type App struct {
 	db     *store.Store
 	runner *proc.Runner
 	disc   *agent.Discovery
-	closed atomic.Bool
+	// changes 是存下之後轉交的發現結果（saveInstallations）；Close 等它結束才關 store。
+	changes *relay
+	// sweeper 在刪除 Task 之後清理待清理的密鑰；Close 先停它（它用 hub 與 store）。
+	sweeper *sweeper
+	closed  atomic.Bool
 }
 
 // New 打開一切；任何失敗都把已打開的關掉。
@@ -82,17 +87,30 @@ func New(ctx context.Context, o Options) (*App, error) {
 	}
 	// 失敗時把已建立的都關掉（hub、discovery、runner、store）。
 	var toClose []func()
+	var changes *relay
 	fail := func(err error) (*App, error) {
 		for i := len(toClose) - 1; i >= 0; i-- {
 			toClose[i]()
+		}
+		if changes != nil { // discovery 已關，轉交發現結果的 goroutine 會結束；等它寫完再關 store
+			<-changes.done
 		}
 		db.Close()
 		return nil, err
 	}
 	runner := &proc.Runner{}
 	toClose = append(toClose, runner.Close)
+	// 使用者的目錄設定與上一次的發現結果（m4.md AC02、AC05）。
+	cfg, err := db.AgentConfig(ctx)
+	if err != nil {
+		return fail(err)
+	}
+	last, err := db.LastInstallations(ctx)
+	if err != nil {
+		return fail(err)
+	}
 	disc := agent.NewDiscovery(agent.DiscoveryOptions{
-		Runner: runner, Root: o.Root, Inherited: o.Inherited})
+		Runner: runner, Root: o.Root, Inherited: o.Inherited, Previous: last})
 	log := cmp.Or(o.Logger, slog.Default())
 	// 用量先建好（Start 在 hub 之後）：Claude 的轉接器把協議報來的額度交給它（D87）。
 	sources := o.UsageSources
@@ -104,16 +122,31 @@ func New(ctx context.Context, o Options) (*App, error) {
 	toClose = append(toClose, tracker.Close)
 	acpRuntime := acp.New(acp.Options{Runner: runner, Version: o.Version, Logger: o.Logger})
 	runtimes := newRuntimes(runner, o.Version, o.Logger, acpRuntime, tracker.Report)
-	defs := catalog(log, runtimes) // 唯讀，Discovery、Launcher 與 Agents 共用
-	disc.SetAgents(defs, nil)
+	keychain := o.Keychain
+	if keychain == nil {
+		keychain = &provider.MemKeychain{Err: errors.ErrUnsupported}
+	}
+	client := registryHTTP(o, disc)
+	agents := &Agents{disc: disc, builtins: builtins(), runtimes: runtimes, store: db, keychain: keychain,
+		http: client, regDir: filepath.Join(o.DataDir, "registry"), url: o.RegistryURL,
+		root: o.Root, log: log, now: time.Now}
+	agents.load(cfg)
 	toClose = append(toClose, disc.Close)
+	sweeps := newSweeper()
+	launch := newLauncher(disc, agents, acpRuntime.Capabilities, log)
+	// 解析放掉的密鑰在待清理裡時再清理一次：清理時它被 lease 跳過了，建不成 Task 時沒有別的事會再觸發（AC37）。
+	launch.released = func(keys []string) {
+		if agents.retiredAny(keys) {
+			sweeps.trigger()
+		}
+	}
 	git := workspace.New(workspace.Options{
 		Runner: runner, Env: disc.Env, Root: o.Root})
 	h := hub.New(hub.Options{
 		Log: db, Config: db, Index: db,
 		Notifier:     o.Notifier,
 		Runtimes:     runtimes,
-		Launcher:     newLauncher(disc, defs, acpRuntime.Capabilities, log),
+		Launcher:     launch,
 		Git:          git,
 		Env:          disc.Env,
 		Secret:       o.Secret,
@@ -124,15 +157,13 @@ func New(ctx context.Context, o Options) (*App, error) {
 	if err := h.Start(ctx); err != nil {
 		return fail(err)
 	}
+	agents.forget = h.ForgetAgent
+	agents.refs, agents.leased = h.SecretsInUse, launch.Leased
 	disc.Start()
+	changes = saveInstallations(disc.Changes(), db, log)
 	tracker.Start()
-	client := registryHTTP(o, disc)
 	status := provider.New(provider.Options{HTTP: client, UserAgent: "OrielHub/" + cmp.Or(o.Version, "dev"),
 		Vendors: o.ProviderVendors, Zone: usage.SystemZone, OnResume: o.OnResume, Logger: o.Logger})
-	keychain := o.Keychain
-	if keychain == nil {
-		keychain = &provider.MemKeychain{Err: errors.ErrUnsupported}
-	}
 	keys := provider.NewKeys(provider.KeyOptions{Keychain: keychain, Store: db, Logger: o.Logger})
 	// 集成（D108）：用與 agent 相同的環境快照找 gh；啟動時檢測一次（IG15）。
 	integ, err := integration.New(ctx, integration.Options{Runner: runner, Env: disc.Env, Store: db, Root: o.Root})
@@ -141,9 +172,6 @@ func New(ctx context.Context, o Options) (*App, error) {
 		return fail(err)
 	}
 	integ.Start()
-	agents := &Agents{disc: disc, defs: defs, http: client,
-		regDir: filepath.Join(o.DataDir, "registry"), url: o.RegistryURL,
-		root: o.Root, log: log}
 	// 遠程（D145）：開關與中繼地址記在資料目錄，密鑰在鑰匙串；開著時在背景連中繼。
 	// 正式版不建（D149）：不連中繼，也不讀鑰匙串。
 	var rc *remote.Control
@@ -155,10 +183,81 @@ func New(ctx context.Context, o Options) (*App, error) {
 			log.Warn("remote settings unreadable; remote stays off", "err", err)
 		}
 	}
+	// 待清理的密鑰（m4.md AC39）：啟動時在背景清理一次（不擋啟動），之後每刪一個 Task、每放掉一個引用待清理密鑰的解析清理一次。
+	sweeps.start(h, agents, log)
 	return &App{
 		hub: h, remote: rc, db: db, runner: runner, disc: disc, usage: tracker, status: status, keys: keys,
-		integ: integ, agents: agents,
+		integ: integ, agents: agents, changes: changes, sweeper: sweeps,
 	}, nil
+}
+
+// hubCode 是 err 的 hub 錯誤代碼；不是 hub.Error 時為 ""。
+func hubCode(err error) hub.Code {
+	if he, ok := errors.AsType[*hub.Error](err); ok {
+		return he.Code
+	}
+	return ""
+}
+
+// sweeper 在背景清理待清理的密鑰（m4.md AC37、AC39）：trigger 只扣下一格（已經有一次在排時不再加），清理在自己的
+// goroutine 跑，接連的觸發合成幾次。stop 讓它結束並等它。
+type sweeper struct {
+	due    chan struct{}
+	ctx    context.Context
+	cancel context.CancelFunc
+	wg     sync.WaitGroup
+}
+
+// newSweeper 先建好觸發的那一格（launcher 建好就能觸發）；start 之前的觸發等到 start 後才清理。
+func newSweeper() *sweeper {
+	ctx, cancel := context.WithCancel(context.Background())
+	return &sweeper{due: make(chan struct{}, 1), ctx: ctx, cancel: cancel}
+}
+
+func (s *sweeper) trigger() {
+	select {
+	case s.due <- struct{}{}:
+	default: // 已經有一次在排
+	}
+}
+
+func (s *sweeper) stop() {
+	s.cancel()
+	s.wg.Wait()
+}
+
+// start 先排一次（啟動時的清理），再看 Task 列表：推來刪除（TaskView.Removed）時要清理（AC39）。跟不上
+// （hub.lagging）時可能漏了刪除，也要清理，再重新看。看的 goroutine 只觸發，不等清理，所以不會因清理慢而
+// 跟不上。hub 關了時不再看；stop 時都結束。
+func (s *sweeper) start(h *hub.Hub, agents *Agents, log *slog.Logger) {
+	s.trigger()
+	s.wg.Go(func() {
+		for {
+			err := h.WatchTasks(s.ctx, hub.LocalOwner, func(v hub.TaskView) error {
+				if v.Removed {
+					s.trigger()
+				}
+				return nil
+			})
+			if s.ctx.Err() != nil || hubCode(err) != hub.CodeLagging {
+				if err != nil && !errors.Is(err, hub.ErrClosed) {
+					log.Warn("app: watching tasks for retired secrets stopped", "err", err)
+				}
+				return
+			}
+			s.trigger()
+		}
+	})
+	s.wg.Go(func() {
+		for {
+			select {
+			case <-s.ctx.Done():
+				return
+			case <-s.due:
+				agents.sweep(s.ctx)
+			}
+		}
+	})
 }
 
 // remoteSecrets 把 provider.Keychain 接成 remote.Secrets：找不到是 ok == false。
@@ -182,12 +281,14 @@ func (a *App) Close() {
 	if a.remote != nil {
 		a.remote.Close()
 	}
+	a.sweeper.stop()
 	a.integ.Close()
 	a.status.Close()
 	// hub 先關：它結束 Claude 的行程時報來的最後一份額度，usage 還收得下（D156）。
 	a.hub.Close()
 	a.usage.Close()
 	a.disc.Close()
+	<-a.changes.done
 	a.runner.Close()
 	a.db.Close()
 }
@@ -203,7 +304,7 @@ func (a *App) Integrations() *integration.Service { return a.integ }
 // Remote 是遠程的控制器；Options.Remote 為假時是 nil。
 func (a *App) Remote() *remote.Control              { return a.remote }
 func (a *App) Agents() *Agents                      { return a.agents }
-func (a *App) Changes() <-chan []agent.Installation { return a.disc.Changes() }
+func (a *App) Changes() <-chan []agent.Installation { return a.changes.out }
 
 // registryHTTP 建 Registry 的 HTTP client：proxy 從當時的
 // 環境快照讀（拿不到就用 Inherited，不阻塞請求）。

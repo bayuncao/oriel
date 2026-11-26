@@ -394,6 +394,172 @@ func (msgs Messages) AgentDuplicateAgent() string {
 	return Catalog.Format(msgs.locale, "agent_duplicate_agent", nil)
 }
 
+// AgentAlreadyAdded says "{id} is already added"
+// in the language the app shows.
+func AgentAlreadyAdded(id string) string { return In(i18n.Locale()).AgentAlreadyAdded(id) }
+
+// AgentAlreadyAdded says "{id} is already added"
+// in the language of msgs.
+func (msgs Messages) AgentAlreadyAdded(id string) string {
+	return Catalog.Format(msgs.locale, "agent_already_added", map[string]any{"id": id})
+}
+
+// AgentRegistryEntryChanged says "{id} changed to version {version} in the registry. Check it and confirm again"
+// in the language the app shows.
+//
+// The registry entry changed after the user confirmed adding or updating
+// it.
+func AgentRegistryEntryChanged(id string, version string) string {
+	return In(i18n.Locale()).AgentRegistryEntryChanged(id, version)
+}
+
+// AgentRegistryEntryChanged says "{id} changed to version {version} in the registry. Check it and confirm again"
+// in the language of msgs.
+//
+// The registry entry changed after the user confirmed adding or updating
+// it.
+func (msgs Messages) AgentRegistryEntryChanged(id string, version string) string {
+	return Catalog.Format(msgs.locale, "agent_registry_entry_changed", map[string]any{"id": id, "version": version})
+}
+
+// AgentRegistryEntryMissing says "{id} is no longer in the registry. Refresh the registry and try again"
+// in the language the app shows.
+func AgentRegistryEntryMissing(id string) string {
+	return In(i18n.Locale()).AgentRegistryEntryMissing(id)
+}
+
+// AgentRegistryEntryMissing says "{id} is no longer in the registry. Refresh the registry and try again"
+// in the language of msgs.
+func (msgs Messages) AgentRegistryEntryMissing(id string) string {
+	return Catalog.Format(msgs.locale, "agent_registry_entry_missing", map[string]any{"id": id})
+}
+
+// AgentBuiltin says "Built-in agents cannot be removed"
+// in the language the app shows.
+func AgentBuiltin() string { return In(i18n.Locale()).AgentBuiltin() }
+
+// AgentBuiltin says "Built-in agents cannot be removed"
+// in the language of msgs.
+func (msgs Messages) AgentBuiltin() string {
+	return Catalog.Format(msgs.locale, "agent_builtin", nil)
+}
+
+// AgentRelativeOverride says "The path {path} must be absolute"
+// in the language the app shows.
+func AgentRelativeOverride(path string) string { return In(i18n.Locale()).AgentRelativeOverride(path) }
+
+// AgentRelativeOverride says "The path {path} must be absolute"
+// in the language of msgs.
+func (msgs Messages) AgentRelativeOverride(path string) string {
+	return Catalog.Format(msgs.locale, "agent_relative_override", map[string]any{"path": path})
+}
+
+// AgentInvalidEnv says "The environment variable name “{name}” is empty, contains =, or is repeated"
+// in the language the app shows.
+func AgentInvalidEnv(name string) string { return In(i18n.Locale()).AgentInvalidEnv(name) }
+
+// AgentInvalidEnv says "The environment variable name “{name}” is empty, contains =, or is repeated"
+// in the language of msgs.
+func (msgs Messages) AgentInvalidEnv(name string) string {
+	return Catalog.Format(msgs.locale, "agent_invalid_env", map[string]any{"name": name})
+}
+
+// AgentSecretEmpty says "Enter a value for the secret {name}"
+// in the language the app shows.
+func AgentSecretEmpty(name string) string { return In(i18n.Locale()).AgentSecretEmpty(name) }
+
+// AgentSecretEmpty says "Enter a value for the secret {name}"
+// in the language of msgs.
+func (msgs Messages) AgentSecretEmpty(name string) string {
+	return Catalog.Format(msgs.locale, "agent_secret_empty", map[string]any{"name": name})
+}
+
+// AgentUnknownProfile says "This profile no longer exists"
+// in the language the app shows.
+func AgentUnknownProfile() string { return In(i18n.Locale()).AgentUnknownProfile() }
+
+// AgentUnknownProfile says "This profile no longer exists"
+// in the language of msgs.
+func (msgs Messages) AgentUnknownProfile() string {
+	return Catalog.Format(msgs.locale, "agent_unknown_profile", nil)
+}
+
+// AgentProfileNameEmpty says "Enter a name for the profile"
+// in the language the app shows.
+func AgentProfileNameEmpty() string { return In(i18n.Locale()).AgentProfileNameEmpty() }
+
+// AgentProfileNameEmpty says "Enter a name for the profile"
+// in the language of msgs.
+func (msgs Messages) AgentProfileNameEmpty() string {
+	return Catalog.Format(msgs.locale, "agent_profile_name_empty", nil)
+}
+
+// AgentProfileNameTaken says "This agent already has a profile named “{name}”"
+// in the language the app shows.
+//
+// A profile name is already used by another profile of the agent.
+func AgentProfileNameTaken(name string) string { return In(i18n.Locale()).AgentProfileNameTaken(name) }
+
+// AgentProfileNameTaken says "This agent already has a profile named “{name}”"
+// in the language of msgs.
+//
+// A profile name is already used by another profile of the agent.
+func (msgs Messages) AgentProfileNameTaken(name string) string {
+	return Catalog.Format(msgs.locale, "agent_profile_name_taken", map[string]any{"name": name})
+}
+
+// AgentDefaultProfile says "The default profile can’t be deleted"
+// in the language the app shows.
+func AgentDefaultProfile() string { return In(i18n.Locale()).AgentDefaultProfile() }
+
+// AgentDefaultProfile says "The default profile can’t be deleted"
+// in the language of msgs.
+func (msgs Messages) AgentDefaultProfile() string {
+	return Catalog.Format(msgs.locale, "agent_default_profile", nil)
+}
+
+// AgentNativeUnsupported says "This agent has no permissive mode of its own"
+// in the language the app shows.
+func AgentNativeUnsupported() string { return In(i18n.Locale()).AgentNativeUnsupported() }
+
+// AgentNativeUnsupported says "This agent has no permissive mode of its own"
+// in the language of msgs.
+func (msgs Messages) AgentNativeUnsupported() string {
+	return Catalog.Format(msgs.locale, "agent_native_unsupported", nil)
+}
+
+// AgentInvalidTimeout says "The approval timeout must be between 0 and 24 hours"
+// in the language the app shows.
+func AgentInvalidTimeout() string { return In(i18n.Locale()).AgentInvalidTimeout() }
+
+// AgentInvalidTimeout says "The approval timeout must be between 0 and 24 hours"
+// in the language of msgs.
+func (msgs Messages) AgentInvalidTimeout() string {
+	return Catalog.Format(msgs.locale, "agent_invalid_timeout", nil)
+}
+
+// AgentTimeoutVerdictMissing says "Choose what happens when an approval times out"
+// in the language the app shows.
+func AgentTimeoutVerdictMissing() string { return In(i18n.Locale()).AgentTimeoutVerdictMissing() }
+
+// AgentTimeoutVerdictMissing says "Choose what happens when an approval times out"
+// in the language of msgs.
+func (msgs Messages) AgentTimeoutVerdictMissing() string {
+	return Catalog.Format(msgs.locale, "agent_timeout_verdict_missing", nil)
+}
+
+// AgentKeychainUnavailable says "The system keychain is not available: {detail}"
+// in the language the app shows.
+func AgentKeychainUnavailable(detail string) string {
+	return In(i18n.Locale()).AgentKeychainUnavailable(detail)
+}
+
+// AgentKeychainUnavailable says "The system keychain is not available: {detail}"
+// in the language of msgs.
+func (msgs Messages) AgentKeychainUnavailable(detail string) string {
+	return Catalog.Format(msgs.locale, "agent_keychain_unavailable", map[string]any{"detail": detail})
+}
+
 // AgentInvalidSlug says "The ID {slug} may only use lowercase letters, digits and -"
 // in the language the app shows.
 //
@@ -3508,6 +3674,22 @@ func (msgs Messages) UiPathSourceOverride() string {
 	return Catalog.Format(msgs.locale, "ui_path_source_override", nil)
 }
 
+// UiPathSourceCommand says "Command path"
+// in the language the app shows.
+//
+// Where the program was found: the absolute path a custom agent's command
+// names.
+func UiPathSourceCommand() string { return In(i18n.Locale()).UiPathSourceCommand() }
+
+// UiPathSourceCommand says "Command path"
+// in the language of msgs.
+//
+// Where the program was found: the absolute path a custom agent's command
+// names.
+func (msgs Messages) UiPathSourceCommand() string {
+	return Catalog.Format(msgs.locale, "ui_path_source_command", nil)
+}
+
 // UiPathSourcePath says "PATH"
 // in the language the app shows.
 //
@@ -3930,6 +4112,696 @@ func UiAgentStateChanged(name string, state string) string {
 // the inspector changes.
 func (msgs Messages) UiAgentStateChanged(name string, state string) string {
 	return Catalog.Format(msgs.locale, "ui_agent_state_changed", map[string]any{"name": name, "state": state})
+}
+
+// UiAgentcfgSection says "Settings"
+// in the language the app shows.
+//
+// Title of the section in an agent's details that holds its override path,
+// version, edit and remove.
+func UiAgentcfgSection() string { return In(i18n.Locale()).UiAgentcfgSection() }
+
+// UiAgentcfgSection says "Settings"
+// in the language of msgs.
+//
+// Title of the section in an agent's details that holds its override path,
+// version, edit and remove.
+func (msgs Messages) UiAgentcfgSection() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_section", nil)
+}
+
+// UiAgentcfgAdd says "Add"
+// in the language the app shows.
+//
+// Button in a registry entry's details that adds it to the agents.
+func UiAgentcfgAdd() string { return In(i18n.Locale()).UiAgentcfgAdd() }
+
+// UiAgentcfgAdd says "Add"
+// in the language of msgs.
+//
+// Button in a registry entry's details that adds it to the agents.
+func (msgs Messages) UiAgentcfgAdd() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_add", nil)
+}
+
+// UiAgentcfgAddTitle says "Add {name}?"
+// in the language the app shows.
+//
+// Title of the confirmation before adding a registry entry.
+func UiAgentcfgAddTitle(name string) string { return In(i18n.Locale()).UiAgentcfgAddTitle(name) }
+
+// UiAgentcfgAddTitle says "Add {name}?"
+// in the language of msgs.
+//
+// Title of the confirmation before adding a registry entry.
+func (msgs Messages) UiAgentcfgAddTitle(name string) string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_add_title", map[string]any{"name": name})
+}
+
+// UiAgentcfgAddText says "OrielHub runs this command to start the agent. It downloads and runs code from the package's publisher."
+// in the language the app shows.
+//
+// Description of the confirmation before adding or updating a registry
+// entry.
+func UiAgentcfgAddText() string { return In(i18n.Locale()).UiAgentcfgAddText() }
+
+// UiAgentcfgAddText says "OrielHub runs this command to start the agent. It downloads and runs code from the package's publisher."
+// in the language of msgs.
+//
+// Description of the confirmation before adding or updating a registry
+// entry.
+func (msgs Messages) UiAgentcfgAddText() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_add_text", nil)
+}
+
+// UiAgentcfgAddYes says "Add"
+// in the language the app shows.
+//
+// Confirm button of the add confirmation.
+func UiAgentcfgAddYes() string { return In(i18n.Locale()).UiAgentcfgAddYes() }
+
+// UiAgentcfgAddYes says "Add"
+// in the language of msgs.
+//
+// Confirm button of the add confirmation.
+func (msgs Messages) UiAgentcfgAddYes() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_add_yes", nil)
+}
+
+// UiAgentcfgAddFailed says "Could not add the agent"
+// in the language the app shows.
+//
+// Title of the error shown when adding a registry entry fails.
+func UiAgentcfgAddFailed() string { return In(i18n.Locale()).UiAgentcfgAddFailed() }
+
+// UiAgentcfgAddFailed says "Could not add the agent"
+// in the language of msgs.
+//
+// Title of the error shown when adding a registry entry fails.
+func (msgs Messages) UiAgentcfgAddFailed() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_add_failed", nil)
+}
+
+// UiAgentcfgAdded says "Added · {version}"
+// in the language the app shows.
+//
+// Badge on a registry entry that is already added, with the pinned version.
+func UiAgentcfgAdded(version string) string { return In(i18n.Locale()).UiAgentcfgAdded(version) }
+
+// UiAgentcfgAdded says "Added · {version}"
+// in the language of msgs.
+//
+// Badge on a registry entry that is already added, with the pinned version.
+func (msgs Messages) UiAgentcfgAdded(version string) string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_added", map[string]any{"version": version})
+}
+
+// UiAgentcfgNative says "Supported natively by a built-in agent"
+// in the language the app shows.
+//
+// Footer note on a registry entry that a built-in agent already supports.
+func UiAgentcfgNative() string { return In(i18n.Locale()).UiAgentcfgNative() }
+
+// UiAgentcfgNative says "Supported natively by a built-in agent"
+// in the language of msgs.
+//
+// Footer note on a registry entry that a built-in agent already supports.
+func (msgs Messages) UiAgentcfgNative() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_native", nil)
+}
+
+// UiAgentcfgUpdate says "Update to {version}"
+// in the language the app shows.
+//
+// Button that replaces an added registry entry with the registry's newer
+// version.
+func UiAgentcfgUpdate(version string) string { return In(i18n.Locale()).UiAgentcfgUpdate(version) }
+
+// UiAgentcfgUpdate says "Update to {version}"
+// in the language of msgs.
+//
+// Button that replaces an added registry entry with the registry's newer
+// version.
+func (msgs Messages) UiAgentcfgUpdate(version string) string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_update", map[string]any{"version": version})
+}
+
+// UiAgentcfgUpdateBadge says "Update: {version}"
+// in the language the app shows.
+//
+// Badge on an added registry entry when the registry has another version.
+func UiAgentcfgUpdateBadge(version string) string {
+	return In(i18n.Locale()).UiAgentcfgUpdateBadge(version)
+}
+
+// UiAgentcfgUpdateBadge says "Update: {version}"
+// in the language of msgs.
+//
+// Badge on an added registry entry when the registry has another version.
+func (msgs Messages) UiAgentcfgUpdateBadge(version string) string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_update_badge", map[string]any{"version": version})
+}
+
+// UiAgentcfgUpdateTitle says "Update {name} to {version}?"
+// in the language the app shows.
+//
+// Title of the confirmation before updating a registry entry.
+func UiAgentcfgUpdateTitle(name string, version string) string {
+	return In(i18n.Locale()).UiAgentcfgUpdateTitle(name, version)
+}
+
+// UiAgentcfgUpdateTitle says "Update {name} to {version}?"
+// in the language of msgs.
+//
+// Title of the confirmation before updating a registry entry.
+func (msgs Messages) UiAgentcfgUpdateTitle(name string, version string) string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_update_title", map[string]any{"name": name, "version": version})
+}
+
+// UiAgentcfgUpdateYes says "Update"
+// in the language the app shows.
+//
+// Confirm button of the update confirmation.
+func UiAgentcfgUpdateYes() string { return In(i18n.Locale()).UiAgentcfgUpdateYes() }
+
+// UiAgentcfgUpdateYes says "Update"
+// in the language of msgs.
+//
+// Confirm button of the update confirmation.
+func (msgs Messages) UiAgentcfgUpdateYes() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_update_yes", nil)
+}
+
+// UiAgentcfgUpdateFailed says "Could not update the agent"
+// in the language the app shows.
+//
+// Title of the error shown when updating a registry entry fails.
+func UiAgentcfgUpdateFailed() string { return In(i18n.Locale()).UiAgentcfgUpdateFailed() }
+
+// UiAgentcfgUpdateFailed says "Could not update the agent"
+// in the language of msgs.
+//
+// Title of the error shown when updating a registry entry fails.
+func (msgs Messages) UiAgentcfgUpdateFailed() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_update_failed", nil)
+}
+
+// UiAgentcfgVersionChange says "{from} → {to}"
+// in the language the app shows.
+//
+// Old and new version in the update confirmation.
+func UiAgentcfgVersionChange(from string, to string) string {
+	return In(i18n.Locale()).UiAgentcfgVersionChange(from, to)
+}
+
+// UiAgentcfgVersionChange says "{from} → {to}"
+// in the language of msgs.
+//
+// Old and new version in the update confirmation.
+func (msgs Messages) UiAgentcfgVersionChange(from string, to string) string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_version_change", map[string]any{"from": from, "to": to})
+}
+
+// UiAgentcfgPinned says "Version {version}"
+// in the language the app shows.
+//
+// Pinned version of an added registry entry in its details.
+func UiAgentcfgPinned(version string) string { return In(i18n.Locale()).UiAgentcfgPinned(version) }
+
+// UiAgentcfgPinned says "Version {version}"
+// in the language of msgs.
+//
+// Pinned version of an added registry entry in its details.
+func (msgs Messages) UiAgentcfgPinned(version string) string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_pinned", map[string]any{"version": version})
+}
+
+// UiAgentcfgCommand says "Command"
+// in the language the app shows.
+//
+// Label of the command that starts an agent.
+func UiAgentcfgCommand() string { return In(i18n.Locale()).UiAgentcfgCommand() }
+
+// UiAgentcfgCommand says "Command"
+// in the language of msgs.
+//
+// Label of the command that starts an agent.
+func (msgs Messages) UiAgentcfgCommand() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_command", nil)
+}
+
+// UiAgentcfgCommandHint says "A command name, found the same way as other agents, or an absolute path."
+// in the language the app shows.
+//
+// Help under the command field of a custom agent.
+func UiAgentcfgCommandHint() string { return In(i18n.Locale()).UiAgentcfgCommandHint() }
+
+// UiAgentcfgCommandHint says "A command name, found the same way as other agents, or an absolute path."
+// in the language of msgs.
+//
+// Help under the command field of a custom agent.
+func (msgs Messages) UiAgentcfgCommandHint() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_command_hint", nil)
+}
+
+// UiAgentcfgOverride says "Program path"
+// in the language the app shows.
+//
+// Label of the field that overrides where the agent's program is.
+func UiAgentcfgOverride() string { return In(i18n.Locale()).UiAgentcfgOverride() }
+
+// UiAgentcfgOverride says "Program path"
+// in the language of msgs.
+//
+// Label of the field that overrides where the agent's program is.
+func (msgs Messages) UiAgentcfgOverride() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_override", nil)
+}
+
+// UiAgentcfgOverrideHint says "An absolute path. When set, only this program is used."
+// in the language the app shows.
+//
+// Help under the override path field.
+func UiAgentcfgOverrideHint() string { return In(i18n.Locale()).UiAgentcfgOverrideHint() }
+
+// UiAgentcfgOverrideHint says "An absolute path. When set, only this program is used."
+// in the language of msgs.
+//
+// Help under the override path field.
+func (msgs Messages) UiAgentcfgOverrideHint() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_override_hint", nil)
+}
+
+// UiAgentcfgOverrideClear says "Clear"
+// in the language the app shows.
+//
+// Button that clears the override path.
+func UiAgentcfgOverrideClear() string { return In(i18n.Locale()).UiAgentcfgOverrideClear() }
+
+// UiAgentcfgOverrideClear says "Clear"
+// in the language of msgs.
+//
+// Button that clears the override path.
+func (msgs Messages) UiAgentcfgOverrideClear() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_override_clear", nil)
+}
+
+// UiAgentcfgSave says "Save"
+// in the language the app shows.
+//
+// Save button of the agent settings.
+func UiAgentcfgSave() string { return In(i18n.Locale()).UiAgentcfgSave() }
+
+// UiAgentcfgSave says "Save"
+// in the language of msgs.
+//
+// Save button of the agent settings.
+func (msgs Messages) UiAgentcfgSave() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_save", nil)
+}
+
+// UiAgentcfgSaveFailed says "Could not save"
+// in the language the app shows.
+//
+// Title of the error shown when saving a custom agent fails.
+func UiAgentcfgSaveFailed() string { return In(i18n.Locale()).UiAgentcfgSaveFailed() }
+
+// UiAgentcfgSaveFailed says "Could not save"
+// in the language of msgs.
+//
+// Title of the error shown when saving a custom agent fails.
+func (msgs Messages) UiAgentcfgSaveFailed() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_save_failed", nil)
+}
+
+// UiAgentcfgEdit says "Edit"
+// in the language the app shows.
+//
+// Button that opens the custom agent form.
+func UiAgentcfgEdit() string { return In(i18n.Locale()).UiAgentcfgEdit() }
+
+// UiAgentcfgEdit says "Edit"
+// in the language of msgs.
+//
+// Button that opens the custom agent form.
+func (msgs Messages) UiAgentcfgEdit() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_edit", nil)
+}
+
+// UiAgentcfgRemove says "Remove"
+// in the language the app shows.
+//
+// Button that removes an added registry entry or a custom agent.
+func UiAgentcfgRemove() string { return In(i18n.Locale()).UiAgentcfgRemove() }
+
+// UiAgentcfgRemove says "Remove"
+// in the language of msgs.
+//
+// Button that removes an added registry entry or a custom agent.
+func (msgs Messages) UiAgentcfgRemove() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_remove", nil)
+}
+
+// UiAgentcfgRemoveTitle says "Remove {name}?"
+// in the language the app shows.
+//
+// Title of the confirmation before removing an agent.
+func UiAgentcfgRemoveTitle(name string) string { return In(i18n.Locale()).UiAgentcfgRemoveTitle(name) }
+
+// UiAgentcfgRemoveTitle says "Remove {name}?"
+// in the language of msgs.
+//
+// Title of the confirmation before removing an agent.
+func (msgs Messages) UiAgentcfgRemoveTitle(name string) string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_remove_title", map[string]any{"name": name})
+}
+
+// UiAgentcfgRemoveText says "Its tasks keep their conversations and can still continue. New tasks cannot use it."
+// in the language the app shows.
+//
+// Description of the remove confirmation.
+func UiAgentcfgRemoveText() string { return In(i18n.Locale()).UiAgentcfgRemoveText() }
+
+// UiAgentcfgRemoveText says "Its tasks keep their conversations and can still continue. New tasks cannot use it."
+// in the language of msgs.
+//
+// Description of the remove confirmation.
+func (msgs Messages) UiAgentcfgRemoveText() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_remove_text", nil)
+}
+
+// UiAgentcfgRemoveYes says "Remove"
+// in the language the app shows.
+//
+// Confirm button of the remove confirmation.
+func UiAgentcfgRemoveYes() string { return In(i18n.Locale()).UiAgentcfgRemoveYes() }
+
+// UiAgentcfgRemoveYes says "Remove"
+// in the language of msgs.
+//
+// Confirm button of the remove confirmation.
+func (msgs Messages) UiAgentcfgRemoveYes() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_remove_yes", nil)
+}
+
+// UiAgentcfgRemoveFailed says "Could not remove the agent"
+// in the language the app shows.
+//
+// Title of the error shown when removing an agent fails.
+func UiAgentcfgRemoveFailed() string { return In(i18n.Locale()).UiAgentcfgRemoveFailed() }
+
+// UiAgentcfgRemoveFailed says "Could not remove the agent"
+// in the language of msgs.
+//
+// Title of the error shown when removing an agent fails.
+func (msgs Messages) UiAgentcfgRemoveFailed() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_remove_failed", nil)
+}
+
+// UiAgentcfgProblems says "{count, plural, one {# configured agent could not be loaded} other {# configured agents could not be loaded}}"
+// in the language the app shows.
+//
+// Title of the list of configured agents left out of the catalog.
+func UiAgentcfgProblems(count int) string { return In(i18n.Locale()).UiAgentcfgProblems(count) }
+
+// UiAgentcfgProblems says "{count, plural, one {# configured agent could not be loaded} other {# configured agents could not be loaded}}"
+// in the language of msgs.
+//
+// Title of the list of configured agents left out of the catalog.
+func (msgs Messages) UiAgentcfgProblems(count int) string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_problems", map[string]any{"count": count})
+}
+
+// UiAgentcfgCustomNew says "Add custom agent"
+// in the language the app shows.
+//
+// Button and dialog title for adding a custom ACP agent.
+func UiAgentcfgCustomNew() string { return In(i18n.Locale()).UiAgentcfgCustomNew() }
+
+// UiAgentcfgCustomNew says "Add custom agent"
+// in the language of msgs.
+//
+// Button and dialog title for adding a custom ACP agent.
+func (msgs Messages) UiAgentcfgCustomNew() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_custom_new", nil)
+}
+
+// UiAgentcfgCustomEdit says "Edit {name}"
+// in the language the app shows.
+//
+// Title of the dialog that edits a custom agent.
+func UiAgentcfgCustomEdit(name string) string { return In(i18n.Locale()).UiAgentcfgCustomEdit(name) }
+
+// UiAgentcfgCustomEdit says "Edit {name}"
+// in the language of msgs.
+//
+// Title of the dialog that edits a custom agent.
+func (msgs Messages) UiAgentcfgCustomEdit(name string) string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_custom_edit", map[string]any{"name": name})
+}
+
+// UiAgentcfgCustomText says "Any program that speaks the Agent Client Protocol over stdio."
+// in the language the app shows.
+//
+// Description of the custom agent dialog.
+func UiAgentcfgCustomText() string { return In(i18n.Locale()).UiAgentcfgCustomText() }
+
+// UiAgentcfgCustomText says "Any program that speaks the Agent Client Protocol over stdio."
+// in the language of msgs.
+//
+// Description of the custom agent dialog.
+func (msgs Messages) UiAgentcfgCustomText() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_custom_text", nil)
+}
+
+// UiAgentcfgCustomAdd says "Add"
+// in the language the app shows.
+//
+// Submit button of the new custom agent form.
+func UiAgentcfgCustomAdd() string { return In(i18n.Locale()).UiAgentcfgCustomAdd() }
+
+// UiAgentcfgCustomAdd says "Add"
+// in the language of msgs.
+//
+// Submit button of the new custom agent form.
+func (msgs Messages) UiAgentcfgCustomAdd() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_custom_add", nil)
+}
+
+// UiAgentcfgName says "Name"
+// in the language the app shows.
+//
+// Label of the custom agent's name field.
+func UiAgentcfgName() string { return In(i18n.Locale()).UiAgentcfgName() }
+
+// UiAgentcfgName says "Name"
+// in the language of msgs.
+//
+// Label of the custom agent's name field.
+func (msgs Messages) UiAgentcfgName() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_name", nil)
+}
+
+// UiAgentcfgSlug says "ID"
+// in the language the app shows.
+//
+// Label of the custom agent's slug field.
+func UiAgentcfgSlug() string { return In(i18n.Locale()).UiAgentcfgSlug() }
+
+// UiAgentcfgSlug says "ID"
+// in the language of msgs.
+//
+// Label of the custom agent's slug field.
+func (msgs Messages) UiAgentcfgSlug() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_slug", nil)
+}
+
+// UiAgentcfgSlugHint says "Lowercase letters, digits and -. Cannot be changed later."
+// in the language the app shows.
+//
+// Help under the slug field when adding.
+func UiAgentcfgSlugHint() string { return In(i18n.Locale()).UiAgentcfgSlugHint() }
+
+// UiAgentcfgSlugHint says "Lowercase letters, digits and -. Cannot be changed later."
+// in the language of msgs.
+//
+// Help under the slug field when adding.
+func (msgs Messages) UiAgentcfgSlugHint() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_slug_hint", nil)
+}
+
+// UiAgentcfgSlugFixed says "The ID cannot be changed."
+// in the language the app shows.
+//
+// Help under the slug field when editing.
+func UiAgentcfgSlugFixed() string { return In(i18n.Locale()).UiAgentcfgSlugFixed() }
+
+// UiAgentcfgSlugFixed says "The ID cannot be changed."
+// in the language of msgs.
+//
+// Help under the slug field when editing.
+func (msgs Messages) UiAgentcfgSlugFixed() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_slug_fixed", nil)
+}
+
+// UiAgentcfgArgs says "Arguments"
+// in the language the app shows.
+//
+// Label of the custom agent's arguments field.
+func UiAgentcfgArgs() string { return In(i18n.Locale()).UiAgentcfgArgs() }
+
+// UiAgentcfgArgs says "Arguments"
+// in the language of msgs.
+//
+// Label of the custom agent's arguments field.
+func (msgs Messages) UiAgentcfgArgs() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_args", nil)
+}
+
+// UiAgentcfgArgsHint says "One per line, passed as they are."
+// in the language the app shows.
+//
+// Help under the arguments field.
+func UiAgentcfgArgsHint() string { return In(i18n.Locale()).UiAgentcfgArgsHint() }
+
+// UiAgentcfgArgsHint says "One per line, passed as they are."
+// in the language of msgs.
+//
+// Help under the arguments field.
+func (msgs Messages) UiAgentcfgArgsHint() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_args_hint", nil)
+}
+
+// UiAgentcfgEnv says "Environment variables"
+// in the language the app shows.
+//
+// Legend of the custom agent's environment variables.
+func UiAgentcfgEnv() string { return In(i18n.Locale()).UiAgentcfgEnv() }
+
+// UiAgentcfgEnv says "Environment variables"
+// in the language of msgs.
+//
+// Legend of the custom agent's environment variables.
+func (msgs Messages) UiAgentcfgEnv() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_env", nil)
+}
+
+// UiAgentcfgEnvName says "Name"
+// in the language the app shows.
+//
+// Label of an environment variable's name.
+func UiAgentcfgEnvName() string { return In(i18n.Locale()).UiAgentcfgEnvName() }
+
+// UiAgentcfgEnvName says "Name"
+// in the language of msgs.
+//
+// Label of an environment variable's name.
+func (msgs Messages) UiAgentcfgEnvName() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_env_name", nil)
+}
+
+// UiAgentcfgEnvValue says "Value"
+// in the language the app shows.
+//
+// Label of an environment variable's value.
+func UiAgentcfgEnvValue() string { return In(i18n.Locale()).UiAgentcfgEnvValue() }
+
+// UiAgentcfgEnvValue says "Value"
+// in the language of msgs.
+//
+// Label of an environment variable's value.
+func (msgs Messages) UiAgentcfgEnvValue() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_env_value", nil)
+}
+
+// UiAgentcfgEnvAdd says "Add variable"
+// in the language the app shows.
+//
+// Button that adds an environment variable row.
+func UiAgentcfgEnvAdd() string { return In(i18n.Locale()).UiAgentcfgEnvAdd() }
+
+// UiAgentcfgEnvAdd says "Add variable"
+// in the language of msgs.
+//
+// Button that adds an environment variable row.
+func (msgs Messages) UiAgentcfgEnvAdd() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_env_add", nil)
+}
+
+// UiAgentcfgEnvRemove says "Remove {name}"
+// in the language the app shows.
+//
+// Spoken name of the button that removes an environment variable row.
+func UiAgentcfgEnvRemove(name string) string { return In(i18n.Locale()).UiAgentcfgEnvRemove(name) }
+
+// UiAgentcfgEnvRemove says "Remove {name}"
+// in the language of msgs.
+//
+// Spoken name of the button that removes an environment variable row.
+func (msgs Messages) UiAgentcfgEnvRemove(name string) string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_env_remove", map[string]any{"name": name})
+}
+
+// UiAgentcfgEnvRemoveUnnamed says "Remove this variable"
+// in the language the app shows.
+//
+// Spoken name of the button that removes an environment variable row whose
+// name is still empty.
+func UiAgentcfgEnvRemoveUnnamed() string { return In(i18n.Locale()).UiAgentcfgEnvRemoveUnnamed() }
+
+// UiAgentcfgEnvRemoveUnnamed says "Remove this variable"
+// in the language of msgs.
+//
+// Spoken name of the button that removes an environment variable row whose
+// name is still empty.
+func (msgs Messages) UiAgentcfgEnvRemoveUnnamed() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_env_remove_unnamed", nil)
+}
+
+// UiAgentcfgSecret says "Secret"
+// in the language the app shows.
+//
+// Switch that stores the value in the system keychain.
+func UiAgentcfgSecret() string { return In(i18n.Locale()).UiAgentcfgSecret() }
+
+// UiAgentcfgSecret says "Secret"
+// in the language of msgs.
+//
+// Switch that stores the value in the system keychain.
+func (msgs Messages) UiAgentcfgSecret() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_secret", nil)
+}
+
+// UiAgentcfgSecretKept says "Saved · leave empty to keep"
+// in the language the app shows.
+//
+// Placeholder of a saved secret's value field.
+func UiAgentcfgSecretKept() string { return In(i18n.Locale()).UiAgentcfgSecretKept() }
+
+// UiAgentcfgSecretKept says "Saved · leave empty to keep"
+// in the language of msgs.
+//
+// Placeholder of a saved secret's value field.
+func (msgs Messages) UiAgentcfgSecretKept() string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_secret_kept", nil)
+}
+
+// UiAgentcfgSecretUnsecured says "{name} was saved as a secret. Enter its new value, or turn Secret back on to keep it"
+// in the language the app shows.
+//
+// Shown when a saved secret is switched to plain text without a value:
+// saving would replace it with an empty value.
+func UiAgentcfgSecretUnsecured(name string) string {
+	return In(i18n.Locale()).UiAgentcfgSecretUnsecured(name)
+}
+
+// UiAgentcfgSecretUnsecured says "{name} was saved as a secret. Enter its new value, or turn Secret back on to keep it"
+// in the language of msgs.
+//
+// Shown when a saved secret is switched to plain text without a value:
+// saving would replace it with an empty value.
+func (msgs Messages) UiAgentcfgSecretUnsecured(name string) string {
+	return Catalog.Format(msgs.locale, "ui_agentcfg_secret_unsecured", map[string]any{"name": name})
 }
 
 // UiCandidateSelected says "In use"
@@ -18180,4 +19052,456 @@ func UiWtActionFailed() string { return In(i18n.Locale()).UiWtActionFailed() }
 // Needs attention: retry or cancel was rejected (WT41).
 func (msgs Messages) UiWtActionFailed() string {
 	return Catalog.Format(msgs.locale, "ui_wt_action_failed", nil)
+}
+
+// UiProfileSection says "Profiles"
+// in the language the app shows.
+//
+// Title of the profiles section in an agent's details.
+func UiProfileSection() string { return In(i18n.Locale()).UiProfileSection() }
+
+// UiProfileSection says "Profiles"
+// in the language of msgs.
+//
+// Title of the profiles section in an agent's details.
+func (msgs Messages) UiProfileSection() string {
+	return Catalog.Format(msgs.locale, "ui_profile_section", nil)
+}
+
+// UiProfileDefault says "Default profile"
+// in the language the app shows.
+//
+// Name of an agent's default profile.
+func UiProfileDefault() string { return In(i18n.Locale()).UiProfileDefault() }
+
+// UiProfileDefault says "Default profile"
+// in the language of msgs.
+//
+// Name of an agent's default profile.
+func (msgs Messages) UiProfileDefault() string {
+	return Catalog.Format(msgs.locale, "ui_profile_default", nil)
+}
+
+// UiProfileDefaultBadge says "Default"
+// in the language the app shows.
+//
+// Badge on the default profile in the list.
+func UiProfileDefaultBadge() string { return In(i18n.Locale()).UiProfileDefaultBadge() }
+
+// UiProfileDefaultBadge says "Default"
+// in the language of msgs.
+//
+// Badge on the default profile in the list.
+func (msgs Messages) UiProfileDefaultBadge() string {
+	return Catalog.Format(msgs.locale, "ui_profile_default_badge", nil)
+}
+
+// UiProfileNew says "New profile"
+// in the language the app shows.
+//
+// Button and dialog title that create a profile.
+func UiProfileNew() string { return In(i18n.Locale()).UiProfileNew() }
+
+// UiProfileNew says "New profile"
+// in the language of msgs.
+//
+// Button and dialog title that create a profile.
+func (msgs Messages) UiProfileNew() string {
+	return Catalog.Format(msgs.locale, "ui_profile_new", nil)
+}
+
+// UiProfileEditTitle says "Edit {name}"
+// in the language the app shows.
+//
+// Title of the dialog that edits a profile.
+func UiProfileEditTitle(name string) string { return In(i18n.Locale()).UiProfileEditTitle(name) }
+
+// UiProfileEditTitle says "Edit {name}"
+// in the language of msgs.
+//
+// Title of the dialog that edits a profile.
+func (msgs Messages) UiProfileEditTitle(name string) string {
+	return Catalog.Format(msgs.locale, "ui_profile_edit_title", map[string]any{"name": name})
+}
+
+// UiProfileText says "Settings to start this agent with. Sessions keep the settings they started with."
+// in the language the app shows.
+//
+// Description of the profile dialog.
+func UiProfileText() string { return In(i18n.Locale()).UiProfileText() }
+
+// UiProfileText says "Settings to start this agent with. Sessions keep the settings they started with."
+// in the language of msgs.
+//
+// Description of the profile dialog.
+func (msgs Messages) UiProfileText() string {
+	return Catalog.Format(msgs.locale, "ui_profile_text", nil)
+}
+
+// UiProfileName says "Name"
+// in the language the app shows.
+//
+// Label of the profile name field.
+func UiProfileName() string { return In(i18n.Locale()).UiProfileName() }
+
+// UiProfileName says "Name"
+// in the language of msgs.
+//
+// Label of the profile name field.
+func (msgs Messages) UiProfileName() string {
+	return Catalog.Format(msgs.locale, "ui_profile_name", nil)
+}
+
+// UiProfileNameFixed says "The default profile keeps its name"
+// in the language the app shows.
+//
+// Hint under the disabled name of the default profile.
+func UiProfileNameFixed() string { return In(i18n.Locale()).UiProfileNameFixed() }
+
+// UiProfileNameFixed says "The default profile keeps its name"
+// in the language of msgs.
+//
+// Hint under the disabled name of the default profile.
+func (msgs Messages) UiProfileNameFixed() string {
+	return Catalog.Format(msgs.locale, "ui_profile_name_fixed", nil)
+}
+
+// UiProfileApproval says "Approvals"
+// in the language the app shows.
+//
+// Label of the approval mode choice.
+func UiProfileApproval() string { return In(i18n.Locale()).UiProfileApproval() }
+
+// UiProfileApproval says "Approvals"
+// in the language of msgs.
+//
+// Label of the approval mode choice.
+func (msgs Messages) UiProfileApproval() string {
+	return Catalog.Format(msgs.locale, "ui_profile_approval", nil)
+}
+
+// UiProfileApprovalOrielhub says "Through OrielHub"
+// in the language the app shows.
+//
+// Approval mode: the agent asks OrielHub.
+func UiProfileApprovalOrielhub() string { return In(i18n.Locale()).UiProfileApprovalOrielhub() }
+
+// UiProfileApprovalOrielhub says "Through OrielHub"
+// in the language of msgs.
+//
+// Approval mode: the agent asks OrielHub.
+func (msgs Messages) UiProfileApprovalOrielhub() string {
+	return Catalog.Format(msgs.locale, "ui_profile_approval_orielhub", nil)
+}
+
+// UiProfileApprovalOrielhubDetail says "The agent asks before acting; you answer in OrielHub"
+// in the language the app shows.
+//
+// Detail of the OrielHub approval mode.
+func UiProfileApprovalOrielhubDetail() string {
+	return In(i18n.Locale()).UiProfileApprovalOrielhubDetail()
+}
+
+// UiProfileApprovalOrielhubDetail says "The agent asks before acting; you answer in OrielHub"
+// in the language of msgs.
+//
+// Detail of the OrielHub approval mode.
+func (msgs Messages) UiProfileApprovalOrielhubDetail() string {
+	return Catalog.Format(msgs.locale, "ui_profile_approval_orielhub_detail", nil)
+}
+
+// UiProfileApprovalNative says "Agent's permissive mode"
+// in the language the app shows.
+//
+// Approval mode: the agent's own permissive mode.
+func UiProfileApprovalNative() string { return In(i18n.Locale()).UiProfileApprovalNative() }
+
+// UiProfileApprovalNative says "Agent's permissive mode"
+// in the language of msgs.
+//
+// Approval mode: the agent's own permissive mode.
+func (msgs Messages) UiProfileApprovalNative() string {
+	return Catalog.Format(msgs.locale, "ui_profile_approval_native", nil)
+}
+
+// UiProfileApprovalNativeDetail says "The agent's actions no longer go through OrielHub for approval"
+// in the language the app shows.
+//
+// Warning shown with the permissive mode.
+func UiProfileApprovalNativeDetail() string { return In(i18n.Locale()).UiProfileApprovalNativeDetail() }
+
+// UiProfileApprovalNativeDetail says "The agent's actions no longer go through OrielHub for approval"
+// in the language of msgs.
+//
+// Warning shown with the permissive mode.
+func (msgs Messages) UiProfileApprovalNativeDetail() string {
+	return Catalog.Format(msgs.locale, "ui_profile_approval_native_detail", nil)
+}
+
+// UiProfileArgs says "Extra arguments"
+// in the language the app shows.
+//
+// Label of the extra arguments field.
+func UiProfileArgs() string { return In(i18n.Locale()).UiProfileArgs() }
+
+// UiProfileArgs says "Extra arguments"
+// in the language of msgs.
+//
+// Label of the extra arguments field.
+func (msgs Messages) UiProfileArgs() string {
+	return Catalog.Format(msgs.locale, "ui_profile_args", nil)
+}
+
+// UiProfileArgsHint says "One per line, added after the agent's own arguments, not through a shell"
+// in the language the app shows.
+//
+// Hint under the extra arguments field.
+func UiProfileArgsHint() string { return In(i18n.Locale()).UiProfileArgsHint() }
+
+// UiProfileArgsHint says "One per line, added after the agent's own arguments, not through a shell"
+// in the language of msgs.
+//
+// Hint under the extra arguments field.
+func (msgs Messages) UiProfileArgsHint() string {
+	return Catalog.Format(msgs.locale, "ui_profile_args_hint", nil)
+}
+
+// UiProfileTimeout says "Approval timeout (minutes)"
+// in the language the app shows.
+//
+// Label of the approval timeout field.
+func UiProfileTimeout() string { return In(i18n.Locale()).UiProfileTimeout() }
+
+// UiProfileTimeout says "Approval timeout (minutes)"
+// in the language of msgs.
+//
+// Label of the approval timeout field.
+func (msgs Messages) UiProfileTimeout() string {
+	return Catalog.Format(msgs.locale, "ui_profile_timeout", nil)
+}
+
+// UiProfileTimeoutHint says "0 means never; at most 1440 (24 hours)"
+// in the language the app shows.
+//
+// Hint under the approval timeout field.
+func UiProfileTimeoutHint() string { return In(i18n.Locale()).UiProfileTimeoutHint() }
+
+// UiProfileTimeoutHint says "0 means never; at most 1440 (24 hours)"
+// in the language of msgs.
+//
+// Hint under the approval timeout field.
+func (msgs Messages) UiProfileTimeoutHint() string {
+	return Catalog.Format(msgs.locale, "ui_profile_timeout_hint", nil)
+}
+
+// UiProfileTimeoutInvalid says "Enter a whole number of minutes"
+// in the language the app shows.
+//
+// Error when the timeout is not a whole number.
+func UiProfileTimeoutInvalid() string { return In(i18n.Locale()).UiProfileTimeoutInvalid() }
+
+// UiProfileTimeoutInvalid says "Enter a whole number of minutes"
+// in the language of msgs.
+//
+// Error when the timeout is not a whole number.
+func (msgs Messages) UiProfileTimeoutInvalid() string {
+	return Catalog.Format(msgs.locale, "ui_profile_timeout_invalid", nil)
+}
+
+// UiProfileVerdict says "When an approval times out"
+// in the language the app shows.
+//
+// Label of the timeout verdict choice.
+func UiProfileVerdict() string { return In(i18n.Locale()).UiProfileVerdict() }
+
+// UiProfileVerdict says "When an approval times out"
+// in the language of msgs.
+//
+// Label of the timeout verdict choice.
+func (msgs Messages) UiProfileVerdict() string {
+	return Catalog.Format(msgs.locale, "ui_profile_verdict", nil)
+}
+
+// UiProfileVerdictAllow says "Allow"
+// in the language the app shows.
+//
+// Timeout verdict: allow.
+func UiProfileVerdictAllow() string { return In(i18n.Locale()).UiProfileVerdictAllow() }
+
+// UiProfileVerdictAllow says "Allow"
+// in the language of msgs.
+//
+// Timeout verdict: allow.
+func (msgs Messages) UiProfileVerdictAllow() string {
+	return Catalog.Format(msgs.locale, "ui_profile_verdict_allow", nil)
+}
+
+// UiProfileVerdictDeny says "Deny"
+// in the language the app shows.
+//
+// Timeout verdict: deny.
+func UiProfileVerdictDeny() string { return In(i18n.Locale()).UiProfileVerdictDeny() }
+
+// UiProfileVerdictDeny says "Deny"
+// in the language of msgs.
+//
+// Timeout verdict: deny.
+func (msgs Messages) UiProfileVerdictDeny() string {
+	return Catalog.Format(msgs.locale, "ui_profile_verdict_deny", nil)
+}
+
+// UiProfileAdd says "Add profile"
+// in the language the app shows.
+//
+// Submit button of the new profile dialog.
+func UiProfileAdd() string { return In(i18n.Locale()).UiProfileAdd() }
+
+// UiProfileAdd says "Add profile"
+// in the language of msgs.
+//
+// Submit button of the new profile dialog.
+func (msgs Messages) UiProfileAdd() string {
+	return Catalog.Format(msgs.locale, "ui_profile_add", nil)
+}
+
+// UiProfileEdit says "Edit {name}"
+// in the language the app shows.
+//
+// Accessible name of the edit button of a profile.
+func UiProfileEdit(name string) string { return In(i18n.Locale()).UiProfileEdit(name) }
+
+// UiProfileEdit says "Edit {name}"
+// in the language of msgs.
+//
+// Accessible name of the edit button of a profile.
+func (msgs Messages) UiProfileEdit(name string) string {
+	return Catalog.Format(msgs.locale, "ui_profile_edit", map[string]any{"name": name})
+}
+
+// UiProfileRemove says "Delete {name}"
+// in the language the app shows.
+//
+// Accessible name of the delete button of a profile.
+func UiProfileRemove(name string) string { return In(i18n.Locale()).UiProfileRemove(name) }
+
+// UiProfileRemove says "Delete {name}"
+// in the language of msgs.
+//
+// Accessible name of the delete button of a profile.
+func (msgs Messages) UiProfileRemove(name string) string {
+	return Catalog.Format(msgs.locale, "ui_profile_remove", map[string]any{"name": name})
+}
+
+// UiProfileRemoveTitle says "Delete {name}?"
+// in the language the app shows.
+//
+// Title of the confirmation that deletes a profile.
+func UiProfileRemoveTitle(name string) string { return In(i18n.Locale()).UiProfileRemoveTitle(name) }
+
+// UiProfileRemoveTitle says "Delete {name}?"
+// in the language of msgs.
+//
+// Title of the confirmation that deletes a profile.
+func (msgs Messages) UiProfileRemoveTitle(name string) string {
+	return Catalog.Format(msgs.locale, "ui_profile_remove_title", map[string]any{"name": name})
+}
+
+// UiProfileRemoveText says "Existing sessions keep their settings. Its secrets are removed from the keychain once no task uses them."
+// in the language the app shows.
+//
+// Text of the confirmation that deletes a profile.
+func UiProfileRemoveText() string { return In(i18n.Locale()).UiProfileRemoveText() }
+
+// UiProfileRemoveText says "Existing sessions keep their settings. Its secrets are removed from the keychain once no task uses them."
+// in the language of msgs.
+//
+// Text of the confirmation that deletes a profile.
+func (msgs Messages) UiProfileRemoveText() string {
+	return Catalog.Format(msgs.locale, "ui_profile_remove_text", nil)
+}
+
+// UiProfileRemoveYes says "Delete"
+// in the language the app shows.
+//
+// Confirm button that deletes a profile.
+func UiProfileRemoveYes() string { return In(i18n.Locale()).UiProfileRemoveYes() }
+
+// UiProfileRemoveYes says "Delete"
+// in the language of msgs.
+//
+// Confirm button that deletes a profile.
+func (msgs Messages) UiProfileRemoveYes() string {
+	return Catalog.Format(msgs.locale, "ui_profile_remove_yes", nil)
+}
+
+// UiProfileRemoveFailed says "Could not delete the profile"
+// in the language the app shows.
+//
+// Title of the error when deleting a profile fails.
+func UiProfileRemoveFailed() string { return In(i18n.Locale()).UiProfileRemoveFailed() }
+
+// UiProfileRemoveFailed says "Could not delete the profile"
+// in the language of msgs.
+//
+// Title of the error when deleting a profile fails.
+func (msgs Messages) UiProfileRemoveFailed() string {
+	return Catalog.Format(msgs.locale, "ui_profile_remove_failed", nil)
+}
+
+// UiProfileSummaryArgs says "{count, plural, one {# extra argument} other {# extra arguments}}"
+// in the language the app shows.
+//
+// Profile summary: number of extra arguments.
+func UiProfileSummaryArgs(count int) string { return In(i18n.Locale()).UiProfileSummaryArgs(count) }
+
+// UiProfileSummaryArgs says "{count, plural, one {# extra argument} other {# extra arguments}}"
+// in the language of msgs.
+//
+// Profile summary: number of extra arguments.
+func (msgs Messages) UiProfileSummaryArgs(count int) string {
+	return Catalog.Format(msgs.locale, "ui_profile_summary_args", map[string]any{"count": count})
+}
+
+// UiProfileSummaryEnv says "{count, plural, one {# environment variable} other {# environment variables}}"
+// in the language the app shows.
+//
+// Profile summary: number of environment variables.
+func UiProfileSummaryEnv(count int) string { return In(i18n.Locale()).UiProfileSummaryEnv(count) }
+
+// UiProfileSummaryEnv says "{count, plural, one {# environment variable} other {# environment variables}}"
+// in the language of msgs.
+//
+// Profile summary: number of environment variables.
+func (msgs Messages) UiProfileSummaryEnv(count int) string {
+	return Catalog.Format(msgs.locale, "ui_profile_summary_env", map[string]any{"count": count})
+}
+
+// UiProfileSummaryTimeout says "Times out after {minutes} min"
+// in the language the app shows.
+//
+// Profile summary: approval timeout.
+func UiProfileSummaryTimeout(minutes int) string {
+	return In(i18n.Locale()).UiProfileSummaryTimeout(minutes)
+}
+
+// UiProfileSummaryTimeout says "Times out after {minutes} min"
+// in the language of msgs.
+//
+// Profile summary: approval timeout.
+func (msgs Messages) UiProfileSummaryTimeout(minutes int) string {
+	return Catalog.Format(msgs.locale, "ui_profile_summary_timeout", map[string]any{"minutes": minutes})
+}
+
+// UiProfileField says "Profile"
+// in the language the app shows.
+//
+// Label of the profile choice when creating a task or starting an agent.
+func UiProfileField() string { return In(i18n.Locale()).UiProfileField() }
+
+// UiProfileField says "Profile"
+// in the language of msgs.
+//
+// Label of the profile choice when creating a task or starting an agent.
+func (msgs Messages) UiProfileField() string {
+	return Catalog.Format(msgs.locale, "ui_profile_field", nil)
 }

@@ -112,6 +112,36 @@ type SearchEntry struct {
 	Text  string     `json:"text"`
 }
 
+// TaskSecret 是 Task 的 Launch Snapshot（Session 的與待審查的審查者的）引用的一個密鑰（m4.md AC37）：app 清理
+// 待清理的密鑰時查它，不必重放事件。鍵是 (Task, Key)。
+type TaskSecret struct {
+	Agent task.AgentID `json:"agent"`
+	Key   string       `json:"key"`
+}
+
+// secretsOf 是 s 引用的密鑰：各 Session 與待審查的審查者的快照裡的，按 Key 排列、不重複；沒有時是空的非 nil 切片。
+func secretsOf(s task.State) []TaskSecret {
+	seen := map[string]TaskSecret{}
+	add := func(l task.LaunchSnapshot) {
+		for _, e := range l.Env {
+			if e.Secret != "" {
+				seen[e.Secret] = TaskSecret{Agent: l.Agent, Key: e.Secret}
+			}
+		}
+	}
+	for _, x := range s.Sessions {
+		add(x.Launch)
+	}
+	if s.Review != nil && s.Review.Launch != nil {
+		add(*s.Review.Launch)
+	}
+	out := make([]TaskSecret, 0, len(seen))
+	for _, k := range slices.Sorted(maps.Keys(seen)) {
+		out = append(out, seen[k])
+	}
+	return out
+}
+
 // SessionLink 記下 OrielHub 跑的一個原生會話屬於哪個 Task（m2.md 第 33 節）：用量頁據此把
 // agent 本機記錄裡這個會話的用量算作經 OrielHub，歸到這個 Task。鍵是 (Agent, Native)。
 type SessionLink struct {
@@ -416,8 +446,9 @@ func (f fileSet) list() []FileUse {
 // 分類與路徑取更新改過的。版本 5：Task 列帶置頂的時間（D109）。版本 6：結束的回合（D115）。
 // 版本 7：Task 列帶優先級、標籤與 agent（D135）。版本 8：檢索列帶來源與 agent 名稱，
 // 回答在訊息結束時整條寫一列，思考不進，使用者的訊息進（D70）。版本 9：會話歸屬與上報的用量
-// （m2.md 第 33 節）。版本 10：不再有 Session 列（沒有讀者，store 遷移 v13 刪表）。
-const viewsVersion = 10
+// （m2.md 第 33 節）。版本 10：不再有 Session 列（沒有讀者，store 遷移 v13 刪表）。版本 11：Task 引用的密鑰
+// （m4.md AC37，store 遷移 v15 建表）。
+const viewsVersion = 11
 
 // projections 把本批事件逐一折疊進 prev，回傳新 State、還沒結束的回答與增量寫入的投影：
 // Task/Sessions/Confirmations 是全集替換，Search、Files 與 Turns 只收本批；
@@ -451,6 +482,10 @@ func projections(prev task.State, drafts searchDrafts, events []task.Event, dir 
 	}
 	v := stateViews(s)
 	v.Search, v.Files, v.Turns, v.Links, v.Reported = search, files.list(), turns, links, reported
+	// 引用的密鑰只在建了 Session 或換了審查者時變：沒變時不寫（nil），變了整組替換。
+	if next := secretsOf(s); !slices.Equal(next, secretsOf(prev)) {
+		v.Secrets = next
+	}
 	return s, drafts, v
 }
 
@@ -462,6 +497,7 @@ func rebuildViews(l loadedTask) Views {
 	v.Files = l.files.list()
 	v.Turns = l.turns
 	v.Links, v.Reported = l.links, l.reported
+	v.Secrets = secretsOf(l.state)
 	return v
 }
 

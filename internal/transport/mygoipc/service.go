@@ -34,10 +34,21 @@ type OpenTaskEvent struct {
 // AgentSource 是 Agents 服務的後端；app 的 *Agents 滿足它。
 // 如此 mygoipc 不依賴 app（組合根依賴 transport，不能反過來）。
 type AgentSource interface {
-	Definitions() []agent.Definition
-	Installations() []agent.Installation
+	// Rows 是 Agent 頁的列，接上了使用者的設定（m4.md 第 2 節）。
+	Rows() []agent.AgentRow
+	Problems() []agent.CatalogError
 	Refresh(ctx context.Context) error
 	Registry(ctx context.Context, force bool) (agent.RegistryList, error)
+	AddRegistry(ctx context.Context, id, version string) error
+	UpdateRegistry(ctx context.Context, id, version string) error
+	Remove(ctx context.Context, id task.AgentID) error
+	AddCustom(ctx context.Context, in agent.CustomAgentInput) error
+	EditCustom(ctx context.Context, in agent.CustomAgentInput) error
+	SetOverride(ctx context.Context, id task.AgentID, path string) error
+	// Profile（m4.md 第 3 節）。
+	AddProfile(ctx context.Context, in agent.ProfileInput) (task.ProfileID, error)
+	EditProfile(ctx context.Context, in agent.ProfileInput) error
+	RemoveProfile(ctx context.Context, id task.AgentID, profile task.ProfileID) error
 }
 
 // late 讓 service 在後端就緒前先被 Bind（mygo generate）：後端 T 與 log
@@ -85,15 +96,15 @@ func wire(log *slog.Logger, method string, err error) *transport.Error {
 // Hub 是任務相關的 IPC 服務（BindAs "Hub"）。
 type Hub struct{ late[*hub.Hub] }
 
-// CreateTask 建立 Task；agent 非空時帶一個用它的預設 Profile 的 Session，
-// 說明是第一個 Prompt（M2-2）。頁面只給 agent ID，不給 Launch Snapshot（D57）。
-func (s *Hub) CreateTask(ctx context.Context, dir, title, brief string, agent task.AgentID) (task.TaskID, error) {
+// CreateTask 建立 Task；agent 非空時帶一個用它的 Profile profile（空著是預設的）的 Session，
+// 說明是第一個 Prompt（M2-2、m4.md PO35）。頁面只給 agent 與 Profile 的 ID，不給 Launch Snapshot（D57）。
+func (s *Hub) CreateTask(ctx context.Context, dir, title, brief string, agent task.AgentID, profile task.ProfileID) (task.TaskID, error) {
 	h, log, e := s.get()
 	if e != nil {
 		return "", e
 	}
 	id, _, err := h.CreateTaskWithAgent(ctx, hub.LocalOwner, dir,
-		task.CreateTask{Title: title, Brief: brief}, agent)
+		task.CreateTask{Title: title, Brief: brief}, agent, profile)
 	if err != nil {
 		return "", wire(log, "CreateTask", err)
 	}
@@ -114,15 +125,15 @@ func (s *Hub) Isolation(ctx context.Context, dir string) (task.IsolationMode, er
 	return mode, nil
 }
 
-// StartAgent 給還沒有 Session 的 Task 啟動 agent，message 是它的第一個 Prompt
-// （m2.md I05–I11，D104）。同 CreateTask，頁面只給 agent ID，不給 Launch
+// StartAgent 給還沒有 Session 的 Task 用 agent 的 Profile profile 啟動它，message 是它的第一個 Prompt
+// （m2.md I05–I11，D104，m4.md PO37）。同 CreateTask，頁面只給 ID，不給 Launch
 // Snapshot（D57）；create_session 仍在 Command 被拒絕（I12）。
-func (s *Hub) StartAgent(ctx context.Context, id task.TaskID, agent task.AgentID, message string) (task.Seq, error) {
+func (s *Hub) StartAgent(ctx context.Context, id task.TaskID, agent task.AgentID, profile task.ProfileID, message string) (task.Seq, error) {
 	h, log, e := s.get()
 	if e != nil {
 		return 0, e
 	}
-	seq, err := h.CreateSessionWithAgent(ctx, hub.LocalOwner, id, agent, task.Prompt{Text: message})
+	seq, err := h.CreateSessionWithAgent(ctx, hub.LocalOwner, id, agent, profile, task.Prompt{Text: message})
 	if err != nil {
 		return 0, wire(log, "StartAgent", err)
 	}
@@ -423,7 +434,75 @@ func (s *Agents) List(ctx context.Context) ([]agent.AgentRow, error) {
 	if e != nil {
 		return nil, e
 	}
-	return agent.Rows(g.Definitions(), g.Installations()), nil
+	return g.Rows(), nil
+}
+
+// Problems 是設定裡進不了目錄的 agent 與原因（AC03）。
+func (s *Agents) Problems(ctx context.Context) ([]agent.CatalogError, error) {
+	g, _, e := s.get()
+	if e != nil {
+		return nil, e
+	}
+	return g.Problems(), nil
+}
+
+// AddRegistry 加入 Registry 條目 id 的 version 版（AC10–AC18）；頁面先讓使用者確認包名與版本，版本隨之送來。
+func (s *Agents) AddRegistry(ctx context.Context, id, version string) error {
+	return s.do("AddRegistry", func(g AgentSource) error { return g.AddRegistry(ctx, id, version) })
+}
+
+// UpdateRegistry 把加入的 Registry 條目換成使用者確認過的 version 版（AC21）。
+func (s *Agents) UpdateRegistry(ctx context.Context, id, version string) error {
+	return s.do("UpdateRegistry", func(g AgentSource) error { return g.UpdateRegistry(ctx, id, version) })
+}
+
+// Remove 移除加入的 Registry 條目或自訂 agent（AC22–AC25）。
+func (s *Agents) Remove(ctx context.Context, id task.AgentID) error {
+	return s.do("Remove", func(g AgentSource) error { return g.Remove(ctx, id) })
+}
+
+// AddCustom 新增自訂 agent（AC30–AC35）。
+func (s *Agents) AddCustom(ctx context.Context, in agent.CustomAgentInput) error {
+	return s.do("AddCustom", func(g AgentSource) error { return g.AddCustom(ctx, in) })
+}
+
+// EditCustom 改寫自訂 agent（AC36）。
+func (s *Agents) EditCustom(ctx context.Context, in agent.CustomAgentInput) error {
+	return s.do("EditCustom", func(g AgentSource) error { return g.EditCustom(ctx, in) })
+}
+
+// AddProfile 給 agent 新建 Profile（PO03、PO31），回傳它的 ID。
+func (s *Agents) AddProfile(ctx context.Context, in agent.ProfileInput) (task.ProfileID, error) {
+	var id task.ProfileID
+	err := s.do("AddProfile", func(g AgentSource) (err error) { id, err = g.AddProfile(ctx, in); return err })
+	return id, err
+}
+
+// EditProfile 改寫 agent 的 Profile（PO32）。
+func (s *Agents) EditProfile(ctx context.Context, in agent.ProfileInput) error {
+	return s.do("EditProfile", func(g AgentSource) error { return g.EditProfile(ctx, in) })
+}
+
+// RemoveProfile 刪掉 agent 的 Profile（PO04、PO05、PO34）。
+func (s *Agents) RemoveProfile(ctx context.Context, id task.AgentID, profile task.ProfileID) error {
+	return s.do("RemoveProfile", func(g AgentSource) error { return g.RemoveProfile(ctx, id, profile) })
+}
+
+// SetOverride 設或清掉（path 為 ""）覆蓋路徑（AC40–AC43）。
+func (s *Agents) SetOverride(ctx context.Context, id task.AgentID, path string) error {
+	return s.do("SetOverride", func(g AgentSource) error { return g.SetOverride(ctx, id, path) })
+}
+
+// do 在後端就緒時執行 fn，錯誤照代碼回給頁面。
+func (s *Agents) do(method string, fn func(AgentSource) error) error {
+	g, log, e := s.get()
+	if e != nil {
+		return e
+	}
+	if err := fn(g); err != nil {
+		return wire(log, method, err)
+	}
+	return nil
 }
 
 func (s *Agents) Refresh(ctx context.Context) error {
@@ -453,7 +532,7 @@ func (s *Agents) Registry(ctx context.Context, refresh bool) (agent.RegistryList
 // agents:changed；channel 關閉時結束。由 main 在後端就緒後啟動。
 func BroadcastChanges(changes <-chan []agent.Installation, src AgentSource) {
 	for range changes {
-		AgentsChanged.Broadcast(agent.Rows(src.Definitions(), src.Installations()))
+		AgentsChanged.Broadcast(src.Rows())
 	}
 }
 

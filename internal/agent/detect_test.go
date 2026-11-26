@@ -250,6 +250,35 @@ func TestDetectOverride(t *testing.T) {
 	}
 }
 
+// 自訂 agent 的命令是絕對路徑時，它是唯一的候選，來源是 command 而不是覆寫（使用者沒設覆寫）；
+// 被拒時同樣不退回 PATH 上的同名程式。
+func TestDetectAbsoluteCommand(t *testing.T) {
+	m := newMachine(t)
+	m.script(filepath.Join(m.path, "foo"), "echo foo 1.0.0")
+	good := m.script(filepath.Join(m.root, "opt/foo"), "echo foo 9.0.0")
+	wrong := m.script(filepath.Join(m.root, "opt/bar"), "echo bar 1.0.0")
+	for _, tc := range []struct {
+		name  string
+		cmd   string
+		avail Availability
+	}{
+		{"accepted", good, Ready},
+		{"rejected does not fall back", wrong, Broken},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			def := fooDef()
+			def.Detect.Command = tc.cmd
+			in := m.detector().detect(context.Background(), m.env, def, Override{}).inst
+			if in.Availability != tc.avail || len(in.Candidates) != 1 || in.Candidates[0].Source != FromCommand {
+				t.Fatalf("got %+v", in)
+			}
+			if tc.avail == Ready && in.PathSource != FromCommand {
+				t.Fatalf("path source %s, want %s", in.PathSource, FromCommand)
+			}
+		})
+	}
+}
+
 func TestDetectNameSharedNeedsBrew(t *testing.T) {
 	m := newMachine(t)
 	def := Definition{

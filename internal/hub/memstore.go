@@ -22,6 +22,7 @@ type MemStore struct {
 	search     map[task.TaskID]map[task.Seq]SearchEntry // 累積的全文檢索列
 	files      map[task.TaskID]fileSet                  // 累積的用過的檔案
 	turns      map[task.TaskID][]TurnEnd                // 累積的結束的回合
+	secrets    map[task.TaskID][]TaskSecret             // 引用的密鑰（Views.Secrets 變了時整組替換）
 	workspaces map[task.WorkspaceID]Workspace
 	rules      []task.Rule
 	settings   Settings
@@ -39,6 +40,7 @@ func NewMemStore() *MemStore {
 		search:     map[task.TaskID]map[task.Seq]SearchEntry{},
 		files:      map[task.TaskID]fileSet{},
 		turns:      map[task.TaskID][]TurnEnd{},
+		secrets:    map[task.TaskID][]TaskSecret{},
 		workspaces: map[task.WorkspaceID]Workspace{},
 		labels:     map[task.LabelID]Label{},
 		devices:    map[task.DeviceID]Device{},
@@ -97,6 +99,9 @@ func (s *MemStore) Append(ctx context.Context, id task.TaskID, expected task.Seq
 		s.files[id].add(b.Views.Files)
 	}
 	s.turns[id] = append(s.turns[id], b.Views.Turns...)
+	if b.Views.Secrets != nil {
+		s.secrets[id] = slices.Clone(b.Views.Secrets)
+	}
 	s.views[id] = storedViews(b.Views)
 	return nil
 }
@@ -106,7 +111,7 @@ func (s *MemStore) Append(ctx context.Context, id task.TaskID, expected task.Seq
 // hub 經任何端口都讀不到它們），空的列表是非 nil，待確認數由確認列推出（與 store
 // 一致），不改呼叫端的列。
 func storedViews(v Views) Views {
-	v.Search, v.Unsearch, v.Files, v.Turns, v.Links, v.Reported = nil, nil, nil, nil, nil, nil
+	v.Search, v.Unsearch, v.Files, v.Turns, v.Links, v.Reported, v.Secrets = nil, nil, nil, nil, nil, nil, nil
 	if v.Confirmations == nil {
 		v.Confirmations = []ConfirmationView{}
 	}
@@ -153,6 +158,7 @@ func (s *MemStore) Reproject(ctx context.Context, id task.TaskID, v Views) error
 	files.add(v.Files)
 	s.files[id] = files
 	s.turns[id] = slices.Clone(v.Turns)
+	s.secrets[id] = slices.Clone(v.Secrets)
 	s.views[id] = storedViews(v)
 	return nil
 }
@@ -182,6 +188,7 @@ func (s *MemStore) Delete(_ context.Context, id task.TaskID) error {
 	delete(s.search, id)
 	delete(s.files, id)
 	delete(s.turns, id)
+	delete(s.secrets, id)
 	return nil
 }
 
@@ -245,6 +252,24 @@ func (s *MemStore) Files(ctx context.Context) ([]TaskFile, error) {
 		}
 		for _, u := range f.list() {
 			out = append(out, TaskFile{Task: id, Workspace: t.Workspace, Use: u})
+		}
+	}
+	return out, nil
+}
+
+// SecretsInUse 是 agent 的快照引用的密鑰（含已歸檔的 Task）。
+func (s *MemStore) SecretsInUse(ctx context.Context, agent task.AgentID) ([]string, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	var out []string
+	for _, list := range s.secrets {
+		for _, x := range list {
+			if x.Agent == agent {
+				out = append(out, x.Key)
+			}
 		}
 	}
 	return out, nil
