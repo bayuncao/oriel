@@ -439,6 +439,14 @@
     "description": "Picking a model while the previous pick is still on its way to the agent (V82, D118)."
   },
   "task_unknown_label": "That label was just deleted",
+  "task_workdir_busy": "Another agent is working in this task's folder. Try again once it stops",
+  "@task_workdir_busy": {
+    "description": "Only one session in a task's folder runs at a time (m4.md HO03, HO14): relaying, messaging another session or resuming it while one is running."
+  },
+  "task_worktree_closed": "This task's worktree has been merged or discarded",
+  "@task_worktree_closed": {
+    "description": "Starting another agent on a task whose worktree is merged, discarded, or being merged or discarded (m4.md HO12)."
+  },
   "task_session_open": "Close the session first",
   "@task_session_open": {
     "description": "Deleting native session files while the session is still connected to the agent."
@@ -519,10 +527,6 @@
         "type": "String"
       }
     }
-  },
-  "hub_session_exists": "This task has already started an agent",
-  "@hub_session_exists": {
-    "description": "Starting an agent on a task that already has a session; in M2 a task has at most one agent (D95)."
   },
   "hub_unknown_label": "Label {label} no longer exists",
   "hub_duplicate_label": "A label named “{name}” already exists",
@@ -5535,5 +5539,41 @@
   "ui_profile_summary_timeout": "Times out after {minutes} min",
   "@ui_profile_summary_timeout": {"description": "Profile summary: approval timeout.", "placeholders": {"minutes": {"type": "int"}}},
   "ui_profile_field": "Profile",
-  "@ui_profile_field": {"description": "Label of the profile choice when creating a task or starting an agent."}
+  "@ui_profile_field": {"description": "Label of the profile choice when creating a task or starting an agent."},
+  "ui_relay_open": "Hand off to another agent",
+  "@ui_relay_open": {"description": "Task details: start another agent in a task that already has sessions (m4.md HO21)."},
+  "ui_relay_running": "An agent is running. Stop it before handing off",
+  "@ui_relay_running": {"description": "Under the hand-off button while a session in the task folder is running (HO22)."},
+  "ui_relay_title": "Hand off to another agent",
+  "@ui_relay_title": {"description": "Title of the hand-off dialog (HO24)."},
+  "ui_relay_from": "Hand off from",
+  "@ui_relay_from": {"description": "Choice of the session the handoff comes from, shown when the task folder has more than one (HO25)."},
+  "ui_relay_carry": "Include the handoff",
+  "@ui_relay_carry": {"description": "Switch: send the previous session's last reply and the task's changes with the first message (HO24)."},
+  "ui_relay_carry_reply": "{agent}'s last reply",
+  "@ui_relay_carry_reply": {"description": "What the handoff includes: the previous agent's last reply.", "placeholders": {"agent": {"type": "String"}}},
+  "ui_relay_carry_no_reply": "{agent} left no reply",
+  "@ui_relay_carry_no_reply": {"description": "What the handoff includes: the previous agent's last turn had no reply.", "placeholders": {"agent": {"type": "String"}}},
+  "ui_relay_carry_files": "{count, plural, one {Changes to # file} other {Changes to # files}}",
+  "@ui_relay_carry_files": {"description": "What the handoff includes: changed files in the worktree.", "placeholders": {"count": {"type": "int"}}},
+  "ui_relay_carry_no_changes": "No changes yet",
+  "@ui_relay_carry_no_changes": {"description": "What the handoff includes: the worktree has no changes."},
+  "ui_relay_carry_edited": "Files this task edited",
+  "@ui_relay_carry_edited": {"description": "What the handoff includes: for a task working directly in the folder."},
+  "ui_relay_note": "Ask {agent} to write a handoff note first",
+  "@ui_relay_note": {"description": "Button in the hand-off dialog: send the previous session a fixed message asking for a handoff note (HO26).", "placeholders": {"agent": {"type": "String"}}},
+  "ui_relay_note_prompt": "Please write a handoff note for another agent who will take over this task: what you did, what is left, how to verify it, and anything to watch out for.",
+  "@ui_relay_note_prompt": {"description": "The fixed message sent to the previous session when asking for a handoff note (HO26)."},
+  "ui_relay_note_failed": "Couldn't send the request",
+  "@ui_relay_note_failed": {"description": "Sending the handoff-note request failed."},
+  "ui_relay_submit": "Hand off",
+  "@ui_relay_submit": {"description": "Submit button of the hand-off dialog."},
+  "ui_relay_failed": "Couldn't hand off",
+  "@ui_relay_failed": {"description": "Title of the error when the hand-off is rejected (HO30)."},
+  "ui_conv_handoff": "Handoff",
+  "@ui_conv_handoff": {"description": "Folded block under the first message of a relayed session: the handoff context sent with it (HO29)."},
+  "ui_conv_send_to": "Send to",
+  "@ui_conv_send_to": {"description": "Choice of the session the composer sends to, when the task folder has two or more open sessions (HO31)."},
+  "ui_conv_workdir_busy": "{running} is working in this folder. Wait until it stops to message {target}",
+  "@ui_conv_workdir_busy": {"description": "Composer note: another session in the task folder is running (HO32).", "placeholders": {"running": {"type": "String"}, "target": {"type": "String"}}}
 }

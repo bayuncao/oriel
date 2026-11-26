@@ -36,7 +36,6 @@ const (
 	CodeUnknownRule      Code = "hub.unknown_rule"      // rule
 	CodeInvalidField     Code = "hub.invalid_field"     // field
 	CodeAgentUnsupported Code = "hub.agent_unsupported" // agent
-	CodeSessionExists    Code = "hub.session_exists"    //
 	CodeUnknownLabel     Code = "hub.unknown_label"     // label
 	CodeDuplicateLabel   Code = "hub.duplicate_label"   // name
 	CodeNotArchived      Code = "hub.not_archived"      //
@@ -64,7 +63,6 @@ var codeText = map[Code]string{
 	CodeUnknownRule:      "rule {rule} is unknown",
 	CodeInvalidField:     "field {field} is invalid",
 	CodeAgentUnsupported: "{agent} cannot be used from OrielHub yet",
-	CodeSessionExists:    "the task already has an agent",
 	CodeUnknownLabel:     "label {label} is unknown",
 	CodeDuplicateLabel:   "a label named {name} already exists",
 	CodeNotArchived:      "only an archived task can be deleted",

@@ -85,6 +85,9 @@ func CheckPrompt(p Prompt) error {
 	if strings.TrimSpace(p.Text) == "" && len(p.Attachments) == 0 {
 		return invalid("empty prompt")
 	}
+	if p.Context != "" {
+		return invalid("context comes only from a handoff") // 只由 create_session 的 Handoff 寫入
+	}
 	return nil
 }
 
@@ -98,9 +101,25 @@ func createSession(d *decision, c Command) error {
 			return err
 		}
 	}
+	if err := CanStartSession(d.s); err != nil {
+		return err
+	}
+	var context string
+	if h := p.Handoff; h != nil {
+		if p.Prompt == nil {
+			return invalid("handoff without a prompt")
+		}
+		from, err := HandoffSource(d.s, h.From)
+		if err != nil {
+			return err
+		}
+		context = handoffContext(d.s, from, h.Changes)
+	}
 	id := d.newSession(p.Launch, RoleWorker, false)
 	if p.Prompt != nil {
-		d.submit(id, *p.Prompt)
+		first := *p.Prompt
+		first.Context = context
+		d.submit(id, first)
 	}
 	return nil
 }
@@ -119,6 +138,9 @@ func submitPrompt(d *decision, c Command) error {
 	}
 	if err := CheckPrompt(p.Prompt); err != nil {
 		return err
+	}
+	if x.Fork == nil && busy(d.s, c.Session) {
+		return reject(ReasonWorkdirBusy) // 另一個 Session 在同一個資料夾裡運行（HO14）
 	}
 	d.submit(c.Session, p.Prompt)
 	return nil
@@ -149,6 +171,9 @@ func resume(d *decision, c Command) error {
 	}
 	if !x.resumable() {
 		return reject(ReasonNotResumable)
+	}
+	if x.Fork == nil && busy(d.s, c.Session) {
+		return reject(ReasonWorkdirBusy) // HO14
 	}
 	r := &SessionResumed{}
 	if x.Retry != nil {

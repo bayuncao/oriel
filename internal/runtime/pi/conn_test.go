@@ -220,11 +220,11 @@ func TestPrompt(t *testing.T) {
 	}
 }
 
-// PI11、PI12：附件以絕對路徑寫成一段文字；blob 只讓這一輪失敗。
+// PI11、PI12：附件以絕對路徑寫成一段文字；blob 只讓這一輪失敗。交接內容接在文字之後（HO18）。
 func TestAttachments(t *testing.T) {
 	c, got := mustStart(t, append(append(slices.Clone(started),
-		lPrompt(4, "look\n\nAttached file: <cwd>/shot.png\n\nAttached file: <cwd>/notes.md")...), lSettled(false))...)
-	if err := c.Prompt(context.Background(), task.Prompt{ID: "a", Text: "look", Attachments: []task.Attachment{
+		lPrompt(4, "look\n\nhandoff\n\nAttached file: <cwd>/shot.png\n\nAttached file: <cwd>/notes.md")...), lSettled(false))...)
+	if err := c.Prompt(context.Background(), task.Prompt{ID: "a", Text: "look", Context: "handoff", Attachments: []task.Attachment{
 		{Name: "shot.png", MIME: "image/png", Path: "shot.png"}, {Name: "notes.md", MIME: "text/markdown", Path: "notes.md"}}}); err != nil {
 		t.Fatal(err)
 	}

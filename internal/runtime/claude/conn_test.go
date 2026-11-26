@@ -175,7 +175,7 @@ func TestSetModelTimesOut(t *testing.T) {
 	wantTurn(t, got.turnEnd(t), task.TurnOK, "", nil)
 }
 
-// CL11、CL12：工作目錄裡的檔案以絕對路徑告訴 Claude；blob 只讓這一輪失敗，下一輪照常。
+// CL11、CL12：工作目錄裡的檔案以絕對路徑告訴 Claude；blob 只讓這一輪失敗，下一輪照常。交接內容接在文字之後（HO18）。
 func TestAttachments(t *testing.T) {
 	dir, err := filepath.EvalSymlinks(t.TempDir())
 	if err != nil {
@@ -185,13 +185,13 @@ func TestAttachments(t *testing.T) {
 	got := newRec()
 	c, err := r.Start(context.Background(), hub.StartOptions{Launch: testLaunch(), Workdir: dir, Emit: got.emit,
 		Env: replayEnv(t, fixture(t, append(started,
-			`{"client":{"type":"user","message":{"content":[{"type":"text","text":"look"},{"type":"text","text":"Attached file: <cwd>/notes.md"}]}}}`,
+			`{"client":{"type":"user","message":{"content":[{"type":"text","text":"look\n\nhandoff"},{"type":"text","text":"Attached file: <cwd>/notes.md"}]}}}`,
 			lOK, lUserText("again"), lOK)...))})
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer c.Close()
-	if err := c.Prompt(context.Background(), task.Prompt{ID: "a", Text: "look",
+	if err := c.Prompt(context.Background(), task.Prompt{ID: "a", Text: "look", Context: "handoff",
 		Attachments: []task.Attachment{{Name: "notes.md", Path: "notes.md"}}}); err != nil {
 		t.Fatal(err)
 	}

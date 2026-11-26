@@ -64,6 +64,8 @@ type Index interface {
 	Search(ctx context.Context, q string, limit int) ([]SearchHit, error)
 	// Files 是未歸檔的 Task 用過的檔案（D107），帶 Task 的 Workspace，順序不定。
 	Files(ctx context.Context) ([]TaskFile, error)
+	// EditedFiles 是 Task 改過、在工作目錄裡的檔案（D107 的 edited、不是 outside），按路徑升冪；接力的交接內容用（m4.md HO08）。
+	EditedFiles(ctx context.Context, id task.TaskID) ([]string, error)
 	// Recap 是未歸檔的 Task 在 since 之後（含）結束的回合（D115），帶 Task 的標題與 Workspace，順序不定。
 	Recap(ctx context.Context, since time.Time) ([]RecapTurn, error)
 	// SecretsInUse 是 agent 的快照引用的密鑰（Views.Secrets，含已歸檔的 Task），順序不定。

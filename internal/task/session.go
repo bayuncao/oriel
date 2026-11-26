@@ -189,9 +189,23 @@ type TurnRecord struct {
 
 // Prompt 是來自使用者的一次輸入。
 type Prompt struct {
-	ID          PromptID     `json:"id"`
-	Text        string       `json:"text"`
+	ID   PromptID `json:"id"`
+	Text string   `json:"text"`
+	// Context 是接力時 Decide 附上的交接內容（m4.md HO05）：送給 agent 時接在 Text 之後（Full），
+	// 介面折起來顯示，不進搜尋。只由 create_session 的 Handoff 產生，客戶端不能自帶。
+	Context     string       `json:"context,omitzero"`
 	Attachments []Attachment `json:"attachments"`
+}
+
+// Full 是送給 agent 的文字：Text，有 Context 時空一行再接上它（HO18）。
+func (p Prompt) Full() string {
+	if p.Context == "" {
+		return p.Text
+	}
+	if p.Text == "" {
+		return p.Context
+	}
+	return p.Text + "\n\n" + p.Context
 }
 
 // Attachment 是隨 Prompt 傳送的圖片或檔案，可能以 blob

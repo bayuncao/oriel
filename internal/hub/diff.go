@@ -28,25 +28,12 @@ func (h *Hub) Diff(ctx context.Context, p Principal, id task.TaskID) (DiffView, 
 	if err != nil {
 		// 算的同時合併或丟棄可能正在刪這個 worktree（Diff 不經 Actor，與 Effect 並行）：那時的錯誤不是故障，
 		// worktree 已處置或有處置意圖就回 no_worktree。
-		if now, serr := h.Snapshot(ctx, p, id); serr == nil && resolving(now) {
+		if now, serr := h.Snapshot(ctx, p, id); serr == nil && (now.Worktree == nil || now.WorktreeClosing()) {
 			return DiffView{}, fail(CodeNoWorktree, err)
 		}
 		return DiffView{}, err
 	}
 	return parseDiff(text, maxDiffPatch), nil
-}
-
-// resolving 回報 Task Worktree 已處置，或有合併或丟棄的意圖（在跑、等著或掛起）。
-func resolving(s task.State) bool {
-	if s.Worktree == nil || s.Worktree.Outcome != task.OutcomeOpen {
-		return true
-	}
-	for _, in := range s.Intents {
-		if in.Target.Level == task.TargetWorktree {
-			return true
-		}
-	}
-	return false
 }
 
 // parseDiff 把 git diff（a/、b/ 前綴，Git 連接埠的格式）拆成檔案，保持 git 的順序；

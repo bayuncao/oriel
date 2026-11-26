@@ -43,6 +43,8 @@ const (
 	ReasonModelUnavailable  Reason = "model_unavailable" // agent 的模型列表裡沒有這個模型（列表變了）
 	ReasonModelSwitching    Reason = "model_switching"   // 上一次選的模型還沒換好
 	ReasonUnknownLabel      Reason = "unknown_label"     // 標籤目錄裡沒有這個標籤（剛被刪掉）
+	ReasonWorkdirBusy       Reason = "workdir_busy"      // Task 資料夾裡另一個 Session 在運行（m4.md HO03、HO14）
+	ReasonWorktreeClosed    Reason = "worktree_closed"   // Task Worktree 已合併、丟棄或正要處置，不能再開 Session（HO12）
 	ReasonInvalid           Reason = "invalid"           // 格式不對的命令（程式或協定錯誤）；使用者能處理的拒絕都有具體原因
 )
 
@@ -72,6 +74,6 @@ func Reasons() []Reason {
 		ReasonNotResumable,
 		ReasonUnresolvedChanges, ReasonNeedsDesktop, ReasonDirtyWorkdir, ReasonNotGit,
 		ReasonDetachedHead, ReasonInvalid, ReasonInFlight, ReasonModelUnavailable, ReasonModelSwitching,
-		ReasonUnknownLabel,
+		ReasonUnknownLabel, ReasonWorkdirBusy, ReasonWorktreeClosed,
 	}
 }

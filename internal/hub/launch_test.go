@@ -198,9 +198,9 @@ func (l *countingLauncher) calls() int {
 	return l.n
 }
 
-// CreateSessionWithAgent（m2.md I05–I11）：給還沒有 Session 的 Task 啟動 agent。
+// CreateSessionWithAgent（m2.md I05–I11，m4.md HO03、HO13、HO17）：給 Task 啟動 agent。
 // 拒絕時不建 Session；不必啟動 agent 就能判斷的（agent 或消息是空的、沒有這個
-// Task、已有 Session、已歸檔）不解析 agent。
+// Task、資料夾裡有 Session 在運行、已歸檔）不解析 agent。
 func TestCreateSessionWithAgent(t *testing.T) {
 	status := func(s task.TaskStatus) func(task.Event) bool {
 		return func(e task.Event) bool {
@@ -217,24 +217,14 @@ func TestCreateSessionWithAgent(t *testing.T) {
 		}
 		return id
 	}
-	// withSession 建一個帶 Session、跑完第一輪的 Task；closed 時再關掉那個 Session。
-	withSession := func(closed bool) func(*testing.T, *testEnv) task.TaskID {
-		return func(t *testing.T, env *testEnv) task.TaskID {
-			t.Helper()
-			id := env.create(t, t.TempDir(), "say hi", testLaunch())
-			w := watch(t, env.h, id)
-			sid := w.next(task.SessionCreatedKind).Session
-			w.next(task.TurnCompletedKind)
-			if closed {
-				if _, err := env.h.Command(ctxb(), LocalOwner, id, task.Command{Kind: task.CmdCloseSession,
-					Session: sid, CloseSession: &task.CloseSession{}}); err != nil {
-					t.Fatal(err)
-				}
-				w.next(task.SessionClosedKind)
-			}
-			w.cancel()
-			return id
-		}
+	// busy 建一個 Session 在運行（等著取消）的 Task。
+	busy := func(t *testing.T, env *testEnv) task.TaskID {
+		t.Helper()
+		id := env.create(t, t.TempDir(), "hang", testLaunch())
+		w := watch(t, env.h, id)
+		w.next(task.TurnStartedKind)
+		w.cancel()
+		return id
 	}
 	archived := func(t *testing.T, env *testEnv) task.TaskID {
 		t.Helper()
@@ -248,7 +238,7 @@ func TestCreateSessionWithAgent(t *testing.T) {
 	t.Run("I05 the message is the first prompt", func(t *testing.T) {
 		env := newTestHub(t, func(o *Options) { o.Launcher = l })
 		id := bare(t, env)
-		if _, err := env.h.CreateSessionWithAgent(ctxb(), LocalOwner, id, "test", "", task.Prompt{Text: "say hi"}); err != nil {
+		if _, err := env.h.CreateSessionWithAgent(ctxb(), LocalOwner, id, "test", "", task.Prompt{Text: "say hi"}, ""); err != nil {
 			t.Fatal(err)
 		}
 		w := watch(t, env.h, id)
@@ -280,8 +270,7 @@ func TestCreateSessionWithAgent(t *testing.T) {
 		{name: "I09 not installed", setup: bare, agent: "gone", prompt: "say hi", code: string(agent.CodeNotInstalled), resolve: true},
 		{name: "I09 no runtime for the protocol", setup: bare, agent: "noruntime", prompt: "say hi", code: string(CodeAgentUnsupported), resolve: true},
 		{name: "I09 unknown agent", setup: bare, agent: "nobody", prompt: "say hi", code: string(agent.CodeUnknownAgent), resolve: true},
-		{name: "I10 has a session", setup: withSession(false), agent: "test", prompt: "say hi", code: string(CodeSessionExists)},
-		{name: "I10 a closed session counts", setup: withSession(true), agent: "test", prompt: "say hi", code: string(CodeSessionExists)},
+		{name: "HO03 a session is running", setup: busy, agent: "test", prompt: "say hi", code: task.ReasonWorkdirBusy.Code()},
 		{name: "I11 archived", setup: archived, agent: "test", prompt: "say hi", code: task.ReasonArchived.Code()},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
@@ -292,7 +281,7 @@ func TestCreateSessionWithAgent(t *testing.T) {
 			if s, err := env.h.Snapshot(ctxb(), LocalOwner, id); err == nil {
 				before = len(s.Sessions)
 			}
-			_, err := env.h.CreateSessionWithAgent(ctxb(), LocalOwner, id, tc.agent, "", task.Prompt{Text: tc.prompt})
+			_, err := env.h.CreateSessionWithAgent(ctxb(), LocalOwner, id, tc.agent, "", task.Prompt{Text: tc.prompt}, "")
 			if got := errCode(err); got != tc.code {
 				t.Fatalf("got %v, want %s", err, tc.code)
 			}
@@ -308,9 +297,9 @@ func TestCreateSessionWithAgent(t *testing.T) {
 		})
 	}
 
-	// 同時來的兩次只有一次建得成：第一次停在解析途中時第二次建好了，第一次放行後
-	// 在 Actor 裡再核對一次，回 hub.session_exists。
-	t.Run("I10 two at once", func(t *testing.T) {
+	// HO17：同時來的兩次只有一次建得成：第一次停在解析途中時第二次建好了、它的一輪在跑，
+	// 第一次放行後在 Actor 裡再核對一次，回 task.workdir_busy。
+	t.Run("HO17 two at once", func(t *testing.T) {
 		entered, release := make(chan struct{}), make(chan struct{})
 		var once sync.Once
 		open := func() { once.Do(func() { close(release) }) }
@@ -325,15 +314,15 @@ func TestCreateSessionWithAgent(t *testing.T) {
 		id := bare(t, env)
 		first := make(chan error, 1)
 		go func() {
-			_, err := env.h.CreateSessionWithAgent(ctxb(), LocalOwner, id, "test", "", task.Prompt{Text: "say hi"})
+			_, err := env.h.CreateSessionWithAgent(ctxb(), LocalOwner, id, "test", "", task.Prompt{Text: "say hi"}, "")
 			first <- err
 		}()
 		<-entered
-		if _, err := env.h.CreateSessionWithAgent(ctxb(), LocalOwner, id, "test", "", task.Prompt{Text: "say hi"}); err != nil {
+		if _, err := env.h.CreateSessionWithAgent(ctxb(), LocalOwner, id, "test", "", task.Prompt{Text: "hang"}, ""); err != nil {
 			t.Fatal(err)
 		}
 		open()
-		if err := <-first; errCode(err) != string(CodeSessionExists) {
+		if err := <-first; errCode(err) != task.ReasonWorkdirBusy.Code() {
 			t.Fatalf("first call: %v", err)
 		}
 		if s, err := env.h.Snapshot(ctxb(), LocalOwner, id); err != nil || len(s.Sessions) != 1 {
@@ -348,7 +337,7 @@ func TestCreateSessionWithAgent(t *testing.T) {
 		env := newTestHub(t, func(o *Options) { o.Launcher = l })
 		id := bare(t, env)
 		env.h.Close()
-		if _, err := env.h.CreateSessionWithAgent(ctxb(), LocalOwner, id, "test", "", task.Prompt{Text: "say hi"}); err != ErrClosed {
+		if _, err := env.h.CreateSessionWithAgent(ctxb(), LocalOwner, id, "test", "", task.Prompt{Text: "say hi"}, ""); err != ErrClosed {
 			t.Fatalf("got %v", err)
 		}
 	})
@@ -381,7 +370,7 @@ func TestLaunchReleasedAfterPersisting(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := env.h.CreateSessionWithAgent(ctxb(), LocalOwner, id, "test", "", task.Prompt{Text: "say hi"}); err != nil {
+	if _, err := env.h.CreateSessionWithAgent(ctxb(), LocalOwner, id, "test", "", task.Prompt{Text: "say hi"}, ""); err != nil {
 		t.Fatal(err)
 	}
 	if _, _, err := env.h.CreateTaskWithAgent(ctxb(), LocalOwner, t.TempDir(), task.CreateTask{Title: "t", Brief: "say hi"}, "noruntime", ""); errCode(err) != string(CodeAgentUnsupported) {

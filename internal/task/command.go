@@ -148,6 +148,8 @@ type SetLabels struct {
 type CreateSession struct {
 	Launch LaunchSnapshot `json:"launch"`
 	Prompt *Prompt        `json:"prompt"` // 可選的第一個 prompt
+	// Handoff 是接力的交接來源（m4.md HO01）：有它時第一個 Prompt 必須有，Decide 以它與 State 組出 Prompt.Context。
+	Handoff *Handoff `json:"handoff,omitzero"`
 }
 
 type Submit struct {

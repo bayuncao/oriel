@@ -151,6 +151,22 @@ func (s *Store) SecretsInUse(ctx context.Context, agent task.AgentID) ([]string,
 	return out, nil
 }
 
+// EditedFiles 是 Index.EditedFiles：Task 改過、在工作目錄裡的檔案，按路徑升冪（走 files_view 的主鍵）。
+func (s *Store) EditedFiles(ctx context.Context, id task.TaskID) ([]string, error) {
+	if err := s.check(); err != nil {
+		return nil, err
+	}
+	rows, err := s.r.Query(ctx, "SELECT path FROM files_view WHERE task_id=? AND edited=1 AND outside=0 ORDER BY path", string(id))
+	if err != nil {
+		return nil, mapErr(err)
+	}
+	out := make([]string, 0, len(rows.Values))
+	for _, r := range rows.Values {
+		out = append(out, toStr(r[0]))
+	}
+	return out, nil
+}
+
 // Recap 是 Index.Recap：未歸檔的 Task 在 since 之後（含）結束的回合，連同 Task 的標題與 Workspace
 // （在 SQL 裡篩，走 ended_at 的索引）。
 func (s *Store) Recap(ctx context.Context, since time.Time) ([]hub.RecapTurn, error) {

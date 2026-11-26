@@ -416,8 +416,8 @@ func cloneSetting(s *task.ModelSetting) *task.ModelSetting {
 // 由它用自己的工具讀；blob 還不支援（轉接器拿不到它的內容）。
 func (c *conn) content(p task.Prompt) ([]map[string]any, *Error) {
 	out := []map[string]any{}
-	if strings.TrimSpace(p.Text) != "" {
-		out = append(out, map[string]any{"type": "text", "text": p.Text})
+	if text := p.Full(); strings.TrimSpace(text) != "" {
+		out = append(out, map[string]any{"type": "text", "text": text})
 	}
 	for _, a := range p.Attachments {
 		if a.Path == "" {

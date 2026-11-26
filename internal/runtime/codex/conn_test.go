@@ -109,13 +109,13 @@ func TestModels(t *testing.T) {
 	wantTurn(t, got.turnEnd(t), task.TurnOK, "", nil)
 }
 
-// CX11、CX12：工作目錄裡的圖片是 localImage，其他檔案寫成一段路徑文字；blob 只讓這一輪失敗。
+// CX11、CX12：工作目錄裡的圖片是 localImage，其他檔案寫成一段路徑文字；blob 只讓這一輪失敗。交接內容接在文字之後（HO18）。
 func TestAttachments(t *testing.T) {
 	c, got := mustStart(t, append(started,
-		`{"client":{"id":4,"method":"turn/start","params":{"threadId":"thr_1","input":[{"type":"text","text":"look"},`+
+		`{"client":{"id":4,"method":"turn/start","params":{"threadId":"thr_1","input":[{"type":"text","text":"look\n\nhandoff"},`+
 			`{"type":"localImage","path":"<cwd>/shot.png"},{"type":"text","text":"Attached file: <cwd>/notes.md"}]}}}`,
 		`{"agent":{"id":4,"result":{"turn":{"id":"turn_1"}}}}`, lOK(1))...)
-	if err := c.Prompt(context.Background(), task.Prompt{ID: "a", Text: "look", Attachments: []task.Attachment{
+	if err := c.Prompt(context.Background(), task.Prompt{ID: "a", Text: "look", Context: "handoff", Attachments: []task.Attachment{
 		{Name: "shot.png", MIME: "image/png", Path: "shot.png"}, {Name: "notes.md", MIME: "text/markdown", Path: "notes.md"}}}); err != nil {
 		t.Fatal(err)
 	}

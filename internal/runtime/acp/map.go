@@ -372,8 +372,8 @@ func usageOf(u *sdk.Usage) (task.Usage, bool) {
 // blob 附件還不支援（C11、C12、D100）。
 func (c *conn) blocks(p task.Prompt) ([]sdk.ContentBlock, *Error) {
 	var out []sdk.ContentBlock
-	if strings.TrimSpace(p.Text) != "" {
-		out = append(out, sdk.TextBlock(p.Text))
+	if text := p.Full(); strings.TrimSpace(text) != "" {
+		out = append(out, sdk.TextBlock(text))
 	}
 	for _, a := range p.Attachments {
 		if a.Path == "" {

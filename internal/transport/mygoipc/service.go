@@ -125,15 +125,16 @@ func (s *Hub) Isolation(ctx context.Context, dir string) (task.IsolationMode, er
 	return mode, nil
 }
 
-// StartAgent 給還沒有 Session 的 Task 用 agent 的 Profile profile 啟動它，message 是它的第一個 Prompt
-// （m2.md I05–I11，D104，m4.md PO37）。同 CreateTask，頁面只給 ID，不給 Launch
-// Snapshot（D57）；create_session 仍在 Command 被拒絕（I12）。
-func (s *Hub) StartAgent(ctx context.Context, id task.TaskID, agent task.AgentID, profile task.ProfileID, message string) (task.Seq, error) {
+// StartAgent 給 Task 用 agent 的 Profile profile 啟動它，message 是它的第一個 Prompt
+// （m2.md I05–I11，D104，m4.md PO37）；Task 已有 Session 時是接力，from 不空時帶上從那個 Session 交接的內容
+// （m4.md HO01–HO17，D83）。同 CreateTask，頁面只給 ID，不給 Launch Snapshot（D57）；create_session 仍在
+// Command 被拒絕（I12）。
+func (s *Hub) StartAgent(ctx context.Context, id task.TaskID, agent task.AgentID, profile task.ProfileID, message string, from task.SessionID) (task.Seq, error) {
 	h, log, e := s.get()
 	if e != nil {
 		return 0, e
 	}
-	seq, err := h.CreateSessionWithAgent(ctx, hub.LocalOwner, id, agent, profile, task.Prompt{Text: message})
+	seq, err := h.CreateSessionWithAgent(ctx, hub.LocalOwner, id, agent, profile, task.Prompt{Text: message}, from)
 	if err != nil {
 		return 0, wire(log, "StartAgent", err)
 	}

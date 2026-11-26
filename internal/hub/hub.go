@@ -347,13 +347,14 @@ func (h *Hub) CreateTaskWithAgent(ctx context.Context, p Principal, dir string, 
 	return h.CreateTask(ctx, p, dir, c)
 }
 
-// CreateSessionWithAgent 給還沒有 Session 的 Task 啟動 agent（m2.md I05–I11）：
+// CreateSessionWithAgent 給 Task 啟動 agent（m2.md I05–I11）或接力（m4.md HO01–HO17）：
 // 用它的 Profile profile（空著是預設的）解析為 Launch Snapshot（D95），建一個 Session，prompt 是它的
-// 第一個 Prompt。先做不必啟動 agent 的檢查（agent 與 prompt 不能空、Task 存在、
-// 未歸檔、還沒有 Session），再解析；送進 Actor 時再核對一次 Session 數，同時來的
-// 兩次只有一次建得成（hub.session_exists）。M2 裡一個 Task 最多一個 agent（D95）。
+// 第一個 Prompt。from 不空時帶上從那個 Session 交接的內容（D83）：hub 先讀好 Task 的改動，交接的文字由
+// Decide 組。先做不必啟動 agent 的檢查（agent 與 prompt 不能空、Task 存在、未歸檔、資料夾裡沒有 Session
+// 在運行、worktree 沒處置、沒有未選定的 Fork、from 是 Task 資料夾裡的 Session），再解析、讀改動；Decide 在 Actor 裡再查一次，
+// 同時來的兩次只有一次建得成（新 Session 立刻開始一輪，另一次是 task.workdir_busy）。
 func (h *Hub) CreateSessionWithAgent(ctx context.Context, p Principal, id task.TaskID,
-	agent task.AgentID, profile task.ProfileID, prompt task.Prompt) (task.Seq, error) {
+	agent task.AgentID, profile task.ProfileID, prompt task.Prompt, from task.SessionID) (task.Seq, error) {
 	if err := h.alive(); err != nil {
 		return 0, err
 	}
@@ -367,22 +368,31 @@ func (h *Hub) CreateSessionWithAgent(ctx context.Context, p Principal, id task.T
 	if err != nil {
 		return 0, err
 	}
-	if err := oneAgent(s); err != nil {
+	if err := task.CanStartSession(s); err != nil {
 		return 0, err
+	}
+	if from != "" {
+		if _, err := task.HandoffSource(s, from); err != nil {
+			return 0, err
+		}
 	}
 	l, release, err := h.resolveLaunch(ctx, agent, profile)
 	if err != nil {
 		return 0, err
 	}
 	defer release() // 快照寫進事件流（或建不成）之後
+	var handoff *task.Handoff
+	if from != "" { // 解析成功後才讀改動：agent 用不了時不白算 diff
+		handoff = &task.Handoff{From: from, Changes: h.changes(ctx, s)}
+	}
 	a, err := h.loadActor(ctx, id)
 	if err != nil {
 		return 0, err
 	}
 	c := task.Command{Kind: task.CmdCreateSession, Origin: p.Origin(), Device: p.Device,
-		CreateSession: &task.CreateSession{Launch: l, Prompt: &prompt}}
+		CreateSession: &task.CreateSession{Launch: l, Prompt: &prompt, Handoff: handoff}}
 	reply := make(chan cmdResult, 1)
-	if err := a.send(h.ctx, msg{cmd: &c, in: h.inputs(a.wsid), reply: reply, guard: oneAgent}); err != nil {
+	if err := a.send(h.ctx, msg{cmd: &c, in: h.inputs(a.wsid), reply: reply}); err != nil {
 		return 0, err
 	}
 	r, err := await(a, reply)
@@ -410,18 +420,6 @@ func (h *Hub) resolveLaunch(ctx context.Context, agent task.AgentID, profile tas
 	// 預設模型（MD05）：設定頁設的；會話開始時換成它（task 的 modelReported）。
 	l.Model = h.defaultModel(agent)
 	return l, release, nil
-}
-
-// oneAgent 是 M2 給 Task 啟動 agent 的前提：未歸檔（Decide 也會拒絕，這裡先擋，
-// 不白跑解析）、還沒有任何 Session（含已關閉的，D95）。
-func oneAgent(s task.State) error {
-	if s.Archived {
-		return &task.Rejection{Reason: task.ReasonArchived}
-	}
-	if len(s.Sessions) > 0 {
-		return fail(CodeSessionExists, nil)
-	}
-	return nil
 }
 
 // checkAttachments 是附件的前提（D100）：以路徑參照的附件必須是 Prompt 送去的工作目錄裡的絕對路徑——

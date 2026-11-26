@@ -1586,3 +1586,28 @@ func TestTaskSecrets(t *testing.T) {
 		})
 	}
 }
+
+// m4.md HO08：Task 改過、在工作目錄裡的檔案，按路徑排；讀過的、工作目錄外的與別的 Task 的不算。
+func TestEditedFiles(t *testing.T) {
+	for name, mk := range impls(t) {
+		t.Run(name, func(t *testing.T) {
+			ctx := context.Background()
+			s := mk(t)
+			b := batch(rec(1, "a"))
+			b.Views.Files = []hub.FileUse{{Path: "b.go", Via: hub.FileEdit, Edited: true}, {Path: "c.go", Via: hub.FileRead},
+				{Path: "/etc/x", Outside: true, Edited: true}, {Path: "a.go", Via: hub.FileEdit, Edited: true}}
+			if err := s.Append(ctx, "t-1", 0, b); err != nil {
+				t.Fatal(err)
+			}
+			b2 := batch(rec(1, "b"))
+			b2.Views.Files = []hub.FileUse{{Path: "z.go", Via: hub.FileEdit, Edited: true}}
+			if err := s.Append(ctx, "t-2", 0, b2); err != nil {
+				t.Fatal(err)
+			}
+			got, err := s.EditedFiles(ctx, "t-1")
+			if err != nil || !slices.Equal(got, []string{"a.go", "b.go"}) {
+				t.Fatalf("%v %v", got, err)
+			}
+		})
+	}
+}

@@ -373,8 +373,8 @@ func cloneSetting(s *task.ModelSetting) *task.ModelSetting {
 // 讀圖片）；blob 還不支援（轉接器拿不到它的內容）。
 func (c *conn) message(p task.Prompt) (string, *Error) {
 	var parts []string
-	if strings.TrimSpace(p.Text) != "" {
-		parts = append(parts, p.Text)
+	if text := p.Full(); strings.TrimSpace(text) != "" {
+		parts = append(parts, text)
 	}
 	for _, a := range p.Attachments {
 		if a.Path == "" {

@@ -108,6 +108,24 @@ type Review struct {
 	Rationale   string          `json:"rationale,omitzero"`
 }
 
+// WorktreeClosing 回報 Task Worktree 已處置，或有合併或丟棄它的意圖（在跑、等著或掛起）；沒有 Task Worktree 時為假。
+// 這時不能再在它裡面開 Session（m4.md HO12），算它的改動時 git 出錯也不是故障（WT06）。
+func (s State) WorktreeClosing() bool {
+	w := s.Worktree
+	if w == nil {
+		return false
+	}
+	if w.Outcome != OutcomeOpen {
+		return true
+	}
+	for _, in := range s.Intents {
+		if in.Target.Level == TargetWorktree {
+			return true
+		}
+	}
+	return false
+}
+
 // OpenWorktrees 回報 Task 還有沒有開著的 worktree（Task Worktree 或 Fork 的 Outcome 為 open），
 // 不管有沒有合併 / 丟棄意圖在執行：刪除 Task 時它們的目錄會成為沒人管的孤兒（m2.md DL10）。
 func (s State) OpenWorktrees() bool {

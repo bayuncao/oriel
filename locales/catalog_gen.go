@@ -1112,6 +1112,38 @@ func (msgs Messages) TaskUnknownLabel() string {
 	return Catalog.Format(msgs.locale, "task_unknown_label", nil)
 }
 
+// TaskWorkdirBusy says "Another agent is working in this task's folder. Try again once it stops"
+// in the language the app shows.
+//
+// Only one session in a task's folder runs at a time (m4.md HO03, HO14):
+// relaying, messaging another session or resuming it while one is running.
+func TaskWorkdirBusy() string { return In(i18n.Locale()).TaskWorkdirBusy() }
+
+// TaskWorkdirBusy says "Another agent is working in this task's folder. Try again once it stops"
+// in the language of msgs.
+//
+// Only one session in a task's folder runs at a time (m4.md HO03, HO14):
+// relaying, messaging another session or resuming it while one is running.
+func (msgs Messages) TaskWorkdirBusy() string {
+	return Catalog.Format(msgs.locale, "task_workdir_busy", nil)
+}
+
+// TaskWorktreeClosed says "This task's worktree has been merged or discarded"
+// in the language the app shows.
+//
+// Starting another agent on a task whose worktree is merged, discarded, or
+// being merged or discarded (m4.md HO12).
+func TaskWorktreeClosed() string { return In(i18n.Locale()).TaskWorktreeClosed() }
+
+// TaskWorktreeClosed says "This task's worktree has been merged or discarded"
+// in the language of msgs.
+//
+// Starting another agent on a task whose worktree is merged, discarded, or
+// being merged or discarded (m4.md HO12).
+func (msgs Messages) TaskWorktreeClosed() string {
+	return Catalog.Format(msgs.locale, "task_worktree_closed", nil)
+}
+
 // TaskSessionOpen says "Close the session first"
 // in the language the app shows.
 //
@@ -1342,22 +1374,6 @@ func HubAgentUnsupported(agent string) string { return In(i18n.Locale()).HubAgen
 // with M3).
 func (msgs Messages) HubAgentUnsupported(agent string) string {
 	return Catalog.Format(msgs.locale, "hub_agent_unsupported", map[string]any{"agent": agent})
-}
-
-// HubSessionExists says "This task has already started an agent"
-// in the language the app shows.
-//
-// Starting an agent on a task that already has a session; in M2 a task has
-// at most one agent (D95).
-func HubSessionExists() string { return In(i18n.Locale()).HubSessionExists() }
-
-// HubSessionExists says "This task has already started an agent"
-// in the language of msgs.
-//
-// Starting an agent on a task that already has a session; in M2 a task has
-// at most one agent (D95).
-func (msgs Messages) HubSessionExists() string {
-	return Catalog.Format(msgs.locale, "hub_session_exists", nil)
 }
 
 // HubUnknownLabel says "Label {label} no longer exists"
@@ -19504,4 +19520,274 @@ func UiProfileField() string { return In(i18n.Locale()).UiProfileField() }
 // Label of the profile choice when creating a task or starting an agent.
 func (msgs Messages) UiProfileField() string {
 	return Catalog.Format(msgs.locale, "ui_profile_field", nil)
+}
+
+// UiRelayOpen says "Hand off to another agent"
+// in the language the app shows.
+//
+// Task details: start another agent in a task that already has sessions
+// (m4.md HO21).
+func UiRelayOpen() string { return In(i18n.Locale()).UiRelayOpen() }
+
+// UiRelayOpen says "Hand off to another agent"
+// in the language of msgs.
+//
+// Task details: start another agent in a task that already has sessions
+// (m4.md HO21).
+func (msgs Messages) UiRelayOpen() string {
+	return Catalog.Format(msgs.locale, "ui_relay_open", nil)
+}
+
+// UiRelayRunning says "An agent is running. Stop it before handing off"
+// in the language the app shows.
+//
+// Under the hand-off button while a session in the task folder is running
+// (HO22).
+func UiRelayRunning() string { return In(i18n.Locale()).UiRelayRunning() }
+
+// UiRelayRunning says "An agent is running. Stop it before handing off"
+// in the language of msgs.
+//
+// Under the hand-off button while a session in the task folder is running
+// (HO22).
+func (msgs Messages) UiRelayRunning() string {
+	return Catalog.Format(msgs.locale, "ui_relay_running", nil)
+}
+
+// UiRelayTitle says "Hand off to another agent"
+// in the language the app shows.
+//
+// Title of the hand-off dialog (HO24).
+func UiRelayTitle() string { return In(i18n.Locale()).UiRelayTitle() }
+
+// UiRelayTitle says "Hand off to another agent"
+// in the language of msgs.
+//
+// Title of the hand-off dialog (HO24).
+func (msgs Messages) UiRelayTitle() string {
+	return Catalog.Format(msgs.locale, "ui_relay_title", nil)
+}
+
+// UiRelayFrom says "Hand off from"
+// in the language the app shows.
+//
+// Choice of the session the handoff comes from, shown when the task folder
+// has more than one (HO25).
+func UiRelayFrom() string { return In(i18n.Locale()).UiRelayFrom() }
+
+// UiRelayFrom says "Hand off from"
+// in the language of msgs.
+//
+// Choice of the session the handoff comes from, shown when the task folder
+// has more than one (HO25).
+func (msgs Messages) UiRelayFrom() string {
+	return Catalog.Format(msgs.locale, "ui_relay_from", nil)
+}
+
+// UiRelayCarry says "Include the handoff"
+// in the language the app shows.
+//
+// Switch: send the previous session's last reply and the task's changes
+// with the first message (HO24).
+func UiRelayCarry() string { return In(i18n.Locale()).UiRelayCarry() }
+
+// UiRelayCarry says "Include the handoff"
+// in the language of msgs.
+//
+// Switch: send the previous session's last reply and the task's changes
+// with the first message (HO24).
+func (msgs Messages) UiRelayCarry() string {
+	return Catalog.Format(msgs.locale, "ui_relay_carry", nil)
+}
+
+// UiRelayCarryReply says "{agent}'s last reply"
+// in the language the app shows.
+//
+// What the handoff includes: the previous agent's last reply.
+func UiRelayCarryReply(agent string) string { return In(i18n.Locale()).UiRelayCarryReply(agent) }
+
+// UiRelayCarryReply says "{agent}'s last reply"
+// in the language of msgs.
+//
+// What the handoff includes: the previous agent's last reply.
+func (msgs Messages) UiRelayCarryReply(agent string) string {
+	return Catalog.Format(msgs.locale, "ui_relay_carry_reply", map[string]any{"agent": agent})
+}
+
+// UiRelayCarryNoReply says "{agent} left no reply"
+// in the language the app shows.
+//
+// What the handoff includes: the previous agent's last turn had no reply.
+func UiRelayCarryNoReply(agent string) string { return In(i18n.Locale()).UiRelayCarryNoReply(agent) }
+
+// UiRelayCarryNoReply says "{agent} left no reply"
+// in the language of msgs.
+//
+// What the handoff includes: the previous agent's last turn had no reply.
+func (msgs Messages) UiRelayCarryNoReply(agent string) string {
+	return Catalog.Format(msgs.locale, "ui_relay_carry_no_reply", map[string]any{"agent": agent})
+}
+
+// UiRelayCarryFiles says "{count, plural, one {Changes to # file} other {Changes to # files}}"
+// in the language the app shows.
+//
+// What the handoff includes: changed files in the worktree.
+func UiRelayCarryFiles(count int) string { return In(i18n.Locale()).UiRelayCarryFiles(count) }
+
+// UiRelayCarryFiles says "{count, plural, one {Changes to # file} other {Changes to # files}}"
+// in the language of msgs.
+//
+// What the handoff includes: changed files in the worktree.
+func (msgs Messages) UiRelayCarryFiles(count int) string {
+	return Catalog.Format(msgs.locale, "ui_relay_carry_files", map[string]any{"count": count})
+}
+
+// UiRelayCarryNoChanges says "No changes yet"
+// in the language the app shows.
+//
+// What the handoff includes: the worktree has no changes.
+func UiRelayCarryNoChanges() string { return In(i18n.Locale()).UiRelayCarryNoChanges() }
+
+// UiRelayCarryNoChanges says "No changes yet"
+// in the language of msgs.
+//
+// What the handoff includes: the worktree has no changes.
+func (msgs Messages) UiRelayCarryNoChanges() string {
+	return Catalog.Format(msgs.locale, "ui_relay_carry_no_changes", nil)
+}
+
+// UiRelayCarryEdited says "Files this task edited"
+// in the language the app shows.
+//
+// What the handoff includes: for a task working directly in the folder.
+func UiRelayCarryEdited() string { return In(i18n.Locale()).UiRelayCarryEdited() }
+
+// UiRelayCarryEdited says "Files this task edited"
+// in the language of msgs.
+//
+// What the handoff includes: for a task working directly in the folder.
+func (msgs Messages) UiRelayCarryEdited() string {
+	return Catalog.Format(msgs.locale, "ui_relay_carry_edited", nil)
+}
+
+// UiRelayNote says "Ask {agent} to write a handoff note first"
+// in the language the app shows.
+//
+// Button in the hand-off dialog: send the previous session a fixed message
+// asking for a handoff note (HO26).
+func UiRelayNote(agent string) string { return In(i18n.Locale()).UiRelayNote(agent) }
+
+// UiRelayNote says "Ask {agent} to write a handoff note first"
+// in the language of msgs.
+//
+// Button in the hand-off dialog: send the previous session a fixed message
+// asking for a handoff note (HO26).
+func (msgs Messages) UiRelayNote(agent string) string {
+	return Catalog.Format(msgs.locale, "ui_relay_note", map[string]any{"agent": agent})
+}
+
+// UiRelayNotePrompt says "Please write a handoff note for another agent who will take over this task: what you did, what is left, how to verify…"
+// in the language the app shows.
+//
+// The fixed message sent to the previous session when asking for a handoff
+// note (HO26).
+func UiRelayNotePrompt() string { return In(i18n.Locale()).UiRelayNotePrompt() }
+
+// UiRelayNotePrompt says "Please write a handoff note for another agent who will take over this task: what you did, what is left, how to verify…"
+// in the language of msgs.
+//
+// The fixed message sent to the previous session when asking for a handoff
+// note (HO26).
+func (msgs Messages) UiRelayNotePrompt() string {
+	return Catalog.Format(msgs.locale, "ui_relay_note_prompt", nil)
+}
+
+// UiRelayNoteFailed says "Couldn't send the request"
+// in the language the app shows.
+//
+// Sending the handoff-note request failed.
+func UiRelayNoteFailed() string { return In(i18n.Locale()).UiRelayNoteFailed() }
+
+// UiRelayNoteFailed says "Couldn't send the request"
+// in the language of msgs.
+//
+// Sending the handoff-note request failed.
+func (msgs Messages) UiRelayNoteFailed() string {
+	return Catalog.Format(msgs.locale, "ui_relay_note_failed", nil)
+}
+
+// UiRelaySubmit says "Hand off"
+// in the language the app shows.
+//
+// Submit button of the hand-off dialog.
+func UiRelaySubmit() string { return In(i18n.Locale()).UiRelaySubmit() }
+
+// UiRelaySubmit says "Hand off"
+// in the language of msgs.
+//
+// Submit button of the hand-off dialog.
+func (msgs Messages) UiRelaySubmit() string {
+	return Catalog.Format(msgs.locale, "ui_relay_submit", nil)
+}
+
+// UiRelayFailed says "Couldn't hand off"
+// in the language the app shows.
+//
+// Title of the error when the hand-off is rejected (HO30).
+func UiRelayFailed() string { return In(i18n.Locale()).UiRelayFailed() }
+
+// UiRelayFailed says "Couldn't hand off"
+// in the language of msgs.
+//
+// Title of the error when the hand-off is rejected (HO30).
+func (msgs Messages) UiRelayFailed() string {
+	return Catalog.Format(msgs.locale, "ui_relay_failed", nil)
+}
+
+// UiConvHandoff says "Handoff"
+// in the language the app shows.
+//
+// Folded block under the first message of a relayed session: the handoff
+// context sent with it (HO29).
+func UiConvHandoff() string { return In(i18n.Locale()).UiConvHandoff() }
+
+// UiConvHandoff says "Handoff"
+// in the language of msgs.
+//
+// Folded block under the first message of a relayed session: the handoff
+// context sent with it (HO29).
+func (msgs Messages) UiConvHandoff() string {
+	return Catalog.Format(msgs.locale, "ui_conv_handoff", nil)
+}
+
+// UiConvSendTo says "Send to"
+// in the language the app shows.
+//
+// Choice of the session the composer sends to, when the task folder has two
+// or more open sessions (HO31).
+func UiConvSendTo() string { return In(i18n.Locale()).UiConvSendTo() }
+
+// UiConvSendTo says "Send to"
+// in the language of msgs.
+//
+// Choice of the session the composer sends to, when the task folder has two
+// or more open sessions (HO31).
+func (msgs Messages) UiConvSendTo() string {
+	return Catalog.Format(msgs.locale, "ui_conv_send_to", nil)
+}
+
+// UiConvWorkdirBusy says "{running} is working in this folder. Wait until it stops to message {target}"
+// in the language the app shows.
+//
+// Composer note: another session in the task folder is running (HO32).
+func UiConvWorkdirBusy(running string, target string) string {
+	return In(i18n.Locale()).UiConvWorkdirBusy(running, target)
+}
+
+// UiConvWorkdirBusy says "{running} is working in this folder. Wait until it stops to message {target}"
+// in the language of msgs.
+//
+// Composer note: another session in the task folder is running (HO32).
+func (msgs Messages) UiConvWorkdirBusy(running string, target string) string {
+	return Catalog.Format(msgs.locale, "ui_conv_workdir_busy", map[string]any{"running": running, "target": target})
 }

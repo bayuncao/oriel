@@ -486,11 +486,11 @@ func TestClose(t *testing.T) {
 	o.conn.Close()
 }
 
-// C11、C12：工作目錄裡的檔案作為 resource_link；blob 附件還不支援。
+// C11、C12：工作目錄裡的檔案作為 resource_link；blob 附件還不支援。交接內容接在文字之後（m4.md HO18）。
 func TestAttachments(t *testing.T) {
 	r := newRuntime(t, Options{})
 	link := `{"client":{"id":3,"method":"session/prompt","params":{"sessionId":"s1","prompt":[` +
-		`{"type":"text","text":"read"},` +
+		`{"type":"text","text":"read\n\nhandoff"},` +
 		`{"type":"resource_link","name":"notes.md","uri":"file://<cwd>/docs/notes.md","mimeType":"text/markdown"},` +
 		`{"type":"resource_link","name":"b.go","uri":"file:///abs/b.go"}]}}}`
 	o := mustStart(t, r, testLaunch(), "", fixture(t, append(started, link, lResult(3, `{"stopReason":"end_turn"}`))...))
@@ -500,7 +500,7 @@ func TestAttachments(t *testing.T) {
 		c.TurnEnded.Problem.Code != "acp.attachment_unsupported" || c.TurnEnded.Problem.Params["name"] != "a.png" {
 		t.Fatalf("got %+v", c)
 	}
-	o.prompt(t, task.Prompt{Text: "read", Attachments: []task.Attachment{
+	o.prompt(t, task.Prompt{Text: "read", Context: "handoff", Attachments: []task.Attachment{
 		{Name: "notes.md", MIME: "text/markdown", Path: "docs/notes.md"}, {Path: "/abs/b.go"}}})
 	if c := o.rec.next(t, ends); c.Kind != task.FactTurnEnded || c.TurnEnded.Result != task.TurnOK {
 		t.Fatalf("got %+v", c)

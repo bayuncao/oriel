@@ -257,6 +257,23 @@ func (s *MemStore) Files(ctx context.Context) ([]TaskFile, error) {
 	return out, nil
 }
 
+// EditedFiles 是 Task 改過、在工作目錄裡的檔案，按路徑升冪。
+func (s *MemStore) EditedFiles(ctx context.Context, id task.TaskID) ([]string, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	var out []string
+	for _, u := range s.files[id].list() {
+		if u.Edited && !u.Outside {
+			out = append(out, u.Path)
+		}
+	}
+	slices.Sort(out)
+	return out, nil
+}
+
 // SecretsInUse 是 agent 的快照引用的密鑰（含已歸檔的 Task）。
 func (s *MemStore) SecretsInUse(ctx context.Context, agent task.AgentID) ([]string, error) {
 	if err := ctx.Err(); err != nil {
